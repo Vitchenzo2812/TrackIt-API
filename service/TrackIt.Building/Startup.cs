@@ -1,5 +1,4 @@
-﻿using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using TrackIt.Infraestructure.Database.Contracts;
+﻿using TrackIt.Infraestructure.Database.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Database;
@@ -25,9 +24,7 @@ public abstract class TrackItStartup : IStartup
       options
         .UseMySql(
           Environment.GetEnvironmentVariable(EnvironmentVariables.MySqlTrackItConnectionString.Description()),
-          new MySqlServerVersion(new Version()),
-          opt => opt.MigrationsAssembly(typeof(TrackItDbContext).Assembly.FullName)
-            .SchemaBehavior(MySqlSchemaBehavior.Translate, (schema, entity) => $"{schema}.{entity}")
+          new MySqlServerVersion(new Version())
         );
     });
 

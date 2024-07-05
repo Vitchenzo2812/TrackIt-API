@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using TrackIt.Infraestructure.Web.Middlewares;
 using TrackIt.Infraestructure.Web.Swagger;
 using TrackIt.Infraestructure.Database;
 using System.Text.Json.Serialization;
@@ -7,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TrackIt.Building;
 using System.Text;
-using TrackIt.Infraestructure.Web.Middlewares;
 
 namespace TrackIt.WebApi;
 
@@ -66,6 +66,8 @@ public class WebApiTrackItStartup : TrackItStartup
       });
 
     services.AddSwaggerGen(opt => opt.AddJWTAuth());
+    
+    ConfigureDbContext(services);
   }
  
   public override void MigrateDatabase (IApplicationBuilder app)
@@ -79,6 +81,9 @@ public class WebApiTrackItStartup : TrackItStartup
   {
     MigrateDatabase(app);
 
+    if (env.IsDevelopment())
+      app.UseDeveloperExceptionPage();
+      
     app.UseCors();
     app.UseMiddleware<GlobalExceptionMiddleware>();
     app.UseMiddleware<AuthorizationMiddleware>();

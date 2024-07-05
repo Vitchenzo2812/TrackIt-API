@@ -16,7 +16,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5033",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MYSQL_TRACKIT_CONNECTION_STRING": "Server=localhost;Port=3306;Database=trackitservice;Uid=root;Pwd=password;SSL Mode=None;"
       }
     },
     "https": {

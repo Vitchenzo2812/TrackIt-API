@@ -6,7 +6,7 @@ namespace TrackIt.Infraestructure.Web.Middlewares;
 
 public class AuthorizationMiddleware (
   RequestDelegate next
-  // IJwt jwt
+  // IJwtService jwt
 )
 {
   public async Task InvokeAsync (HttpContext context)
