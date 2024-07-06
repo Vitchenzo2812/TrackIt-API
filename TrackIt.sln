@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackIt.WebApi", "service\T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackIt.Entities", "service\TrackIt.Entities\TrackIt.Entities.csproj", "{D418B13E-DB6D-4622-8232-12958A084DEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackIt.Commands", "service\TrackIt.Commands\TrackIt.Commands.csproj", "{BB96224A-E0B0-459A-8E75-879EAB099E33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,7 @@ Global
 		{D9F871A1-2656-4BB4-A991-E5A3579C0D38} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
 		{7E636539-DDAE-4052-8BE5-203C11916CF9} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
 		{D418B13E-DB6D-4622-8232-12958A084DEC} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
+		{BB96224A-E0B0-459A-8E75-879EAB099E33} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{09B46BD5-D9AD-4BD2-9733-D44902FC705B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -38,5 +41,9 @@ Global
 		{D418B13E-DB6D-4622-8232-12958A084DEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D418B13E-DB6D-4622-8232-12958A084DEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D418B13E-DB6D-4622-8232-12958A084DEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB96224A-E0B0-459A-8E75-879EAB099E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB96224A-E0B0-459A-8E75-879EAB099E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB96224A-E0B0-459A-8E75-879EAB099E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB96224A-E0B0-459A-8E75-879EAB099E33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
