@@ -1,7 +1,10 @@
-﻿using TrackIt.Infraestructure.Database.Contracts;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+using TrackIt.Infraestructure.Security.Contracts;
+using TrackIt.Infraestructure.Database.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Database;
+using TrackIt.Infraestructure.Security;
 using TrackIt.Infraestructure.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +18,7 @@ public abstract class TrackItStartup : IStartup
   
   public virtual void ConfigureServices (IServiceCollection services)
   {
+    services.TryAddTransient<IJwtService, JwtService>();
   }
   
   public void ConfigureDbContext (IServiceCollection services)
