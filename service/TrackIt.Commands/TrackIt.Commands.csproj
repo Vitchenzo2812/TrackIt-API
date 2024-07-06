@@ -7,7 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Auth\SignUp\" />
+      <PackageReference Include="MediatR" Version="12.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TrackIt.Entities\TrackIt.Entities.csproj" />
+      <ProjectReference Include="..\TrackIt.Infraestructure\TrackIt.Infraestructure.csproj" />
     </ItemGroup>
 
 </Project>

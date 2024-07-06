@@ -9,6 +9,8 @@ using TrackIt.Infraestructure.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using TrackIt.Building.Contracts;
+using TrackIt.Infraestructure.Repository;
+using TrackIt.Infraestructure.Repository.Contracts;
 
 namespace TrackIt.Building;
 
@@ -19,6 +21,8 @@ public abstract class TrackItStartup : IStartup
   public virtual void ConfigureServices (IServiceCollection services)
   {
     services.TryAddTransient<IJwtService, JwtService>();
+
+    services.AddTransient<IUserRepository, UserRepository>();
   }
   
   public void ConfigureDbContext (IServiceCollection services)
