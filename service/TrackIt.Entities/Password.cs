@@ -52,14 +52,14 @@ public class Password : Entity
 
   private static string IsStrongPassword (string password)
   {
-    HasMinCharacter(password);
+    HasMinCharacters(password);
     return password;
   }
   
-  private static void HasMinCharacter (string password)
+  private static void HasMinCharacters (string password)
   {
     if (password.Length < 8)
-      throw new InvalidPasswordError();
+      throw new InvalidPasswordError("Password must be 8 characters");
 
     HasUpperCaseLetter(password);
   }
@@ -67,7 +67,7 @@ public class Password : Entity
   private static void HasUpperCaseLetter (string password)
   {
     if (!Regex.IsMatch(password, @"[A-Z]"))
-      throw new InvalidPasswordError();
+      throw new InvalidPasswordError("Password must be contains upper case letter");
     
     HasLowerCaseLetter(password);
   }
@@ -75,7 +75,7 @@ public class Password : Entity
   private static void HasLowerCaseLetter (string password)
   {
     if (!Regex.IsMatch(password, @"[a-z]"))
-      throw new InvalidPasswordError();
+      throw new InvalidPasswordError("Password must be contains lower case letter");
 
     HasDigit(password);
   }
@@ -83,7 +83,7 @@ public class Password : Entity
   private static void HasDigit (string password)
   {
     if (!Regex.IsMatch(password, @"[0-9]"))
-      throw new InvalidPasswordError();
+      throw new InvalidPasswordError("Password must be contains digits");
 
     HasSpecialCharacter(password);
   }
@@ -91,6 +91,6 @@ public class Password : Entity
   private static void HasSpecialCharacter (string password)
   {
     if (!Regex.IsMatch(password, @"[\W_]"))
-      throw new InvalidPasswordError();
+      throw new InvalidPasswordError("Password must be contains a special character");
   }
 }
