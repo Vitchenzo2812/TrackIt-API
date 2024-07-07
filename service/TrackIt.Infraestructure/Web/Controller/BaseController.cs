@@ -3,6 +3,7 @@ using TrackIt.Entities.Core;
 
 namespace TrackIt.Infraestructure.Web.Controller;
 
+[ApiController]
 public class BaseController : ControllerBase
 {
   protected Session SessionFromHeaders ()

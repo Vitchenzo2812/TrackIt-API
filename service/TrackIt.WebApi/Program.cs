@@ -1,3 +1,5 @@
+using TrackIt.Infraestructure.Extensions;
+
 namespace TrackIt.WebApi;
 
 public abstract class TrackItProgram
@@ -14,6 +16,8 @@ public abstract class TrackItProgram
     
     startup.Configure(app, builder.Environment);
 
-    app.Run();
+    app
+      .MapDefaultEndpoints()
+      .Run();
   }
 }

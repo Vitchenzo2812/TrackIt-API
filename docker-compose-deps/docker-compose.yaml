@@ -4,19 +4,20 @@ services:
   app:
     build: ../
     environment:
-      MYSQL_TRACKIT_CONNECTION_STRING: Server=mysql;Port=3306;Database=trackitservice;Uid=root;Pwd=password;SSL Mode=None;
+      MYSQL_TRACKIT_CONNECTION_STRING: "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password"
     depends_on:
       - mysql
     links:
       - mysql
   
   mysql:
-    image: mysql
+    image: mysql:9.0
     environment:
       MYSQL_DATABASE: trackitservice
       MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_USER: root
     ports:
-      - 3306:3306
+      - "3306:3306"
     
   adminer:
     image: adminer
@@ -26,7 +27,7 @@ services:
     links:
       - mysql
     ports:
-      - 8080:8080
+      - "8080:8080"
 
 networks:
   trackIt:

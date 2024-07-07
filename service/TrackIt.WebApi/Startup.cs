@@ -17,10 +17,12 @@ public class WebApiTrackItStartup : TrackItStartup
   {
     base.ConfigureServices(services);
     
+    ConfigureDbContext(services);
+    
     services
       .AddControllers()
       .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
+    
     services.AddSwaggerGen(c =>
     {
       c.SwaggerDoc(
@@ -66,8 +68,6 @@ public class WebApiTrackItStartup : TrackItStartup
       });
 
     services.AddSwaggerGen(opt => opt.AddJWTAuth());
-    
-    ConfigureDbContext(services);
   }
  
   public override void MigrateDatabase (IApplicationBuilder app)
@@ -79,24 +79,28 @@ public class WebApiTrackItStartup : TrackItStartup
   
   public void Configure (IApplicationBuilder app, IWebHostEnvironment env)
   {
-    MigrateDatabase(app);
-
+    if (!env.IsEnvironment("Tests"))
+      MigrateDatabase(app);
+    
     if (env.IsDevelopment())
       app.UseDeveloperExceptionPage();
       
     app.UseCors();
     app.UseMiddleware<GlobalExceptionMiddleware>();
-    app.UseMiddleware<AuthorizationMiddleware>();
     
     app.UseSwagger();
     app.UseSwaggerUI(config =>
     {
       config.SwaggerEndpoint("/swagger/trackIt/swagger.json", "TrackIt API");
+      
       config.RoutePrefix = "docs";
       config.InjectStylesheet("/wwwroot/swagger-ui/SwaggerDark.css");
     });
     
     app.UseRouting();
+    
+    app.UseMiddleware<AuthorizationMiddleware>();
+    
     app.UseEndpoints(endpoints => endpoints.MapControllers());
   }
 }
