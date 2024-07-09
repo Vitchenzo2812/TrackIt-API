@@ -16,8 +16,8 @@ public class UserMapper : IEntityTypeConfiguration<User>
       .Property(u => u.Email)
       .HasColumnName("Email")
       .HasConversion(
-        email => email.Value,
-        value => Email.FromAddress(value)
+        email => email == null ? null : email.Value,
+        value => value == null ? null : Email.FromAddress(value)
       );
   }
 }

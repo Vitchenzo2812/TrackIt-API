@@ -17,8 +17,6 @@ public class WebApiTrackItStartup : TrackItStartup
   {
     base.ConfigureServices(services);
     
-    ConfigureDbContext(services);
-    
     services
       .AddControllers()
       .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -86,6 +84,7 @@ public class WebApiTrackItStartup : TrackItStartup
       app.UseDeveloperExceptionPage();
       
     app.UseCors();
+    
     app.UseMiddleware<GlobalExceptionMiddleware>();
     
     app.UseSwagger();
@@ -102,5 +101,7 @@ public class WebApiTrackItStartup : TrackItStartup
     app.UseMiddleware<AuthorizationMiddleware>();
     
     app.UseEndpoints(endpoints => endpoints.MapControllers());
+      
+    app.UseHttpsRedirection();
   }
 }

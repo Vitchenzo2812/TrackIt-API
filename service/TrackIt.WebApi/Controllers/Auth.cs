@@ -8,13 +8,20 @@ namespace TrackIt.WebApi.Controllers;
 [Tags("Auth")]
 [Route("auth")]
 [ApiController]
-public class Auth (IMediator mediator) : BaseController
+public class Auth : BaseController
 {
+  private IMediator _mediator;
+  
+  public Auth (IMediator mediator)
+  {
+    _mediator = mediator;
+  }
+  
   [HttpPost("sign-up")]
   public async Task<ActionResult<SignUpResponse>> Handle ([FromBody] SignUpPayload payload)
   {
-    var result = await mediator.Send(new SignUpCommand(payload));
-    
-    return new ActionResult<SignUpResponse>(result);
+    return new ActionResult<SignUpResponse>(
+      await _mediator.Send(new SignUpCommand(payload))
+    );
   }
 }

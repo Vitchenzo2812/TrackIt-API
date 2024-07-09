@@ -7,11 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR" Version="12.3.0" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.4" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\TrackIt.Entities\TrackIt.Entities.csproj" />
       <ProjectReference Include="..\TrackIt.Infraestructure\TrackIt.Infraestructure.csproj" />
     </ItemGroup>

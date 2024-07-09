@@ -4,7 +4,7 @@ services:
   app:
     build: ../
     environment:
-      MYSQL_TRACKIT_CONNECTION_STRING: "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password"
+      MYSQL_TRACKIT_CONNECTION_STRING: "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password;SSL Mode=None;"
     depends_on:
       - mysql
     links:

@@ -2,13 +2,13 @@
 
 namespace TrackIt.Infraestructure.Repository.Contracts;
 
-public interface IRepository<TAggregate> where TAggregate : Aggregate
+public interface IRepository<TEntity> where TEntity : Entity
 {
-  Task<TAggregate?> FindById (Guid aggregateId);
+  Task<TEntity?> FindById (Guid aggregateId);
   
-  void Save (TAggregate aggregate);
+  void Save (TEntity aggregate);
 
-  void Delete (TAggregate aggregate);
+  void Delete (TEntity aggregate);
   
-  void Update (TAggregate aggregate);
+  void Update (TEntity aggregate);
 }

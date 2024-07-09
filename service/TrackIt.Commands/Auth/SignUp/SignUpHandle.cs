@@ -6,15 +6,24 @@ using MediatR;
 
 namespace TrackIt.Commands.Auth.SignUp;
 
-public class SignUpHandle (
-    IUserRepository userRepository,
+public class SignUpHandle : IRequestHandler<SignUpCommand, SignUpResponse>
+{
+  private readonly IUserRepository _userRepository;
+ 
+  private readonly IUnitOfWork _unitOfWork;
+
+  public SignUpHandle (
+    IUserRepository userRepository, 
     IUnitOfWork unitOfWork
   )
-  : IRequestHandler<SignUpCommand, SignUpResponse>
-{
+  {
+    _userRepository = userRepository;
+    _unitOfWork = unitOfWork;
+  }
+  
   public async Task<SignUpResponse> Handle (SignUpCommand request, CancellationToken cancellationToken)
   {
-    if (await userRepository.FindByEmail(Email.FromAddress(request.Payload.Email)) is not null)
+    if (_userRepository.FindByEmail(Email.FromAddress(request.Payload.Email)) is not null)
       throw new EmailAlreadyInUseError();
 
     var user = User.Create(
@@ -22,9 +31,9 @@ public class SignUpHandle (
       password: Password.Create(request.Payload.Password)
     );
     
-    userRepository.Save(user);
+    _userRepository.Save(user);
 
-    await unitOfWork.SaveChangesAsync();
+    await _unitOfWork.SaveChangesAsync();
     
     return new SignUpResponse(UserId: user.Id);
   }

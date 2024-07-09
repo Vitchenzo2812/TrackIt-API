@@ -1,6 +1,5 @@
-﻿using TrackIt.Infraestructure.Extensions;
+﻿
 using Microsoft.AspNetCore.Mvc.Testing;
-using TrackIt.Infraestructure.Config;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
 using Testcontainers.MySql;
@@ -10,16 +9,14 @@ namespace TrackIt.Tests.Config;
 
 public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsyncLifetime
 {
-  private static Func<MySqlContainer> _baseDbBuilder = (() => new MySqlBuilder().Build());
-
-  private readonly MySqlContainer _baseDb = _baseDbBuilder();
-
+  protected MySqlContainer _baseDb = new MySqlBuilder().WithDatabase("trackitservice").Build();
+  
   protected override void ConfigureWebHost (IWebHostBuilder builder)
   {
     var connectionString = _baseDb.GetConnectionString();
     
     Environment.SetEnvironmentVariable(
-      EnvironmentVariables.MySqlTrackItConnectionString.Description(),
+      "MYSQL_TRACKIT_CONNECTION_STRING",
       connectionString
     );
 
