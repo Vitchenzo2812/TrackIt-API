@@ -1,3 +1,3 @@
 ﻿namespace TrackIt.Queries.GetUser;
 
-public record GetUserParams ();
+public record GetUserParams (Guid UserId);

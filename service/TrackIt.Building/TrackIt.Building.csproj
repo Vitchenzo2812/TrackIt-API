@@ -16,6 +16,7 @@
     <ItemGroup>
       <ProjectReference Include="..\TrackIt.Commands\TrackIt.Commands.csproj" />
       <ProjectReference Include="..\TrackIt.Infraestructure\TrackIt.Infraestructure.csproj" />
+      <ProjectReference Include="..\TrackIt.Queries\TrackIt.Queries.csproj" />
     </ItemGroup>
 
 </Project>

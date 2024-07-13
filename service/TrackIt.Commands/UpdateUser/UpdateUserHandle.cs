@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using TrackIt.Infraestructure.Repository.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
-using TrackIt.Infraestructure.Repository.Contracts;
+using TrackIt.Entities.Errors;
+using MediatR;
 
-namespace TrackIt.Commands.User.UpdateUser;
+namespace TrackIt.Commands.UpdateUser;
 
 public class UpdateUserHandle : IRequestHandler<UpdateUserCommand>
 {
@@ -21,7 +22,16 @@ public class UpdateUserHandle : IRequestHandler<UpdateUserCommand>
   
   public async Task Handle (UpdateUserCommand request, CancellationToken cancellationToken)
   {
-    if (await _userRepository.FindById(request.AggregateId))
-      throw new Not
+    var user = await _userRepository.FindById(request.AggregateId);
+    
+    if (user is null)
+      throw new NotFoundError("User not found");
+
+    user.Update(
+      name: request.Payload.Name,
+      income: request.Payload.Income
+    );
+    
+    await _unitOfWork.SaveChangesAsync();
   }
 }

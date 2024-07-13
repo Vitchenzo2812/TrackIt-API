@@ -2,10 +2,17 @@
 
 namespace TrackIt.Infraestructure.Database;
 
-public class UnitOfWork (TrackItDbContext db) : IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
+  private readonly TrackItDbContext _db;
+
+  public UnitOfWork (TrackItDbContext db)
+  {
+    _db = db;
+  }
+  
   public async Task SaveChangesAsync ()
   {
-    await db.SaveChangesAsync();
+    await _db.SaveChangesAsync();
   }
 }

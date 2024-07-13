@@ -16,7 +16,9 @@ public class UserRepository : IUserRepository
   
   public async Task<User?> FindById (Guid aggregateId)
   {
-    return (await _db.User.FirstOrDefaultAsync(u => u.Id == aggregateId));
+    return await _db.User
+      .Include(u => u.Password)
+      .FirstOrDefaultAsync(u => u.Id == aggregateId);
   }
 
   public User? FindByEmail (Email email)

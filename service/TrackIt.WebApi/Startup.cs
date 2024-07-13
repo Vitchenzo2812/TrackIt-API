@@ -2,12 +2,13 @@
 using TrackIt.Infraestructure.Web.Middlewares;
 using TrackIt.Infraestructure.Web.Swagger;
 using TrackIt.Infraestructure.Database;
-using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TrackIt.Building;
 using System.Text;
+using TrackIt.Entities.Errors;
 
 namespace TrackIt.WebApi;
 
@@ -46,6 +47,9 @@ public class WebApiTrackItStartup : TrackItStartup
     
     var secret = Environment.GetEnvironmentVariable("JWT_SECRET");
 
+    if (string.IsNullOrEmpty(secret))
+      throw new InternalServerError("Secret not found");
+    
     services
       .AddAuthentication(x =>
       {
@@ -59,7 +63,7 @@ public class WebApiTrackItStartup : TrackItStartup
         x.TokenValidationParameters = new TokenValidationParameters
         {
           ValidateIssuerSigningKey = true,
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret!)),
+          IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)),
           ValidateIssuer = false,
           ValidateAudience = false
         };
@@ -95,8 +99,11 @@ public class WebApiTrackItStartup : TrackItStartup
       config.RoutePrefix = "docs";
       config.InjectStylesheet("/wwwroot/swagger-ui/SwaggerDark.css");
     });
-    
+
     app.UseRouting();
+    
+    app.UseAuthentication();
+    app.UseAuthorization();
     
     app.UseMiddleware<AuthorizationMiddleware>();
     

@@ -12,10 +12,13 @@ public class Password : Entity
   
   public string Salt { get; set; }
 
-  private Password (string hash, string salt)
-  {
+  public int PasswordLength { get; set; }
+  
+  private Password (string hash, string salt, int passwordLength)
+  { 
     Hash = hash;
     Salt = salt;
+    PasswordLength = passwordLength;
   }
   
   public static Password Create (string password)
@@ -23,7 +26,7 @@ public class Password : Entity
     var salt = GenerateSalt();
     var hash = ComputeHash(IsStrongPassword(password), salt);
 
-    return new Password(hash, salt);
+    return new Password(hash, salt, password.Length);
   }
 
   public static bool Verify (string plainText, Password password)
@@ -32,6 +35,11 @@ public class Password : Entity
     return hash == password.Hash;
   }
 
+  public string MaskPassword ()
+  {
+    return new string('*', PasswordLength);
+  }
+  
   private static string GenerateSalt ()
   {
     var buffer = new byte[16];

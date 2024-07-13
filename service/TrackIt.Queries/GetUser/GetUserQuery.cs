@@ -1,6 +1,7 @@
-﻿namespace TrackIt.Queries.GetUser;
+﻿using TrackIt.Entities.Core;
+using TrackIt.Queries.Views;
 
-public class GetUserQuery
-{
-  
-}
+namespace TrackIt.Queries.GetUser;
+
+public class GetUserQuery (GetUserParams @params, Session? session = null)
+  : Query<GetUserParams, UserView>(@params, session);

@@ -5,6 +5,17 @@ namespace TrackIt.Tests.Mocks;
 
 public class UserMock : User, IMock<User>
 {
+  public static UserMock Build (Password password)
+  {
+    return new UserMock
+    {
+      Name = "Guilherme",
+      Income = 2000,
+      Email = Email.FromAddress("gvitchenzo@gmail.com"),
+      Password = password
+    };
+  }
+  
   public UserMock ChangeName (string name)
   {
     Name = name;

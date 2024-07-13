@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Builder;
 using TrackIt.Commands.Auth.SignUp;
 using TrackIt.Building.Contracts;
 using TrackIt.Entities.Errors;
+using TrackIt.Queries.GetUser;
+using TrackIt.Queries.Views;
+using MediatR;
 
 namespace TrackIt.Building;
 
@@ -26,6 +29,9 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IUnitOfWork, UnitOfWork>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
+    services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
+
+    services.AddTransient<IPipelineBehavior<GetUserQuery, UserView>, GetUserRealmHandle>();
   }
   
   public void ConfigureDbContext (IServiceCollection services)

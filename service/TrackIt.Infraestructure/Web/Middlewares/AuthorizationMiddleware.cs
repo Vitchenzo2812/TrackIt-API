@@ -7,18 +7,28 @@ using Microsoft.AspNetCore.Http;
 
 namespace TrackIt.Infraestructure.Web.Middlewares;
 
-public class AuthorizationMiddleware (
-  RequestDelegate next,
-  IJwtService jwt
-)
+public class AuthorizationMiddleware
 {
+  private readonly RequestDelegate _next; 
+    
+  private readonly IJwtService _jwtService;
+
+  public AuthorizationMiddleware (
+    RequestDelegate next,
+    IJwtService jwtService
+  )
+  {
+    _next = next;
+    _jwtService = jwtService;
+  }
+  
   public async Task InvokeAsync (HttpContext context)
   {
     var endpoint = context.Features.Get<IEndpointFeature>()?.Endpoint;
     
     if (endpoint?.Metadata.GetMetadata<SwaggerAuthorizeAttribute>() == null)
     {
-      await next(context);
+      await _next(context);
       return;
     }
     
@@ -30,16 +40,16 @@ public class AuthorizationMiddleware (
     
     var token = splited.ElementAt(1);
     
-    if (!jwt.Verify(token))
+    if (!_jwtService.Verify(token))
       throw new UnauthorizedError();
     
-    var decoded = jwt.Decode(token);
+    var decoded = _jwtService.Decode(token);
     
     context.Request.Headers.Append(nameof(decoded.Id), decoded.Id.ToString());
-    context.Request.Headers.Append(nameof(decoded.Name), decoded.Name);
     context.Request.Headers.Append(nameof(decoded.Email), decoded.Email);
+    context.Request.Headers.Append(nameof(decoded.Name), decoded.Name);
     context.Request.Headers.Append(nameof(decoded.Income), decoded.Income.ToString());
     
-    await next(context);
+    await _next(context);
   }
 }

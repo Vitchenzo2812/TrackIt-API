@@ -1,4 +1,4 @@
-﻿namespace TrackIt.Commands.User.UpdateUser;
+﻿namespace TrackIt.Commands.UpdateUser;
 
 public record UpdateUserPayload (
   string Name,

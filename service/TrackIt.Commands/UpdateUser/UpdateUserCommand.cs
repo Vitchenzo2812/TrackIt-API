@@ -1,6 +1,6 @@
 ﻿using TrackIt.Entities.Core;
 
-namespace TrackIt.Commands.User.UpdateUser;
+namespace TrackIt.Commands.UpdateUser;
 
 public class UpdateUserCommand (Guid aggregateId, UpdateUserPayload payload, Session? session = null)
   : Command<Guid, UpdateUserPayload>(aggregateId, payload, session);

@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackIt.Commands", "service
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackIt.Tests", "service\TrackIt.Tests\TrackIt.Tests.csproj", "{E8224AFD-25B5-47E0-8612-851B4CD81B57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackIt.Queries", "service\TrackIt.Queries\TrackIt.Queries.csproj", "{33E82DE8-7A7A-480F-A57B-C988BC69F619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,7 @@ Global
 		{D418B13E-DB6D-4622-8232-12958A084DEC} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
 		{BB96224A-E0B0-459A-8E75-879EAB099E33} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
 		{E8224AFD-25B5-47E0-8612-851B4CD81B57} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
+		{33E82DE8-7A7A-480F-A57B-C988BC69F619} = {BBD4DEEB-F915-4B12-8D7C-43256CE005AA}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{09B46BD5-D9AD-4BD2-9733-D44902FC705B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -52,5 +55,9 @@ Global
 		{E8224AFD-25B5-47E0-8612-851B4CD81B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8224AFD-25B5-47E0-8612-851B4CD81B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8224AFD-25B5-47E0-8612-851B4CD81B57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E82DE8-7A7A-480F-A57B-C988BC69F619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E82DE8-7A7A-480F-A57B-C988BC69F619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E82DE8-7A7A-480F-A57B-C988BC69F619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E82DE8-7A7A-480F-A57B-C988BC69F619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

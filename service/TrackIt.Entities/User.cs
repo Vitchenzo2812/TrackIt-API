@@ -21,4 +21,10 @@ public class User : Entity
       Password = password
     };
   }
+
+  public void Update (string name, double income)
+  {
+    Name = name;
+    Income = income;
+  }
 }

@@ -1,6 +1,5 @@
 ﻿using TrackIt.Infraestructure.Database.Mappers;
 using Microsoft.EntityFrameworkCore;
-using TrackIt.Entities.Errors;
 using TrackIt.Entities;
 
 namespace TrackIt.Infraestructure.Database;
@@ -26,7 +25,6 @@ public class TrackItDbContext : DbContext
         "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password;SSL Mode=None;",
         new MySqlServerVersion(new Version())
       )
-      .EnableSensitiveDataLogging()
       .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
   }
   
