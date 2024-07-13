@@ -8,6 +8,8 @@ using TrackIt.Infraestructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using TrackIt.Commands.Auth.SignUp;
+using TrackIt.Commands.DeleteUser;
+using TrackIt.Commands.UpdateUser;
 using TrackIt.Building.Contracts;
 using TrackIt.Entities.Errors;
 using TrackIt.Queries.GetUser;
@@ -32,6 +34,8 @@ public abstract class TrackItStartup : IStartup
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
 
     services.AddTransient<IPipelineBehavior<GetUserQuery, UserView>, GetUserRealmHandle>();
+    services.AddTransient<IPipelineBehavior<UpdateUserCommand, Unit>, UpdateUserRealmHandle>();
+    services.AddTransient<IPipelineBehavior<DeleteUserCommand, Unit>, DeleteUserRealmHandle>();
   }
   
   public void ConfigureDbContext (IServiceCollection services)

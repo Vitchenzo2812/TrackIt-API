@@ -43,6 +43,13 @@ public class UserMock : User, IMock<User>
 
     return this;
   }
+
+  public UserMock MakeAdministrator ()
+  {
+    Hierarchy = Hierarchy.ADMIN;
+
+    return this;
+  }
   
   public void Verify (User expect, User current)
   {

@@ -8,5 +8,7 @@ public class Session : Data
   
   public string? Email { get; set; }
   
+  public Hierarchy Hierarchy { get; set; }
+  
   public double? Income { get; set; }
 }

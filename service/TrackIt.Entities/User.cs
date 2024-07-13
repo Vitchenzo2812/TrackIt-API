@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using TrackIt.Entities.Core;
+﻿using TrackIt.Entities.Core;
 
 namespace TrackIt.Entities;
 
@@ -10,6 +9,8 @@ public class User : Entity
   public Email? Email { get; set; }
   
   public Password? Password { get; set; }
+
+  public Hierarchy Hierarchy { get; set; } = Hierarchy.CLIENT;
   
   public double? Income { get; set; }
 

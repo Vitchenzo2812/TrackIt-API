@@ -52,6 +52,19 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
     return user;
   }
   
+  protected async Task<UserMock> CreateAdminUser ()
+  {
+    var password = Password.Create("AdminPassword@1234");
+    _db.Password.Add(password);
+    
+    var user = UserMock.Build(password).MakeAdministrator();
+    _db.User.Add(user);
+
+    await _db.SaveChangesAsync();
+
+    return user;
+  }
+  
   public async Task InitializeAsync ()
   {
     await _db.Database.MigrateAsync();

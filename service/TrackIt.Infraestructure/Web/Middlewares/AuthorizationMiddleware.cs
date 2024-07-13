@@ -48,6 +48,7 @@ public class AuthorizationMiddleware
     context.Request.Headers.Append(nameof(decoded.Id), decoded.Id.ToString());
     context.Request.Headers.Append(nameof(decoded.Email), decoded.Email);
     context.Request.Headers.Append(nameof(decoded.Name), decoded.Name);
+    context.Request.Headers.Append(nameof(decoded.Hierarchy), decoded.Hierarchy.ToString());
     context.Request.Headers.Append(nameof(decoded.Income), decoded.Income.ToString());
     
     await _next(context);

@@ -15,6 +15,8 @@ public class SessionBuilder : Session
       
       Name = "username",
       
+      Hierarchy = Hierarchy.CLIENT,
+      
       Income = 2000
     };
   }
@@ -28,6 +30,8 @@ public class SessionBuilder : Session
       Email = user.Email?.Value,
       
       Name = user.Name,
+      
+      Hierarchy = user.Hierarchy,
       
       Income = user.Income
     };

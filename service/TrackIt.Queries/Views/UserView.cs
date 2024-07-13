@@ -10,6 +10,8 @@ public record UserView (
   string? Email,
 
   string? PasswordMask,
+  
+  Hierarchy Hierarchy,
 
   double? Income
 )
@@ -21,6 +23,7 @@ public record UserView (
       Name: user.Name,
       Email: user.Email?.Value,
       PasswordMask: user.Password?.MaskPassword(),
+      Hierarchy: user.Hierarchy,
       Income: user.Income
     );
   }

@@ -1,10 +1,12 @@
 ﻿using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Infraestructure.Security.Errors;
+using TrackIt.Infraestructure.Extensions;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using TrackIt.Entities.Errors;
 using System.Security.Claims;
 using TrackIt.Entities.Core;
+using TrackIt.Entities;
 using System.Text;
 
 namespace TrackIt.Infraestructure.Security;
@@ -28,6 +30,8 @@ public class JwtService : IJwtService
       new ("email", session.Email ?? "null"),
       
       new ("name", session.Name ?? "null"),
+      
+      new ("hierarchy", session.Hierarchy.ToString()),
       
       new ("income", (string.IsNullOrEmpty(session.Income.ToString()) ? "null" : session.Income.ToString())!)
     };
@@ -123,6 +127,7 @@ public class JwtService : IJwtService
     var id = jwtToken.Claims.First(c => c.Type == "id").Value;
     var email = jwtToken.Claims.First(c => c.Type == "email").Value;
     var name = jwtToken.Claims.First(c => c.Type == "name").Value;
+    var hierarchy = jwtToken.Claims.First(c => c.Type == "hierarchy").Value;
     var income = jwtToken.Claims.First(c => c.Type == "income").Value;
     
     double.TryParse(income, out var incomeConverted);
@@ -134,6 +139,8 @@ public class JwtService : IJwtService
       Email = email,
       
       Name = name,
+      
+      Hierarchy = hierarchy.IntFromDescription<Hierarchy>(),
       
       Income = incomeConverted
     };

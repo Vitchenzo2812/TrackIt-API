@@ -1,7 +1,8 @@
 ﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Queries.Views;
-using MediatR;
 using TrackIt.Entities.Errors;
+using TrackIt.Queries.Views;
+using TrackIt.Entities;
+using MediatR;
 
 namespace TrackIt.Queries.GetUser;
 
@@ -24,9 +25,9 @@ public class GetUserRealmHandle : IPipelineBehavior<GetUserQuery, UserView>
     if (user is null)
       throw new NotFoundError("User not found");
 
-    if (request.Session.Id != user.Id)
-      throw new ForbiddenError();
-
-    return await next();
+    if (request.Session.Id == user.Id || request.Session.Hierarchy == Hierarchy.ADMIN)
+      return await next();
+      
+    throw new ForbiddenError();
   }
 }

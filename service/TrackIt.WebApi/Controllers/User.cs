@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MediatR;
+using TrackIt.Commands.DeleteUser;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -22,7 +23,7 @@ public class User : BaseController
 
   [HttpGet("{id}")]
   [SwaggerAuthorize]
-  public async Task<ActionResult<UserView>> Handle (Guid id)
+  public async Task<ActionResult<UserView>> HandleGetUser (Guid id)
   {
     return new ActionResult<UserView>(
       await _mediator.Send(new GetUserQuery(new GetUserParams(id), SessionFromHeaders()))
@@ -31,10 +32,19 @@ public class User : BaseController
 
   [HttpPut("{id}")]
   [SwaggerAuthorize]
-  public async Task<IActionResult> Handle (Guid id, [FromBody] UpdateUserPayload payload)
+  public async Task<IActionResult> HandleUpdateUser (Guid id, [FromBody] UpdateUserPayload payload)
   {
-    await _mediator.Send(new UpdateUserCommand(id, payload));
+    await _mediator.Send(new UpdateUserCommand(id, payload, SessionFromHeaders()));
 
+    return Ok();
+  }
+
+  [HttpDelete("{id}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> HandleDeleteUser (Guid id)
+  {
+    await _mediator.Send(new DeleteUserCommand(id, SessionFromHeaders()));
+    
     return Ok();
   }
 }
