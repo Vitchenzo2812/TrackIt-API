@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
 using Testcontainers.MySql;

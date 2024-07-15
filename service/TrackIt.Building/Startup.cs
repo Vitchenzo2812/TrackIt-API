@@ -27,8 +27,10 @@ public abstract class TrackItStartup : IStartup
     ConfigureDbContext(services);
     
     services.AddTransient<IJwtService, JwtService>();
-    services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
+    services.AddTransient<IUserRepository, UserRepository>();
+    services.AddTransient<ISessionService, SessionService>();
+    services.AddTransient<IRefreshTokenService, RefreshTokenService>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));

@@ -1,4 +1,6 @@
-﻿using TrackIt.Infraestructure.Web.Controller;
+﻿using TrackIt.Infraestructure.Security.Models;
+using TrackIt.Infraestructure.Web.Controller;
+using TrackIt.Commands.Auth.SignIn;
 using TrackIt.Commands.Auth.SignUp;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
@@ -16,11 +18,19 @@ public class Auth : BaseController
   {
     _mediator = mediator;
   }
+
+  [HttpPost("sign-in")]
+  public async Task<ActionResult<Session>> Handle ([FromBody] SignInPayload payload)
+  {
+    return new ActionResult<Session>(
+      await _mediator.Send(new SignInCommand(payload))
+    );
+  }
   
   [HttpPost("sign-up")]
-  public async Task<ActionResult<SignUpResponse>> Handle ([FromBody] SignUpPayload payload)
+  public async Task<ActionResult<Session>> Handle ([FromBody] SignUpPayload payload)
   {
-    return new ActionResult<SignUpResponse>(
+    return new ActionResult<Session>(
       await _mediator.Send(new SignUpCommand(payload))
     );
   }

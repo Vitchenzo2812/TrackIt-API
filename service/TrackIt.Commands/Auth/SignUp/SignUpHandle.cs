@@ -1,27 +1,33 @@
 ﻿using TrackIt.Infraestructure.Repository.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
+using TrackIt.Infraestructure.Security.Contracts;
+using TrackIt.Infraestructure.Security.Models;
 using TrackIt.Commands.Errors;
 using TrackIt.Entities;
 using MediatR;
 
 namespace TrackIt.Commands.Auth.SignUp;
 
-public class SignUpHandle : IRequestHandler<SignUpCommand, SignUpResponse>
+public class SignUpHandle : IRequestHandler<SignUpCommand, Session>
 {
   private readonly IUserRepository _userRepository;
  
   private readonly IUnitOfWork _unitOfWork;
 
+  private readonly ISessionService _sessionService;
+
   public SignUpHandle (
-    IUserRepository userRepository, 
+    IUserRepository userRepository,
+    ISessionService sessionService,
     IUnitOfWork unitOfWork
   )
   {
     _userRepository = userRepository;
+    _sessionService = sessionService;
     _unitOfWork = unitOfWork;
   }
   
-  public async Task<SignUpResponse> Handle (SignUpCommand request, CancellationToken cancellationToken)
+  public async Task<Session> Handle (SignUpCommand request, CancellationToken cancellationToken)
   {
     if (_userRepository.FindByEmail(Email.FromAddress(request.Payload.Email)) is not null)
       throw new EmailAlreadyInUseError();
@@ -35,6 +41,6 @@ public class SignUpHandle : IRequestHandler<SignUpCommand, SignUpResponse>
 
     await _unitOfWork.SaveChangesAsync();
     
-    return new SignUpResponse(UserId: user.Id);
+    return await _sessionService.Create(user.Id);
   }
 }

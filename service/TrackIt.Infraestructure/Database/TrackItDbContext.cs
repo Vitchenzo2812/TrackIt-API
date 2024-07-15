@@ -1,16 +1,19 @@
 ﻿using TrackIt.Infraestructure.Database.Mappers;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Entities;
+using TrackIt.Infraestructure.Security.Models;
 
 namespace TrackIt.Infraestructure.Database;
 
 public class TrackItDbContext : DbContext
 {
-  public static bool IsMigration { get; set;  } = true;
+  public static bool IsMigration { get; set; } = true;
 
-  public DbSet<User> User { get; set; }
+  public DbSet<User> User { get; init; }
 
-  public DbSet<Password> Password { get; set; }
+  public DbSet<Password> Password { get; init; }
+  
+  public DbSet<RefreshToken> RefreshToken { get; init; }
   
   public TrackItDbContext (DbContextOptions<TrackItDbContext> options) : base(options)
   {
@@ -22,7 +25,7 @@ public class TrackItDbContext : DbContext
     
     optionsBuilder
       .UseMySql(
-        "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password;SSL Mode=None;",
+        Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
         new MySqlServerVersion(new Version())
       )
       .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Database;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using TrackIt.Entities;
 using TrackIt.Entities.Core;
 using TrackIt.Tests.Mocks;
+using TrackIt.Entities;
 
 namespace TrackIt.Tests.Config;
 
