@@ -14,6 +14,7 @@ using TrackIt.Building.Contracts;
 using TrackIt.Entities.Errors;
 using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
+using MassTransit;
 using MediatR;
 
 namespace TrackIt.Building;
@@ -25,6 +26,7 @@ public abstract class TrackItStartup : IStartup
   public virtual void ConfigureServices (IServiceCollection services)
   {
     ConfigureDbContext(services);
+    ConfigureMassTransit(services);
     
     services.AddTransient<IJwtService, JwtService>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -39,7 +41,27 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<UpdateUserCommand, Unit>, UpdateUserRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteUserCommand, Unit>, DeleteUserRealmHandle>();
   }
-  
+
+  public void ConfigureMassTransit (IServiceCollection services)
+  {
+    if (Environment.GetEnvironmentVariable("Environment") == "Tests") return;
+
+    services.AddMassTransit(x =>
+    {
+      x.UsingRabbitMq((ctx, cfg) =>
+      {
+        cfg.Host(Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME"), "/", h =>
+        {
+          h.Username(Environment.GetEnvironmentVariable("RABBITMQ_USERNAME")!);
+          h.Password(Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD")!);
+        });
+        
+        cfg.ConfigureEndpoints(ctx);
+        cfg.UseConcurrencyLimit(1);
+      });
+    });
+  }
+
   public void ConfigureDbContext (IServiceCollection services)
   {
     TrackItDbContext.IsMigration = false;
@@ -55,7 +77,8 @@ public abstract class TrackItStartup : IStartup
       options
         .UseMySql(
           connection,
-          new MySqlServerVersion(new Version())
+          new MySqlServerVersion(new Version()),
+          opt => opt.EnableRetryOnFailure()
         );
     });
   }

@@ -26,7 +26,8 @@ public class TrackItDbContext : DbContext
     optionsBuilder
       .UseMySql(
         Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
-        new MySqlServerVersion(new Version())
+        new MySqlServerVersion(new Version()),
+        opt => opt.EnableRetryOnFailure()
       )
       .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
   }
@@ -34,7 +35,14 @@ public class TrackItDbContext : DbContext
   protected override void OnModelCreating (ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
-    
+
+    modelBuilder
+      .Entity<Password>()
+      .HasOne<User>()
+      .WithOne(u => u.Password)
+      .HasForeignKey<Password>(p => p.UserId)
+      .OnDelete(DeleteBehavior.Cascade);
+      
     new UserMapper().Configure(modelBuilder.Entity<User>());
   }
 }

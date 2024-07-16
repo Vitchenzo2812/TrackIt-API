@@ -1,8 +1,9 @@
 ﻿using TrackIt.Entities.Core;
+using TrackIt.Entities.Events;
 
 namespace TrackIt.Entities;
 
-public class User : Entity
+public class User : Aggregate
 {
   public string? Name { get; set; }
   
@@ -16,11 +17,17 @@ public class User : Entity
 
   public static User Create (Email email, Password password)
   {
-    return new User
-    {
-      Email = email,
-      Password = password
-    };
+    return new User().InternalCreate(email, password);
+  }
+
+  private User InternalCreate (Email email, Password password)
+  {
+    Email = email;
+    Password = password;
+
+    Commit(new SignUpEvent(Id));
+    
+    return this;
   }
 
   public void Update (string name, double income)

@@ -7,6 +7,8 @@ public interface IStartup
 {
   void ConfigureServices (IServiceCollection services);
 
+  void ConfigureMassTransit (IServiceCollection services);
+  
   void ConfigureDbContext (IServiceCollection services);
 
   void MigrateDatabase (IApplicationBuilder app);

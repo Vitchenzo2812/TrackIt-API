@@ -10,6 +10,15 @@ services:
     links:
       - mysql
   
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  
   mysql:
     image: mysql:9.0
     environment:

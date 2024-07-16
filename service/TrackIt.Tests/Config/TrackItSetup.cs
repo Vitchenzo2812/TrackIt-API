@@ -17,6 +17,8 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
 
   protected IJwtService _jwtService;
 
+  protected IRefreshTokenService _refreshTokenService;
+
   protected TrackItDbContext _db;
 
   public TrackItSetup (TrackItWebApplication factory)
@@ -29,6 +31,7 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
       }
     );
     _jwtService = _factory.Services.GetService<IJwtService>()!;
+    _refreshTokenService = _factory.Services.GetService<IRefreshTokenService>()!;
     _db = _factory.Services.GetRequiredService<TrackItDbContext>();
   }
   

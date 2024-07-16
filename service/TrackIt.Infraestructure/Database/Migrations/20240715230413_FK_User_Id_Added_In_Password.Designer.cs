@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrackIt.Infraestructure.Database;
 
@@ -11,9 +12,11 @@ using TrackIt.Infraestructure.Database;
 namespace TrackIt.Infraestructure.Database.Migrations
 {
     [DbContext(typeof(TrackItDbContext))]
-    partial class TrackItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240715230413_FK_User_Id_Added_In_Password")]
+    partial class FK_User_Id_Added_In_Password
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +50,7 @@ namespace TrackIt.Infraestructure.Database.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Password", (string)null);
+                    b.ToTable("Password");
                 });
 
             modelBuilder.Entity("TrackIt.Entities.User", b =>
@@ -86,7 +89,7 @@ namespace TrackIt.Infraestructure.Database.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("RefreshToken", (string)null);
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("TrackIt.Entities.Password", b =>

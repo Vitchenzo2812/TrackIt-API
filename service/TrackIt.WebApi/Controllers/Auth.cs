@@ -1,5 +1,6 @@
 ﻿using TrackIt.Infraestructure.Security.Models;
 using TrackIt.Infraestructure.Web.Controller;
+using TrackIt.Commands.Auth.RefreshToken;
 using TrackIt.Commands.Auth.SignIn;
 using TrackIt.Commands.Auth.SignUp;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +29,18 @@ public class Auth : BaseController
   }
   
   [HttpPost("sign-up")]
-  public async Task<ActionResult<Session>> Handle ([FromBody] SignUpPayload payload)
+  public async Task<IActionResult> Handle ([FromBody] SignUpPayload payload)
+  {
+    await _mediator.Send(new SignUpCommand(payload));
+    
+    return StatusCode(201);
+  }
+
+  [HttpPost("refresh-token")]
+  public async Task<ActionResult<Session>> Handle ([FromBody] RefreshTokenPayload payload)
   {
     return new ActionResult<Session>(
-      await _mediator.Send(new SignUpCommand(payload))
+      await _mediator.Send(new RefreshTokenCommand(payload))
     );
   }
 }

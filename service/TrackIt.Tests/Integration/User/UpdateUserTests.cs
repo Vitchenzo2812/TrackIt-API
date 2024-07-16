@@ -62,9 +62,9 @@ public class UpdateUserTests (TrackItWebApplication fixture) : TrackItSetup (fix
   [Fact]
   public async Task ShouldThrowUserNotFound ()
   {
-    var user = UserMock.Build(Password.Create("PasswordTest@1234"));
+    AddAuthorizationData(SessionBuilder.Build(await CreateUser()));
     
-    AddAuthorizationData(SessionBuilder.Build(user));
+    var user = UserMock.Build(Password.Create("PasswordTest@1234"));
     
     var payload = new UpdateUserPayload(
       Name: "Luiz",

@@ -8,6 +8,8 @@ namespace TrackIt.Entities;
 
 public class Password : Entity
 {
+  public Guid UserId { get; set; }
+  
   public string Hash { get; set; }
   
   public string Salt { get; set; }
