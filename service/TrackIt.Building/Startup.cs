@@ -2,9 +2,11 @@
 using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using TrackIt.Infraestructure.Mailer.Contracts;
 using TrackIt.Infraestructure.Repository;
 using TrackIt.Infraestructure.Database;
 using TrackIt.Infraestructure.Security;
+using TrackIt.Infraestructure.Mailer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using TrackIt.Commands.Auth.SignUp;
@@ -30,6 +32,7 @@ public abstract class TrackItStartup : IStartup
     
     services.AddTransient<IJwtService, JwtService>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
+    services.AddTransient<IMailerService, MailerService>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ISessionService, SessionService>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
