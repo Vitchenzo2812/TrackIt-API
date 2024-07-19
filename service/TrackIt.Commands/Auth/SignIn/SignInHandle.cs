@@ -29,7 +29,10 @@ public class SignInHandle : IRequestHandler<SignInCommand, Session>
 
     if (user is null)
       throw new NotFoundError("User not found");
-    
+
+    if (!user.EmailValidated)
+      throw new EmailMustBeValidatedError();
+      
     if (!Password.Verify(request.Payload.Password, user.Password!))
       throw new WrongEmailOrPasswordError();
 

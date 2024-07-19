@@ -12,7 +12,7 @@ public class SignInTests (TrackItWebApplication fixture) : TrackItSetup (fixture
   [Fact]
   public async Task ShouldSignIn ()
   {
-    var user = await CreateUser();
+    var user = await CreateUserWithEmailValidated();
     
     var payload = new SignInPayload(
       Email: "gvitchenzo@gmail.com",
@@ -50,9 +50,9 @@ public class SignInTests (TrackItWebApplication fixture) : TrackItSetup (fixture
   }
 
   [Fact]
-  public async Task ShouldWrongEmailOrPassword ()
+  public async Task ShouldThrowWrongEmailOrPassword ()
   {
-    await CreateUser();
+    await CreateUserWithEmailValidated();
     
     var payload = new SignInPayload(
       Email: "gvitchenzo@gmail.com",
@@ -65,5 +65,24 @@ public class SignInTests (TrackItWebApplication fixture) : TrackItSetup (fixture
     Assert.Equal("Wrong email or password!", result.Message);
     Assert.Equal("WRONG_EMAIL_OR_PASSWORD", result.Code);
     Assert.Equal(400, result.StatusCode);
+  }
+
+  [Fact]
+  public async Task ShouldThrowEmailMustBeValidated ()
+  {
+    await CreateUser();
+    
+    var payload = new SignInPayload(
+      Email: "gvitchenzo@gmail.com",
+      Password: "PasswordTest@1234"
+    );
+
+    var response = await _httpClient.PostAsync("/auth/sign-in", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Email must be validated!", result.Message);
+    Assert.Equal("EMAIL_MUST_BE_VALIDATED", result.Code);
+    Assert.Equal(400, result.StatusCode);
+    
   }
 }

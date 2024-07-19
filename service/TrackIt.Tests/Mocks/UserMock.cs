@@ -15,6 +15,13 @@ public class UserMock : User, IMock<User>
       Password = password
     };
   }
+
+  public UserMock WithEmailValidated ()
+  {
+    EmailValidated = true;
+
+    return this;
+  }
   
   public UserMock ChangeName (string name)
   {

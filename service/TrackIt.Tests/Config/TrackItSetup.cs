@@ -56,6 +56,16 @@ public abstract class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyn
     return user;
   }
   
+  protected async Task<UserMock> CreateUserWithEmailValidated ()
+  {
+    var user = UserMock.Build(Password.Create("PasswordTest@1234")).WithEmailValidated();
+    _db.User.Add(user);
+
+    await _db.SaveChangesAsync();
+
+    return user;
+  }
+  
   protected async Task<UserMock> CreateAdminUser ()
   {
     var user = UserMock.Build(Password.Create("AdminPassword@1234")).MakeAdministrator();

@@ -1,5 +1,5 @@
-﻿using TrackIt.Entities.Core;
-using TrackIt.Entities.Events;
+﻿using TrackIt.Entities.Events;
+using TrackIt.Entities.Core;
 
 namespace TrackIt.Entities;
 
@@ -8,6 +8,8 @@ public class User : Aggregate
   public string? Name { get; set; }
   
   public Email? Email { get; set; }
+
+  public bool EmailValidated { get; set; } = false;
   
   public Password? Password { get; set; }
 

@@ -14,6 +14,7 @@ public class UserTests
     Assert.Null(user.Income);
     Assert.Null(user.Email);
     Assert.Null(user.Password);
+    Assert.False(user.EmailValidated);
   }
   
   [Fact]
@@ -25,11 +26,13 @@ public class UserTests
       .ChangeName("Guilherme")
       .ChangeIncome(2000)
       .ChangeEmail("gvitchenzo@gmail.com")
-      .ChangePassword(password);
+      .ChangePassword(password)
+      .WithEmailValidated();
     
     Assert.Equal("Guilherme", user.Name);
     Assert.Equal(2000, user.Income);
     Assert.Equal("gvitchenzo@gmail.com", user.Email.Value);
     Assert.True(Password.Verify("PasswordTest@1234", password));
+    Assert.True(user.EmailValidated);
   }
 }

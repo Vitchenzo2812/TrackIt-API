@@ -89,7 +89,7 @@ public class RefreshTokenTests (TrackItWebApplication fixture) : TrackItSetup (f
   [Fact]
   public async Task ShouldReturnCorrectSessionWithSequencingRefreshTokenRequests ()
   {
-    var user = await CreateUser();
+    var user = await CreateUserWithEmailValidated();
 
     var signInPayload = new SignInPayload (
       Email: user.Email.Value,
