@@ -1,4 +1,11 @@
 ﻿version: '3.9'
+x-project-name: &project-name docker-compose-itrackit
+name: *project-name
+
+networks:
+  trackIt:
+    driver: bridge
+    name: trackIt
 
 services:
   app:
@@ -9,6 +16,8 @@ services:
       - mysql
     links:
       - mysql
+    networks:
+      - trackIt
   
   rabbitmq:
     image: rabbitmq:3-management
@@ -18,6 +27,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - trackIt
   
   mysql:
     image: mysql:9.0
@@ -27,6 +38,8 @@ services:
       MYSQL_ROOT_USER: root
     ports:
       - "3306:3306"
+    networks:
+      - trackIt
     
   adminer:
     image: adminer
@@ -37,8 +50,5 @@ services:
       - mysql
     ports:
       - "8080:8080"
-
-networks:
-  trackIt:
-    driver: bridge
-    name: trackIt
+    networks:
+      - trackIt

@@ -37,9 +37,9 @@ public class TrackItDbContext : DbContext
     base.OnModelCreating(modelBuilder);
 
     modelBuilder
-      .Entity<Password>()
-      .HasOne<User>()
-      .WithOne(u => u.Password)
+      .Entity<User>()
+      .HasOne(u => u.Password)
+      .WithOne(p => p.User)
       .HasForeignKey<Password>(p => p.UserId)
       .OnDelete(DeleteBehavior.Cascade);
       

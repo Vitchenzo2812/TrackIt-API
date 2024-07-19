@@ -4,12 +4,13 @@ using TrackIt.Infraestructure.Database;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Entities.Core;
+using MassTransit.Testing;
 using TrackIt.Tests.Mocks;
 using TrackIt.Entities;
 
 namespace TrackIt.Tests.Config;
 
-public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
+public abstract class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
 {
   protected TrackItWebApplication _factory;
 
@@ -20,6 +21,8 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
   protected IRefreshTokenService _refreshTokenService;
 
   protected TrackItDbContext _db;
+  
+  protected ITestHarness _harness;
 
   public TrackItSetup (TrackItWebApplication factory)
   {
@@ -33,6 +36,7 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
     _jwtService = _factory.Services.GetService<IJwtService>()!;
     _refreshTokenService = _factory.Services.GetService<IRefreshTokenService>()!;
     _db = _factory.Services.GetRequiredService<TrackItDbContext>();
+    _harness = _factory.Services.GetTestHarness();
   }
   
   protected void AddAuthorizationData (Session s)
@@ -44,10 +48,7 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
 
   protected async Task<UserMock> CreateUser ()
   {
-    var password = Password.Create("PasswordTest@1234");
-    _db.Password.Add(password);
-    
-    var user = UserMock.Build(password);
+    var user = UserMock.Build(Password.Create("PasswordTest@1234"));
     _db.User.Add(user);
 
     await _db.SaveChangesAsync();
@@ -57,10 +58,7 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
   
   protected async Task<UserMock> CreateAdminUser ()
   {
-    var password = Password.Create("AdminPassword@1234");
-    _db.Password.Add(password);
-    
-    var user = UserMock.Build(password).MakeAdministrator();
+    var user = UserMock.Build(Password.Create("AdminPassword@1234")).MakeAdministrator();
     _db.User.Add(user);
 
     await _db.SaveChangesAsync();
@@ -70,12 +68,15 @@ public class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
   
   public async Task InitializeAsync ()
   {
-    await _db.Database.MigrateAsync();
+    await _harness.Start();
+    await _db.Database.EnsureDeletedAsync();
+    await _db.Database.MigrateAsync(); 
   }
 
   public async Task DisposeAsync ()
   {
     _db.ChangeTracker.Clear();
     await _db.Database.EnsureDeletedAsync();
+    await _harness.Stop();
   }
 }

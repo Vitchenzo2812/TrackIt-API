@@ -10,6 +10,8 @@ public class Password : Entity
 {
   public Guid UserId { get; set; }
   
+  public User User { get; set; }
+  
   public string Hash { get; set; }
   
   public string Salt { get; set; }

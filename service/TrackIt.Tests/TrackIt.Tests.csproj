@@ -26,6 +26,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TrackIt.Entities\TrackIt.Entities.csproj" />
+      <ProjectReference Include="..\TrackIt.Events\TrackIt.Events.csproj" />
       <ProjectReference Include="..\TrackIt.WebApi\TrackIt.WebApi.csproj" />
     </ItemGroup>
 
