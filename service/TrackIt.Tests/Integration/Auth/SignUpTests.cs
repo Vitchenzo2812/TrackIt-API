@@ -5,13 +5,16 @@ using TrackIt.Commands.Auth.SignUp;
 using TrackIt.Tests.Config;
 using TrackIt.Entities;
 using System.Net;
+using Moq;
+using TrackIt.Entities.Events;
+using TrackIt.Infraestructure.Mailer.Models;
 
 namespace TrackIt.Tests.Integration.Auth;
 
 public class SignUpTests (TrackItWebApplication fixture) : TrackItSetup (fixture)
 {
   [Fact]
-  public async Task ShouldSignUp ()
+  public async Task ShouldSignUpAndSendEmail ()
   {
     var payload = new SignUpPayload(
       Email: "gvitchenzo@gmail.com",
@@ -32,6 +35,8 @@ public class SignUpTests (TrackItWebApplication fixture) : TrackItSetup (fixture
     Assert.NotNull(created.Password);
     Assert.Equal("gvitchenzo@gmail.com", created.Email.Value);
     Assert.True(Password.Verify("PasswordTest@1234", created.Password));
+    
+    Assert.NotNull(_harness.Published.Select(p => p.MessageObject.GetType() == typeof(SignUpEvent)).FirstOrDefault());
   }
 
   [Fact]

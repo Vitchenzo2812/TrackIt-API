@@ -1,5 +1,5 @@
 ﻿using TrackIt.Entities;
-using TrackIt.Tests.Mocks;
+using TrackIt.Tests.Mocks.Entities;
 
 namespace TrackIt.Tests.Unit;
 

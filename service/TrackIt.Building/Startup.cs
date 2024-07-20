@@ -13,11 +13,13 @@ using TrackIt.Commands.Auth.SignUp;
 using TrackIt.Commands.DeleteUser;
 using TrackIt.Commands.UpdateUser;
 using TrackIt.Building.Contracts;
-using TrackIt.Entities.Errors;
 using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using TrackIt.Events.Consumers;
+using TrackIt.Infraestructure.Database.Interceptor;
 
 namespace TrackIt.Building;
 
@@ -36,6 +38,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ISessionService, SessionService>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
+    services.TryAddSingleton<PublishEvents>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
@@ -51,6 +54,8 @@ public abstract class TrackItStartup : IStartup
 
     services.AddMassTransit(x =>
     {
+      x.AddConsumers(typeof(SignUpEventConsumer).Assembly);
+      
       x.UsingRabbitMq((ctx, cfg) =>
       {
         cfg.Host(Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME"), "/", h =>
@@ -69,17 +74,12 @@ public abstract class TrackItStartup : IStartup
   {
     TrackItDbContext.IsMigration = false;
     
-    var connection =
-      Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING");
-
-    if (string.IsNullOrEmpty(connection))
-      throw new InternalServerError("Connection string not found");
-    
-    services.AddDbContext<TrackItDbContext>(options =>
+    services.AddDbContext<TrackItDbContext>((sp, options) =>
     {
       options
+        .AddInterceptors(sp.GetRequiredService<PublishEvents>())
         .UseMySql(
-          connection,
+          Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
           new MySqlServerVersion(new Version()),
           opt => opt.EnableRetryOnFailure()
         );

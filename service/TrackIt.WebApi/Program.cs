@@ -2,7 +2,7 @@ using TrackIt.Infraestructure.Extensions;
 
 namespace TrackIt.WebApi;
 
-public abstract class TrackItProgram
+public class TrackItProgram
 {
   public static void Main (string[] args)
   {

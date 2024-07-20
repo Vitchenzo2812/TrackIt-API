@@ -1,7 +1,7 @@
 ﻿using TrackIt.Entities;
 using TrackIt.Tests.Mocks.Contracts;
 
-namespace TrackIt.Tests.Mocks;
+namespace TrackIt.Tests.Mocks.Entities;
 
 public class UserMock : User, IMock<User>
 {

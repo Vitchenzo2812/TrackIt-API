@@ -1,35 +1,51 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TrackIt.Infraestructure.Mailer.Contracts;
+using TrackIt.Infraestructure.Mailer.Models;
+using TrackIt.Infraestructure.Extensions;
+using Microsoft.AspNetCore.Mvc.Testing;
+using TrackIt.Infraestructure.Database;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
+using TrackIt.Tests.Mocks.Infra;
 using TrackIt.Events.Consumers;
 using Testcontainers.MySql;
 using TrackIt.WebApi;
 using MassTransit;
-using MySqlConnector;
+using Moq;
+using TrackIt.Infraestructure.Database.Interceptor;
 
 namespace TrackIt.Tests.Config;
 
 public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsyncLifetime
 {
-  private MySqlContainer _baseDb { get; }
+  private readonly MySqlContainer _baseDb = new MySqlBuilder()
+    .WithImage("mysql:9.0")
+    .WithDatabase("trackitservice")
+    .WithUsername("root")
+    .WithPassword("password")
+    .WithCleanUp(true)
+    .Build();
 
-  public TrackItWebApplication ()
-  {
-    _baseDb = new MySqlBuilder().WithDatabase("trackitservice").Build();
-  }
+  public Mock<IMailerService> MailerServiceMock = new Mock<IMailerService>();
   
   protected override void ConfigureWebHost (IWebHostBuilder builder)
   {
-    var connectionString = _baseDb.GetConnectionString();
-    
-    Environment.SetEnvironmentVariable(
-      "MYSQL_TRACKIT_CONNECTION_STRING",
-      connectionString
-    );
-
     builder.ConfigureTestServices(services =>
     {
+      services.RemoveDbContext<TrackItDbContext>();
+      services.AddDbContext<TrackItDbContext>((sp, opt) =>
+      {
+        opt
+          .AddInterceptors(sp.GetRequiredService<PublishEvents>())
+          .UseMySql(
+          _baseDb.GetConnectionString(), 
+          new MySqlServerVersion(new Version()),
+          option => option.EnableRetryOnFailure()
+        );
+      });
+      
       services.AddMassTransitTestHarness(x =>
       {
         x.AddConsumers(typeof(SignUpEventConsumer).Assembly);
@@ -42,6 +58,10 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
           cfg.UseConcurrencyLimit(1);
         });
       });
+
+      services.AddTransient<IMailerService, MailerServiceMock>();
+      MailerServiceMock.Setup(m => m.Send(It.IsAny<MailRequest>())).Returns(Task.CompletedTask);
+      services.AddSingleton(MailerServiceMock.Object);
     });
     
     builder.UseEnvironment("Tests");
@@ -53,16 +73,14 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
     Environment.SetEnvironmentVariable("ENVIRONMENT", "Tests");
     Environment.SetEnvironmentVariable("JWT_SECRET", secret);
   }
-  
-  public async Task InitializeAsync ()
+
+  public Task InitializeAsync ()
   {
-    await _baseDb.StartAsync();
+    return _baseDb.StartAsync();
   }
 
-  public new async Task DisposeAsync ()
+  public new Task DisposeAsync ()
   {
-    await base.DisposeAsync();
-    
-    await _baseDb.StopAsync();
+    return _baseDb.StopAsync();
   }
 }

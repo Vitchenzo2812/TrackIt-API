@@ -1,10 +1,10 @@
 ﻿using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
 using TrackIt.Tests.Config.Builders;
+using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Tests.Config;
-using System.Net;
 using TrackIt.Entities;
-using TrackIt.Tests.Mocks;
+using System.Net;
 
 namespace TrackIt.Tests.Integration.User;
 

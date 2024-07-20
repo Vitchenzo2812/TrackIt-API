@@ -1,10 +1,10 @@
 ﻿using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
 using TrackIt.Tests.Config.Builders;
+using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Commands.UpdateUser;
 using TrackIt.Queries.Views;
 using TrackIt.Tests.Config;
-using TrackIt.Tests.Mocks;
 using TrackIt.Entities;
 using System.Net;
 

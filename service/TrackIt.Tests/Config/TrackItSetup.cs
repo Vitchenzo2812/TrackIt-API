@@ -3,16 +3,18 @@ using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Database;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Entities.Core;
 using MassTransit.Testing;
-using TrackIt.Tests.Mocks;
 using TrackIt.Entities;
 
 namespace TrackIt.Tests.Config;
 
-public abstract class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyncLifetime
+public abstract class TrackItSetup : IClassFixture<TrackItWebApplication>, IDisposable
 {
   protected TrackItWebApplication _factory;
+  
+  private IServiceScope _scope;
 
   protected HttpClient _httpClient;
 
@@ -23,20 +25,26 @@ public abstract class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyn
   protected TrackItDbContext _db;
   
   protected ITestHarness _harness;
-
-  public TrackItSetup (TrackItWebApplication factory)
+  
+  protected TrackItSetup (TrackItWebApplication factory)
   {
     _factory = factory;
+    _scope = factory.Services.CreateScope();
     _httpClient = _factory.CreateClient(
       new WebApplicationFactoryClientOptions
       {
         AllowAutoRedirect = false
       }
     );
-    _jwtService = _factory.Services.GetService<IJwtService>()!;
-    _refreshTokenService = _factory.Services.GetService<IRefreshTokenService>()!;
-    _db = _factory.Services.GetRequiredService<TrackItDbContext>();
-    _harness = _factory.Services.GetTestHarness();
+    _jwtService = _scope.ServiceProvider.GetService<IJwtService>()!;
+    _refreshTokenService = _scope.ServiceProvider.GetService<IRefreshTokenService>()!;
+    _db = _scope.ServiceProvider.GetRequiredService<TrackItDbContext>();
+    _harness = _scope.ServiceProvider.GetTestHarness();
+
+    _harness.Start().Wait();
+
+    _db.Database.EnsureDeleted();
+    _db.Database.Migrate();
   }
   
   protected void AddAuthorizationData (Session s)
@@ -76,17 +84,10 @@ public abstract class TrackItSetup : IClassFixture<TrackItWebApplication>, IAsyn
     return user;
   }
   
-  public async Task InitializeAsync ()
+  public void Dispose()
   {
-    await _harness.Start();
-    await _db.Database.EnsureDeletedAsync();
-    await _db.Database.MigrateAsync(); 
-  }
-
-  public async Task DisposeAsync ()
-  {
-    _db.ChangeTracker.Clear();
-    await _db.Database.EnsureDeletedAsync();
-    await _harness.Stop();
+    _harness.Stop();
+    _scope.Dispose();
+    _db.Dispose();
   }
 }

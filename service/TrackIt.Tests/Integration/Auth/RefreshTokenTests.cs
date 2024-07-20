@@ -1,12 +1,12 @@
-﻿using TrackIt.Commands.Auth.RefreshToken;
-using TrackIt.Commands.Auth.SignIn;
-using TrackIt.Entities;
-using TrackIt.Infraestructure.Extensions;
+﻿using PartialSession = TrackIt.Entities.Core.Session;
 using TrackIt.Infraestructure.Security.Models;
+using TrackIt.Commands.Auth.RefreshToken;
+using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
-using PartialSession = TrackIt.Entities.Core.Session;
+using TrackIt.Commands.Auth.SignIn;
+using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Tests.Config;
-using TrackIt.Tests.Mocks;
+using TrackIt.Entities;
 
 namespace TrackIt.Tests.Integration.Auth;
 
