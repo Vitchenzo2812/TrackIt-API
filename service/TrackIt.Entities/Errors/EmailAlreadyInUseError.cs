@@ -1,6 +1,4 @@
-﻿using TrackIt.Entities.Errors;
-
-namespace TrackIt.Commands.Errors;
+﻿namespace TrackIt.Entities.Errors;
 
 public class EmailAlreadyInUseError : ApplicationError
 {

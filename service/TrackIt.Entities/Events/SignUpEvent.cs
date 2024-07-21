@@ -2,4 +2,4 @@
 
 namespace TrackIt.Entities.Events;
 
-public record SignUpEvent (Guid UserId) : DomainEvent;
+public record SendEmailVerificationEvent (string ValidationObject, string Code) : DomainEvent;

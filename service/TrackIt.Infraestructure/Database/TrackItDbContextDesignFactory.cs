@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using TrackIt.Entities.Errors;
 
 namespace TrackIt.Infraestructure.Database;
 
@@ -12,7 +11,7 @@ public class TrackItDbContextDesignFactory : IDesignTimeDbContextFactory<TrackIt
     
     optionsBuilder
       .UseMySql(
-        Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
+        "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password;SSL Mode=None;",
         new MySqlServerVersion(new Version()),
         opt => opt.EnableRetryOnFailure()
       )

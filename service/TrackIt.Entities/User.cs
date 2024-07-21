@@ -1,5 +1,5 @@
-﻿using TrackIt.Entities.Events;
-using TrackIt.Entities.Core;
+﻿using TrackIt.Entities.Core;
+using TrackIt.Entities.Errors;
 
 namespace TrackIt.Entities;
 
@@ -19,19 +19,24 @@ public class User : Aggregate
 
   public static User Create (Email email, Password password)
   {
-    return new User().InternalCreate(email, password);
+    return new User
+    {
+      Email = email,
+      Password = password
+    };
   }
-
-  private User InternalCreate (Email email, Password password)
+  
+  public User SignUp (string email, string password)
   {
-    Email = email;
-    Password = password;
-
-    Commit(new SignUpEvent(Id));
+    if (Email!.Value == email && !Password.Verify(password, Password!))
+      throw new EmailAlreadyInUseError();
+      
+    if (Email!.Value == email && EmailValidated)
+      throw new UserAlreadyExistsError();
     
     return this;
   }
-
+  
   public void Update (string name, double income)
   {
     Name = name;

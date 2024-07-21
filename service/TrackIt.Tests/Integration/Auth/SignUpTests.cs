@@ -2,17 +2,23 @@
 using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Commands.Auth.SignUp;
+using TrackIt.Entities.Services;
+using TrackIt.Entities.Events;
+using TrackIt.Entities.Core;
 using TrackIt.Tests.Config;
 using TrackIt.Entities;
 using System.Net;
-using Moq;
-using TrackIt.Entities.Events;
-using TrackIt.Infraestructure.Mailer.Models;
 
 namespace TrackIt.Tests.Integration.Auth;
 
-public class SignUpTests (TrackItWebApplication fixture) : TrackItSetup (fixture)
+public class SignUpTests : TrackItSetup
 {
+  public SignUpTests (TrackItWebApplication fixture) : base (fixture)
+  {
+    DateTimeProvider.Set(() => DateTime.Parse("2024-07-20T00:00:00"));
+    GenerateTicketCode.Set(() => "123456");
+  }
+  
   [Fact]
   public async Task ShouldSignUpAndSendEmail ()
   {
@@ -29,6 +35,11 @@ public class SignUpTests (TrackItWebApplication fixture) : TrackItSetup (fixture
       .Include(u => u.Password)
       .AsEnumerable()
       .FirstOrDefault(u => u.Email.Value == payload.Email);
+
+    var ticket = _db.Ticket
+      .Include(t => t.Code)
+      .AsEnumerable()
+      .FirstOrDefault(t => t.UserId == created?.Id);
     
     Assert.NotNull(created);
     Assert.NotNull(created.Email);
@@ -36,29 +47,48 @@ public class SignUpTests (TrackItWebApplication fixture) : TrackItSetup (fixture
     Assert.Equal("gvitchenzo@gmail.com", created.Email.Value);
     Assert.True(Password.Verify("PasswordTest@1234", created.Password));
     
-    Assert.NotNull(_harness.Published.Select(p => p.MessageObject.GetType() == typeof(SignUpEvent)).FirstOrDefault());
-  }
-
-  [Fact]
-  public async Task ShouldReturnEmailAlreadyInUse ()
-  {
-    var payload1 = new SignUpPayload(
-      Email: "gvitchenzo@gmail.com",
-      Password: "PasswordTest@1234"
-    );
-
-    await _httpClient.PostAsync("/auth/sign-up", payload1.ToJson());
+    Assert.NotNull(ticket);
+    Assert.Equal(created.Id, ticket.UserId);
+    Assert.Equal(created.Email.Value, ticket.ValidationObject);
+    Assert.Equal(TicketType.EMAIL_VERIFICATION, ticket.Type);
+    Assert.Equal(TicketSituation.OPEN, ticket.Situation);
     
-    var payload2 = new SignUpPayload(
+    Assert.NotNull(_harness.Published.Select(p => p.MessageObject.GetType() == typeof(SendEmailVerificationEvent)).FirstOrDefault());
+  }
+  
+  [Fact]
+  public async Task ShouldThrowEmailAlreadyInUse ()
+  {
+    await CreateUser();
+    
+    var payload = new SignUpPayload(
       Email: "gvitchenzo@gmail.com",
-      Password: "DiffPassword_1234"
+      Password: "DiffPassword@1234"
     );
 
-    var response = await _httpClient.PostAsync("/auth/sign-up", payload2.ToJson());
+    var response = await _httpClient.PostAsync("/auth/sign-up", payload.ToJson());
     var result = await response.ToData<ErrorResponseDto>();
     
     Assert.Equal("Email already in use!", result.Message);
     Assert.Equal("EMAIL_ALREADY_IN_USE", result.Code);
+    Assert.Equal(400, result.StatusCode);
+  }
+
+  [Fact]
+  public async Task ShouldThrowUserAlreadyExists ()
+  {
+    await CreateUserWithEmailValidated();
+    
+    var payload = new SignUpPayload(
+      Email: "gvitchenzo@gmail.com",
+      Password: "PasswordTest@1234"
+    );
+
+    var response = await _httpClient.PostAsync("/auth/sign-up", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("User already exists!", result.Message);
+    Assert.Equal("USER_ALREADY_EXISTS", result.Code);
     Assert.Equal(400, result.StatusCode);
   }
   

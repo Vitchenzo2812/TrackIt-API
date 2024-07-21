@@ -2,19 +2,18 @@
 using TrackIt.Infraestructure.EventBus.Contracts;
 using TrackIt.Infraestructure.Mailer.Contracts;
 using TrackIt.Infraestructure.Mailer.Models;
-using TrackIt.Entities.Errors;
 using TrackIt.Entities.Events;
 using MassTransit;
 
 namespace TrackIt.Events.Consumers;
 
-public class SignUpEventConsumer : IEventConsumer<SignUpEvent>
+public class SendEmailAboutSignUpConsumer : IEventConsumer<SendEmailVerificationEvent>
 {
   private readonly IUserRepository _userRepository;
   
   private readonly IMailerService _mailerService;
 
-  public SignUpEventConsumer (
+  public SendEmailAboutSignUpConsumer (
     IMailerService mailerService,
     IUserRepository userRepository
   )
@@ -23,21 +22,16 @@ public class SignUpEventConsumer : IEventConsumer<SignUpEvent>
     _mailerService = mailerService;
   }
   
-  public async Task Consume (ConsumeContext<SignUpEvent> @event)
+  public async Task Consume (ConsumeContext<SendEmailVerificationEvent> @event)
   {
-    var user = await _userRepository.FindById(@event.Message.UserId);
-
-    if (user?.Email is null)
-      throw new NotFoundError("User not found");
-
     MailRequest request = new MailRequest(
-      Addresses: [user.Email.Value],
+      Addresses: [@event.Message.ValidationObject],
       
       Template: "",
       
       Subject: "Verificação de Email",
       
-      Data: new MailerSignUpRequestData {}
+      Data: new MailerSignUpRequestData { Code = @event.Message.Code }
     );
 
     await _mailerService.Send(request);

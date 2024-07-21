@@ -35,8 +35,9 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IJwtService, JwtService>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
     services.AddTransient<IMailerService, MailerService>();
-    services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ISessionService, SessionService>();
+    services.AddTransient<IUserRepository, UserRepository>();
+    services.AddTransient<ITicketRepository, TicketRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
     services.TryAddSingleton<PublishEvents>();
     
@@ -54,7 +55,7 @@ public abstract class TrackItStartup : IStartup
 
     services.AddMassTransit(x =>
     {
-      x.AddConsumers(typeof(SignUpEventConsumer).Assembly);
+      x.AddConsumers(typeof(SendEmailAboutSignUpConsumer).Assembly);
       
       x.UsingRabbitMq((ctx, cfg) =>
       {
