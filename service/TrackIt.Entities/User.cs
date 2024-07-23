@@ -36,6 +36,11 @@ public class User : Aggregate
     
     return this;
   }
+
+  public void ValidateEmail ()
+  {
+    EmailValidated = true;
+  }
   
   public void Update (string name, double income)
   {

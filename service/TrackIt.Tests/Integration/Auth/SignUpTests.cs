@@ -28,20 +28,20 @@ public class SignUpTests : TrackItSetup
     );
 
     var response = await _httpClient.PostAsync("/auth/sign-up", payload.ToJson());
+    var result = await response.ToData<SignUpResponse>();
     
-    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-    
-    var created = _db.User
-      .Include(u => u.Password)
-      .AsEnumerable()
-      .FirstOrDefault(u => u.Email.Value == payload.Email);
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-    var ticket = _db.Ticket
-      .Include(t => t.Code)
-      .AsEnumerable()
-      .FirstOrDefault(t => t.UserId == created?.Id);
-    
+    var created = await _db.User
+      .Include(u => u.Password)
+      .FirstOrDefaultAsync(u => u.Id == result.UserId);
+
     Assert.NotNull(created);
+    
+    var ticket = await _db.Ticket
+      .Include(t => t.Code)
+      .FirstOrDefaultAsync(t => t.UserId == created.Id);
+    
     Assert.NotNull(created.Email);
     Assert.NotNull(created.Password);
     Assert.Equal("gvitchenzo@gmail.com", created.Email.Value);

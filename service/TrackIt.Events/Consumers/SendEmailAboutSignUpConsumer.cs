@@ -1,5 +1,4 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.EventBus.Contracts;
+﻿using TrackIt.Infraestructure.EventBus.Contracts;
 using TrackIt.Infraestructure.Mailer.Contracts;
 using TrackIt.Infraestructure.Mailer.Models;
 using TrackIt.Entities.Events;
@@ -9,16 +8,10 @@ namespace TrackIt.Events.Consumers;
 
 public class SendEmailAboutSignUpConsumer : IEventConsumer<SendEmailVerificationEvent>
 {
-  private readonly IUserRepository _userRepository;
-  
   private readonly IMailerService _mailerService;
 
-  public SendEmailAboutSignUpConsumer (
-    IMailerService mailerService,
-    IUserRepository userRepository
-  )
+  public SendEmailAboutSignUpConsumer (IMailerService mailerService)
   {
-    _userRepository = userRepository;
     _mailerService = mailerService;
   }
   
@@ -27,7 +20,7 @@ public class SendEmailAboutSignUpConsumer : IEventConsumer<SendEmailVerification
     MailRequest request = new MailRequest(
       Addresses: [@event.Message.ValidationObject],
       
-      Template: "",
+      Template: "email_verification.html",
       
       Subject: "Verificação de Email",
       

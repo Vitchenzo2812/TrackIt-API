@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using TrackIt.Infraestructure.Database.Interceptor;
+using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Mailer.Contracts;
 using TrackIt.Infraestructure.Mailer.Models;
 using TrackIt.Infraestructure.Extensions;
@@ -14,7 +15,6 @@ using Testcontainers.MySql;
 using TrackIt.WebApi;
 using MassTransit;
 using Moq;
-using TrackIt.Infraestructure.Database.Interceptor;
 
 namespace TrackIt.Tests.Config;
 
@@ -48,7 +48,7 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
       
       services.AddMassTransitTestHarness(x =>
       {
-        x.AddConsumers(typeof(SendEmailAboutSignUpConsumer).Assembly);
+        x.AddConsumer<SendEmailAboutSignUpConsumer>();
 
         x.SetTestTimeouts(testInactivityTimeout: TimeSpan.FromSeconds(60));
 

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace TrackIt.Commands.Auth.SignUp;
 
-public class SignUpHandle : IRequestHandler<SignUpCommand>
+public class SignUpHandle : IRequestHandler<SignUpCommand, SignUpResponse>
 {
   private readonly IUserRepository _userRepository;
 
@@ -25,7 +25,7 @@ public class SignUpHandle : IRequestHandler<SignUpCommand>
     _unitOfWork = unitOfWork;
   }
   
-  public async Task Handle (SignUpCommand request, CancellationToken cancellationToken)
+  public async Task<SignUpResponse> Handle (SignUpCommand request, CancellationToken cancellationToken)
   {
     var oldUser = _userRepository.FindByEmail(Email.FromAddress(request.Payload.Email));
 
@@ -53,7 +53,7 @@ public class SignUpHandle : IRequestHandler<SignUpCommand>
             throw;
           
           oldTicket.SendEmailVerification();
-          return;
+          return new SignUpResponse(UserId: oldUser.Id);
         }
       }
     }
@@ -76,5 +76,7 @@ public class SignUpHandle : IRequestHandler<SignUpCommand>
     
     ticket.SendEmailVerification();
     await _unitOfWork.SaveChangesAsync();
+
+    return new SignUpResponse(UserId: user.Id);
   }
 }

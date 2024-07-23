@@ -5,6 +5,7 @@ using TrackIt.Commands.Auth.SignIn;
 using TrackIt.Commands.Auth.SignUp;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using TrackIt.Commands.Auth.EmailValidation;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -29,13 +30,21 @@ public class Auth : BaseController
   }
   
   [HttpPost("sign-up")]
-  public async Task<IActionResult> Handle ([FromBody] SignUpPayload payload)
+  public async Task<ActionResult<SignUpResponse>> Handle ([FromBody] SignUpPayload payload)
   {
-    await _mediator.Send(new SignUpCommand(payload));
-    
-    return StatusCode(201);
+    return new ActionResult<SignUpResponse>(
+      await _mediator.Send(new SignUpCommand(payload))
+    );
   }
 
+  [HttpPost()]
+  public async Task<ActionResult<Session>> Handle ([FromBody] EmailValidationPayload payload)
+  {
+    return new ActionResult<Session>(
+      await _mediator.Send(new EmailValidationCommand(payload))
+    );
+  }
+  
   [HttpPost("refresh-token")]
   public async Task<ActionResult<Session>> Handle ([FromBody] RefreshTokenPayload payload)
   {
