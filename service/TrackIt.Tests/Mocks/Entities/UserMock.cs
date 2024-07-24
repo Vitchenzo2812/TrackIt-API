@@ -51,6 +51,13 @@ public class UserMock : User, IMock<User>
     return this;
   }
 
+  public UserMock ChangeCreatedAt (DateTime date)
+  {
+    CreatedAt = date;
+
+    return this;
+  }
+
   public UserMock MakeAdministrator ()
   {
     Hierarchy = Hierarchy.ADMIN;

@@ -1,4 +1,6 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+using TrackIt.Infraestructure.Database.Interceptor;
+using TrackIt.Infraestructure.Repository.Contracts;
 using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,13 +15,12 @@ using TrackIt.Commands.Auth.SignUp;
 using TrackIt.Commands.DeleteUser;
 using TrackIt.Commands.UpdateUser;
 using TrackIt.Building.Contracts;
+using TrackIt.Events.Consumers;
+using TrackIt.Queries.GetUsers;
 using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using TrackIt.Events.Consumers;
-using TrackIt.Infraestructure.Database.Interceptor;
 
 namespace TrackIt.Building;
 
@@ -45,6 +46,7 @@ public abstract class TrackItStartup : IStartup
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
 
     services.AddTransient<IPipelineBehavior<GetUserQuery, UserView>, GetUserRealmHandle>();
+    services.AddTransient<IPipelineBehavior<GetUsersQuery, PaginationView<List<UserResourceView>>>, GetUsersRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateUserCommand, Unit>, UpdateUserRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteUserCommand, Unit>, DeleteUserRealmHandle>();
   }

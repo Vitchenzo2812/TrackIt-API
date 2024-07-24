@@ -1,11 +1,12 @@
 ﻿using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Infraestructure.Web.Controller;
 using TrackIt.Commands.UpdateUser;
+using TrackIt.Commands.DeleteUser;
+using TrackIt.Queries.GetUsers;
 using Microsoft.AspNetCore.Mvc;
 using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MediatR;
-using TrackIt.Commands.DeleteUser;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -30,6 +31,15 @@ public class User : BaseController
     );
   }
 
+  [HttpGet]
+  [SwaggerAuthorize]
+  public async Task<ActionResult<PaginationView<List<UserResourceView>>>> HandleGetUsers ([FromQuery] GetUsersParams @params)
+  {
+    return new ActionResult<PaginationView<List<UserResourceView>>>(
+      await _mediator.Send(new GetUsersQuery(@params, SessionFromHeaders()))
+    );
+  }
+  
   [HttpPut("{id}")]
   [SwaggerAuthorize]
   public async Task<IActionResult> HandleUpdateUser (Guid id, [FromBody] UpdateUserPayload payload)

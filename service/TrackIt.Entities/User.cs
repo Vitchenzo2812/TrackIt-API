@@ -1,5 +1,6 @@
 ﻿using TrackIt.Entities.Core;
 using TrackIt.Entities.Errors;
+using TrackIt.Entities.Services;
 
 namespace TrackIt.Entities;
 
@@ -9,7 +10,7 @@ public class User : Aggregate
   
   public Email? Email { get; set; }
 
-  public bool EmailValidated { get; set; } = false;
+  public bool EmailValidated { get; set; }
   
   public Password? Password { get; set; }
 
@@ -17,6 +18,8 @@ public class User : Aggregate
   
   public double? Income { get; set; }
 
+  public DateTime CreatedAt { get; set; } = DateTimeProvider.Now;
+  
   public static User Create (Email email, Password password)
   {
     return new User
