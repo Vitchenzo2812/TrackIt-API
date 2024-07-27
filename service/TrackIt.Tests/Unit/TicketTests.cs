@@ -10,7 +10,6 @@ public class TicketTests
   public TicketTests ()
   {
     DateTimeProvider.Set(() => DateTime.Parse("2024-07-21T00:00:00"));
-    GenerateTicketCode.Set(() => "123456");
   }
   
   [Fact]
@@ -19,9 +18,9 @@ public class TicketTests
     var ticket = new TicketMock();
     
     Assert.Null(ticket.ValidationObject);
+    Assert.Null(ticket.Code);
     Assert.Equal(TicketSituation.OPEN , ticket.Situation);
     Assert.Equal(DateTime.Parse("2024-07-21T00:00:00"), ticket.CreatedAt);
-    Assert.Equal("123456", ticket.Code);
   }
 
   [Fact]
@@ -73,7 +72,7 @@ public class TicketTests
   [Fact]
   public void ShouldCloseTicket ()
   {
-    var ticket = new TicketMock();
+    var ticket = new TicketMock().ChangeCode("123456");
     
     ticket.Close("123456");
     
