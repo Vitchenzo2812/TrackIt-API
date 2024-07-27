@@ -1,8 +1,8 @@
 ﻿using TrackIt.Infraestructure.Database.Mappers;
-using Microsoft.EntityFrameworkCore;
-using TrackIt.Entities;
-using TrackIt.Entities.Core;
 using TrackIt.Infraestructure.Security.Models;
+using Microsoft.EntityFrameworkCore;
+using TrackIt.Entities.Core;
+using TrackIt.Entities;
 
 namespace TrackIt.Infraestructure.Database;
 
@@ -16,14 +16,12 @@ public class TrackItDbContext : DbContext
   
   public DbSet<Ticket> Ticket { get; init; }
   
-  public DbSet<TicketCode> TicketCode { get; init; }
-  
   public DbSet<RefreshToken> RefreshToken { get; init; }
   
   public TrackItDbContext (DbContextOptions<TrackItDbContext> options) : base(options)
   {
   }
-
+  
   protected override void OnConfiguring (DbContextOptionsBuilder optionsBuilder)
   {
     if (!IsMigration) return;

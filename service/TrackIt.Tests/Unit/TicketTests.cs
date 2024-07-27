@@ -21,7 +21,7 @@ public class TicketTests
     Assert.Null(ticket.ValidationObject);
     Assert.Equal(TicketSituation.OPEN , ticket.Situation);
     Assert.Equal(DateTime.Parse("2024-07-21T00:00:00"), ticket.CreatedAt);
-    Assert.Equal("123456", ticket.Code.Value);
+    Assert.Equal("123456", ticket.Code);
   }
 
   [Fact]

@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using TrackIt.Entities.Core;
 using MassTransit;
+using Newtonsoft.Json;
 
 namespace TrackIt.Infraestructure.Database.Interceptor;
 
@@ -21,17 +23,46 @@ public class PublishEvents : SaveChangesInterceptor
   {
     var context = eventData.Context;
 
-    var domainEvents = context.ChangeTracker
-      .Entries<Aggregate>()
-      .SelectMany(e => e.Entity.DomainEvents)
-      .ToList();
+    if (context is not null)
+    {
+      var domainEvents = context.ChangeTracker
+        .Entries<Aggregate>()
+        .SelectMany(e =>
+        {
+          var domainEvents = e.Entity.DomainEvents;
+          
+          e.Entity.Push();
 
-    foreach (var domainEvent in domainEvents)
-      await _bus.Publish(domainEvent, cancellationToken);
-
-    foreach (var aggregate in context.ChangeTracker.Entries<Aggregate>())
-      aggregate.Entity.Push();
+          return domainEvents;
+        })
+        .ToList();
+      
+      foreach (var domainEvent in domainEvents)
+        await PublishEvent(domainEvent);
+    }
     
     return await base.SavedChangesAsync(eventData, result, cancellationToken);
+  }
+
+  private async Task PublishEvent (DomainEvent domainEvent)
+  {
+    var assembly = domainEvent.GetType().Assembly.FullName;
+    var type = domainEvent.GetType().FullName;
+    var content = JsonConvert.SerializeObject(domainEvent, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+
+    if (assembly is null || type is null)
+      return;
+        
+    var domainEventType = Assembly.Load(assembly).GetType(type);
+
+    if (domainEventType is null)
+      return;
+    
+    var realEvent = JsonConvert.DeserializeObject(content, domainEventType);
+
+    if (realEvent is null) 
+      return;
+        
+    await _bus.Publish(realEvent, domainEventType);
   }
 }

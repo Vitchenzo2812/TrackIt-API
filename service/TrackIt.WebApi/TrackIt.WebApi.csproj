@@ -18,8 +18,4 @@
       <ProjectReference Include="..\TrackIt.Commands\TrackIt.Commands.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="wwwroot\Emails\Templates\" />
-    </ItemGroup>
-
 </Project>

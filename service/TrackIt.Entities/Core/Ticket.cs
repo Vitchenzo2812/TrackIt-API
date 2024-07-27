@@ -8,10 +8,10 @@ public class Ticket : Aggregate
 {
   public Guid UserId { get; set; }
 
-  public TicketCode Code { get; set; } = TicketCode.Generate();
-  
+  public string Code { get; set; }
+
   public string ValidationObject { get; set; }
-  
+
   public TicketType Type { get; set; }
 
   public TicketSituation Situation { get; set; } = TicketSituation.OPEN;
@@ -26,7 +26,9 @@ public class Ticket : Aggregate
       
       Type = type,
       
-      ValidationObject = validationObject
+      ValidationObject = validationObject,
+      
+      Code = GenerateTicketCode.Code
     };
   }
   
@@ -49,7 +51,7 @@ public class Ticket : Aggregate
   
   public void Close (string givenCode)
   {
-    if (Code.Value != givenCode)
+    if (Code != givenCode)
       throw new TicketCannotBeClosedError();
 
     Situation = TicketSituation.CLOSED;
@@ -57,6 +59,11 @@ public class Ticket : Aggregate
 
   public void SendEmailVerification ()
   {
-    Commit(new SendEmailVerificationEvent(ValidationObject, Code.Value));
+    Commit(new SendEmailVerificationEvent(ValidationObject, Code));
+  }
+  
+  public void SendEmailForgotPassword ()
+  {
+    Commit(new ForgotPasswordEvent(ValidationObject, Code));
   }
 }

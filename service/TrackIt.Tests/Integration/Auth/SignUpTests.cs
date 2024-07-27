@@ -39,7 +39,6 @@ public class SignUpTests : TrackItSetup
     Assert.NotNull(created);
     
     var ticket = await _db.Ticket
-      .Include(t => t.Code)
       .FirstOrDefaultAsync(t => t.UserId == created.Id);
     
     Assert.NotNull(created.Email);

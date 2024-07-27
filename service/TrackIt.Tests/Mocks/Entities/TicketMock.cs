@@ -42,9 +42,7 @@ public class TicketMock : Ticket, IMock<Ticket>
 
   public TicketMock ChangeCode (string code)
   {
-    var ticketCode = new TicketCode();
-    ticketCode.Value = code;
-    Code = ticketCode;
+    Code = code;
 
     return this;
   }
@@ -53,7 +51,7 @@ public class TicketMock : Ticket, IMock<Ticket>
   {
     Assert.Equal(expect.Id, current.Id);
     Assert.Equal(expect.UserId, current.UserId);
-    Assert.Equal(expect.Code.Value, current.Code.Value);
+    Assert.Equal(expect.Code, current.Code);
     Assert.Equal(expect.ValidationObject, current.ValidationObject);
     Assert.Equal(expect.Type, current.Type);
     Assert.Equal(expect.Situation, current.Situation);

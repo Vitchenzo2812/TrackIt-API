@@ -43,7 +43,7 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
           _baseDb.GetConnectionString(), 
           new MySqlServerVersion(new Version()),
           option => option.EnableRetryOnFailure()
-        );
+        ).EnableSensitiveDataLogging();
       });
       
       services.AddMassTransitTestHarness(x =>

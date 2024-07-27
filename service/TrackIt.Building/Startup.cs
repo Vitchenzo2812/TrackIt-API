@@ -21,6 +21,7 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
+using TrackIt.Commands.Auth.ForgotPassword;
 
 namespace TrackIt.Building;
 
@@ -49,6 +50,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<GetUsersQuery, PaginationView<List<UserResourceView>>>, GetUsersRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateUserCommand, Unit>, UpdateUserRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteUserCommand, Unit>, DeleteUserRealmHandle>();
+    services.AddTransient<IPipelineBehavior<ForgotPasswordCommand, ForgotPasswordResponse>, ForgotPasswordRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
@@ -57,7 +59,7 @@ public abstract class TrackItStartup : IStartup
 
     services.AddMassTransit(x =>
     {
-      x.AddConsumers(typeof(SendEmailAboutSignUpConsumer).Assembly);
+      x.AddConsumer<SendEmailAboutSignUpConsumer>();
       
       x.UsingRabbitMq((ctx, cfg) =>
       {
@@ -85,7 +87,7 @@ public abstract class TrackItStartup : IStartup
           Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
           new MySqlServerVersion(new Version()),
           opt => opt.EnableRetryOnFailure()
-        );
+        ).EnableSensitiveDataLogging();
     });
   }
 }
