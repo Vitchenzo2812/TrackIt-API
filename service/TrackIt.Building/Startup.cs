@@ -60,6 +60,7 @@ public abstract class TrackItStartup : IStartup
     services.AddMassTransit(x =>
     {
       x.AddConsumer<SendEmailAboutSignUpConsumer>();
+      x.AddConsumer<EmailForgotPasswordConsumer>();
       
       x.UsingRabbitMq((ctx, cfg) =>
       {

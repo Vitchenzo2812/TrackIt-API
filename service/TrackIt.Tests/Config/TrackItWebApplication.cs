@@ -49,6 +49,7 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
       services.AddMassTransitTestHarness(x =>
       {
         x.AddConsumer<SendEmailAboutSignUpConsumer>();
+        x.AddConsumer<EmailForgotPasswordConsumer>();
 
         x.SetTestTimeouts(testInactivityTimeout: TimeSpan.FromSeconds(60));
 
