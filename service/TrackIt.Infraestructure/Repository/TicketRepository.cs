@@ -7,7 +7,7 @@ namespace TrackIt.Infraestructure.Repository;
 
 public class TicketRepository : ITicketRepository
 {
-  private TrackItDbContext _db;
+  private readonly TrackItDbContext _db;
 
   public TicketRepository (TrackItDbContext db)
   {
@@ -34,9 +34,5 @@ public class TicketRepository : ITicketRepository
     return (await _db.Ticket
       .OrderByDescending(t => t.CreatedAt)
       .FirstOrDefaultAsync(t => t.Type == type && t.Situation == situation && t.UserId == userId));
-  }
-  
-  public void Update (Ticket aggregate)
-  {
   }
 }

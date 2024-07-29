@@ -5,6 +5,7 @@ using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Mailer.Contracts;
+using TrackIt.Commands.Auth.ForgotPassword;
 using TrackIt.Infraestructure.Repository;
 using TrackIt.Infraestructure.Database;
 using TrackIt.Infraestructure.Security;
@@ -21,7 +22,6 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
-using TrackIt.Commands.Auth.ForgotPassword;
 
 namespace TrackIt.Building;
 

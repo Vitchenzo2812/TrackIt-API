@@ -42,7 +42,6 @@ public class ForgotPasswordHandle : IRequestHandler<ForgotPasswordCommand, Forgo
       try
       {
         oldTicket.Cancel();
-        _ticketRepository.Update(oldTicket);
 
         await _unitOfWork.SaveChangesAsync();
       }

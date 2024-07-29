@@ -1,12 +1,10 @@
 ﻿using TrackIt.Commands.Auth.ForgotPassword;
 using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
+using Microsoft.EntityFrameworkCore;
 using TrackIt.Entities.Events;
 using TrackIt.Tests.Config;
 using System.Net;
-using Microsoft.EntityFrameworkCore;
-using TrackIt.Entities.Core;
-using TrackIt.Tests.Mocks.Entities;
 
 namespace TrackIt.Tests.Integration.Auth;
 

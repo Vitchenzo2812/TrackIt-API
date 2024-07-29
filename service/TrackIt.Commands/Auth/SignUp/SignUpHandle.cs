@@ -43,7 +43,6 @@ public class SignUpHandle : IRequestHandler<SignUpCommand, SignUpResponse>
         try
         {
           oldTicket.Cancel();
-          _ticketRepository.Update(oldTicket);
 
           await _unitOfWork.SaveChangesAsync();
         }
@@ -67,9 +66,7 @@ public class SignUpHandle : IRequestHandler<SignUpCommand, SignUpResponse>
     
     var ticket = Ticket.Create(user.Id, TicketType.EMAIL_VERIFICATION, request.Payload.Email);
     
-    if (oldUser is not null)
-      _userRepository.Update(oldUser);
-    else
+    if (oldUser is null)
       _userRepository.Save(user);
     
     _ticketRepository.Save(ticket);

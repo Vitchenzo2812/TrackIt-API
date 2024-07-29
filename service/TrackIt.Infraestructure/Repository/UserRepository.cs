@@ -38,8 +38,4 @@ public class UserRepository : IUserRepository
   {
     _db.User.Remove(aggregate);
   }
-  
-  public void Update (User aggregate)
-  {
-  }
 }

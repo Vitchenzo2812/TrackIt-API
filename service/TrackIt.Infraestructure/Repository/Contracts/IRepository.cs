@@ -9,6 +9,4 @@ public interface IRepository<TEntity> where TEntity : Entity
   void Save (TEntity aggregate);
 
   void Delete (TEntity aggregate);
-  
-  void Update (TEntity aggregate);
 }

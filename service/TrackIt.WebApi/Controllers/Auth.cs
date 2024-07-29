@@ -1,12 +1,13 @@
-﻿using TrackIt.Infraestructure.Security.Models;
+﻿using TrackIt.Commands.Auth.VerifyForgotPassword;
+using TrackIt.Infraestructure.Security.Models;
 using TrackIt.Infraestructure.Web.Controller;
 using TrackIt.Commands.Auth.EmailValidation;
+using TrackIt.Commands.Auth.ForgotPassword;
 using TrackIt.Commands.Auth.RefreshToken;
 using TrackIt.Commands.Auth.SignIn;
 using TrackIt.Commands.Auth.SignUp;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using TrackIt.Commands.Auth.ForgotPassword;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -52,6 +53,14 @@ public class Auth : BaseController
     return new ActionResult<ForgotPasswordResponse>(
         await _mediator.Send(new ForgotPasswordCommand(payload))
       );
+  }
+
+  [HttpPost("forgot-password/verify")]
+  public async Task<IActionResult> Handle ([FromBody] VerifyForgotPasswordPayload payload)
+  {
+    await _mediator.Send(new VerifyForgotPasswordCommand(payload));
+
+    return Ok();
   }
   
   [HttpPost("refresh-token")]
