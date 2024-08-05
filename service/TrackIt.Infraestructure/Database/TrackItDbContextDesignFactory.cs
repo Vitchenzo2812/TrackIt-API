@@ -8,14 +8,14 @@ public class TrackItDbContextDesignFactory : IDesignTimeDbContextFactory<TrackIt
   public TrackItDbContext CreateDbContext (string[] args)
   {
     var optionsBuilder = new DbContextOptionsBuilder<TrackItDbContext>();
-    
+
     optionsBuilder
       .UseMySql(
         "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password;SSL Mode=None;",
         new MySqlServerVersion(new Version()),
         opt => opt.EnableRetryOnFailure()
       )
-      .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+      .EnableSensitiveDataLogging();
     
     return new TrackItDbContext(optionsBuilder.Options);
   }

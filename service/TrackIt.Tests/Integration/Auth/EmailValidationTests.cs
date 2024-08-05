@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Session = TrackIt.Infraestructure.Security.Models.Session;
 using TrackIt.Commands.Auth.EmailValidation;
-using TrackIt.Commands.Auth.SignUp;
-using TrackIt.Entities.Core;
 using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
-using TrackIt.Tests.Config;
+using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Mocks.Entities;
-using Session = TrackIt.Infraestructure.Security.Models.Session;
+using TrackIt.Commands.Auth.SignUp;
+using TrackIt.Entities.Core;
+using TrackIt.Tests.Config;
 
 namespace TrackIt.Tests.Integration.Auth;
 
@@ -52,8 +52,10 @@ public class EmailValidationTests (TrackItWebApplication fixture) : TrackItSetup
   [Fact]
   public async Task ShouldThrowTicketNotFound ()
   {
+    var user = await CreateUser();
+    
     var emailValidationPayload = new EmailValidationPayload(
-      UserId: Guid.NewGuid(),
+      UserId: user.Id,
       Code: "123456"
     );
     

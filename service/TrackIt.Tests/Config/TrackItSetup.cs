@@ -12,19 +12,19 @@ namespace TrackIt.Tests.Config;
 
 public abstract class TrackItSetup : IClassFixture<TrackItWebApplication>, IDisposable
 {
-  protected TrackItWebApplication _factory;
+  protected readonly TrackItWebApplication _factory;
   
-  private IServiceScope _scope;
+  private readonly IServiceScope _scope;
 
-  protected HttpClient _httpClient;
+  protected readonly HttpClient _httpClient;
 
-  protected IJwtService _jwtService;
+  protected readonly IJwtService _jwtService;
 
-  protected IRefreshTokenService _refreshTokenService;
+  protected readonly IRefreshTokenService _refreshTokenService;
 
-  protected TrackItDbContext _db;
+  protected readonly TrackItDbContext _db;
   
-  protected ITestHarness _harness;
+  protected readonly ITestHarness _harness;
   
   protected TrackItSetup (TrackItWebApplication factory)
   {

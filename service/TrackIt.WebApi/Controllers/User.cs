@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MediatR;
+using TrackIt.Commands.UpdatePassword;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -45,6 +46,15 @@ public class User : BaseController
   public async Task<IActionResult> HandleUpdateUser (Guid id, [FromBody] UpdateUserPayload payload)
   {
     await _mediator.Send(new UpdateUserCommand(id, payload, SessionFromHeaders()));
+
+    return Ok();
+  }
+
+  [HttpPut("password")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> HandleUpdatePassword ([FromBody] UpdatePasswordPayload payload)
+  {
+    await _mediator.Send(new UpdatePasswordCommand(payload, SessionFromHeaders()));
 
     return Ok();
   }

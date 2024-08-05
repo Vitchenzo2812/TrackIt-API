@@ -56,11 +56,11 @@ public class Auth : BaseController
   }
 
   [HttpPost("forgot-password/verify")]
-  public async Task<IActionResult> Handle ([FromBody] VerifyForgotPasswordPayload payload)
+  public async Task<ActionResult<Session>> Handle ([FromBody] VerifyForgotPasswordPayload payload)
   {
-    await _mediator.Send(new VerifyForgotPasswordCommand(payload));
-
-    return Ok();
+    return new ActionResult<Session>(
+      await _mediator.Send(new VerifyForgotPasswordCommand(payload))
+    );
   }
   
   [HttpPost("refresh-token")]

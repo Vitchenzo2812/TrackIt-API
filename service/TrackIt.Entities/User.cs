@@ -50,4 +50,12 @@ public class User : Aggregate
     Name = name;
     Income = income;
   }
+
+  public void UpdatePassword (string newPassword)
+  {
+    if (Password is null)
+      throw new NotFoundError("Password not found");
+    
+    Password.Update(newPassword);
+  }
 }

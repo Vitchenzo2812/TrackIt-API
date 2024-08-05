@@ -9,6 +9,7 @@ using TrackIt.Commands.Auth.ForgotPassword;
 using TrackIt.Infraestructure.Repository;
 using TrackIt.Infraestructure.Database;
 using TrackIt.Infraestructure.Security;
+using TrackIt.Commands.UpdatePassword;
 using TrackIt.Infraestructure.Mailer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
@@ -50,6 +51,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<GetUsersQuery, PaginationView<List<UserResourceView>>>, GetUsersRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateUserCommand, Unit>, UpdateUserRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteUserCommand, Unit>, DeleteUserRealmHandle>();
+    services.AddTransient<IPipelineBehavior<UpdatePasswordCommand, Unit>, UpdatePasswordRealmHandle>();
     services.AddTransient<IPipelineBehavior<ForgotPasswordCommand, ForgotPasswordResponse>, ForgotPasswordRealmHandle>();
   }
 
@@ -88,7 +90,9 @@ public abstract class TrackItStartup : IStartup
           Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
           new MySqlServerVersion(new Version()),
           opt => opt.EnableRetryOnFailure()
-        ).EnableSensitiveDataLogging();
+        )
+        .EnableSensitiveDataLogging()
+        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     });
   }
 }

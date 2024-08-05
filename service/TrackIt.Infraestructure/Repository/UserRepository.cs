@@ -17,10 +17,11 @@ public class UserRepository : IUserRepository
   public async Task<User?> FindById (Guid aggregateId)
   {
     return await _db.User
+      .AsTracking()
       .Include(u => u.Password)
       .FirstOrDefaultAsync(u => u.Id == aggregateId);
   }
-
+  
   public User? FindByEmail (Email email)
   {
     return _db.User
@@ -28,7 +29,7 @@ public class UserRepository : IUserRepository
       .AsEnumerable()
       .FirstOrDefault(u => u.Email.Value == email.Value);
   }
-
+  
   public void Save (User aggregate)
   {
     _db.User.Add(aggregate);

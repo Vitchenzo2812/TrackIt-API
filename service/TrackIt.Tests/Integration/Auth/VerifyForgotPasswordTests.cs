@@ -1,4 +1,5 @@
-﻿using TrackIt.Commands.Auth.VerifyForgotPassword;
+﻿using Session = TrackIt.Infraestructure.Security.Models.Session;
+using TrackIt.Commands.Auth.VerifyForgotPassword;
 using TrackIt.Commands.Auth.ForgotPassword;
 using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
@@ -41,8 +42,17 @@ public class VerifyForgotPasswordTests (TrackItWebApplication fixture) : TrackIt
     );
     
     var response1 = await _httpClient.PostAsync("/auth/forgot-password/verify", payload1.ToJson());
+    var result1 = await response1.ToData<Session>();
     
     Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
+    
+    Assert.NotNull(result1.Token);
+    Assert.NotNull(result1.RefreshToken);
+    Assert.Equal(user.Id, result1.Id);
+    Assert.Equal(user.Email!.Value, result1.Email);
+    Assert.Equal(user.Hierarchy, result1.Hierarchy);
+    Assert.Equal(user.Income, result1.Income);
+    Assert.Equal(user.Name, result1.Name);
   }
 
   [Fact]

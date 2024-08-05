@@ -1,6 +1,6 @@
-﻿using TrackIt.Entities.Errors;
+﻿using TrackIt.Entities.Services;
+using TrackIt.Entities.Errors;
 using TrackIt.Entities.Events;
-using TrackIt.Entities.Services;
 
 namespace TrackIt.Entities.Core;
 

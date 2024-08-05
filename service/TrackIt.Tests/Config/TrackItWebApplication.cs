@@ -2,11 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Mailer.Contracts;
 using TrackIt.Infraestructure.Mailer.Models;
-using TrackIt.Infraestructure.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using TrackIt.Infraestructure.Database;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
 using TrackIt.Tests.Mocks.Infra;
@@ -14,7 +11,10 @@ using TrackIt.Events.Consumers;
 using Testcontainers.MySql;
 using TrackIt.WebApi;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Moq;
+using TrackIt.Infraestructure.Database;
+using TrackIt.Infraestructure.Extensions;
 
 namespace TrackIt.Tests.Config;
 
@@ -32,6 +32,9 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
   
   protected override void ConfigureWebHost (IWebHostBuilder builder)
   {
+    Environment.SetEnvironmentVariable("Environment", "Tests");
+    builder.UseEnvironment("Tests");
+    
     builder.ConfigureTestServices(services =>
     {
       services.RemoveDbContext<TrackItDbContext>();
@@ -40,10 +43,12 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
         opt
           .AddInterceptors(sp.GetRequiredService<PublishEvents>())
           .UseMySql(
-          _baseDb.GetConnectionString(), 
-          new MySqlServerVersion(new Version()),
-          option => option.EnableRetryOnFailure()
-        ).EnableSensitiveDataLogging();
+            _baseDb.GetConnectionString(), 
+            new MySqlServerVersion(new Version()),
+            option => option.EnableRetryOnFailure()
+          )
+          .EnableSensitiveDataLogging()
+          .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
       });
       
       services.AddMassTransitTestHarness(x =>
@@ -65,13 +70,10 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
       services.AddSingleton(MailerServiceMock.Object);
     });
     
-    builder.UseEnvironment("Tests");
-    
     var randomNumber = new byte[64];
     var rng = RandomNumberGenerator.Create();
     rng.GetBytes(randomNumber);
     var secret = Convert.ToBase64String(randomNumber);
-    Environment.SetEnvironmentVariable("ENVIRONMENT", "Tests");
     Environment.SetEnvironmentVariable("JWT_SECRET", secret);
   }
 

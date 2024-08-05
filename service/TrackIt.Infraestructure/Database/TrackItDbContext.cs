@@ -25,14 +25,14 @@ public class TrackItDbContext : DbContext
   protected override void OnConfiguring (DbContextOptionsBuilder optionsBuilder)
   {
     if (!IsMigration) return;
-    
+
     optionsBuilder
       .UseMySql(
         Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
         new MySqlServerVersion(new Version()),
         opt => opt.EnableRetryOnFailure()
       )
-      .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+      .EnableSensitiveDataLogging();
   }
   
   protected override void OnModelCreating (ModelBuilder modelBuilder)
@@ -44,7 +44,8 @@ public class TrackItDbContext : DbContext
       .HasOne(u => u.Password)
       .WithOne(p => p.User)
       .HasForeignKey<Password>(p => p.UserId)
-      .OnDelete(DeleteBehavior.Cascade);
+      .OnDelete(DeleteBehavior.Cascade)
+      .IsRequired();
     
     new UserMapper().Configure(modelBuilder.Entity<User>());
   }

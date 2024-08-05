@@ -17,20 +17,25 @@ public class Password : Entity
   public string Salt { get; set; }
 
   public int PasswordLength { get; set; }
-  
-  private Password (string hash, string salt, int passwordLength)
-  { 
-    Hash = hash;
-    Salt = salt;
-    PasswordLength = passwordLength;
-  }
-  
+
   public static Password Create (string password)
   {
     var salt = GenerateSalt();
     var hash = ComputeHash(IsStrongPassword(password), salt);
 
-    return new Password(hash, salt, password.Length);
+    return new Password
+    {
+      Hash = hash,
+      Salt = salt,
+      PasswordLength = password.Length
+    };
+  }
+
+  public void Update (string newPassword)
+  {
+    Salt = GenerateSalt();
+    Hash = ComputeHash(IsStrongPassword(newPassword), Salt);
+    PasswordLength = newPassword.Length;
   }
 
   public static bool Verify (string plainText, Password password)
@@ -38,7 +43,7 @@ public class Password : Entity
     var hash = ComputeHash(plainText, password.Salt);
     return hash == password.Hash;
   }
-
+  
   public string MaskPassword ()
   {
     return new string('*', PasswordLength);
@@ -53,13 +58,11 @@ public class Password : Entity
 
   private static string ComputeHash (string password, string salt)
   {
-    using (var sha256 = SHA256.Create())
-    {
-      var saltedPassword = password + salt;
-      var saltedPasswordBytes = Encoding.UTF8.GetBytes(saltedPassword);
-      var hashBytes = sha256.ComputeHash(saltedPasswordBytes);
-      return Convert.ToBase64String(hashBytes);
-    }
+    using var sha256 = SHA256.Create();
+    var saltedPassword = password + salt;
+    var saltedPasswordBytes = Encoding.UTF8.GetBytes(saltedPassword);
+    var hashBytes = sha256.ComputeHash(saltedPasswordBytes);
+    return Convert.ToBase64String(hashBytes);
   }
 
   private static string IsStrongPassword (string password)
