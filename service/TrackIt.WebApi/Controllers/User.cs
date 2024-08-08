@@ -1,13 +1,13 @@
 ﻿using TrackIt.Infraestructure.Web.Swagger.Annotations;
+using TrackIt.Commands.UserCommands.UpdatePassword;
+using TrackIt.Commands.UserCommands.DeleteUser;
+using TrackIt.Commands.UserCommands.UpdateUser;
 using TrackIt.Infraestructure.Web.Controller;
-using TrackIt.Commands.UpdateUser;
-using TrackIt.Commands.DeleteUser;
 using TrackIt.Queries.GetUsers;
 using Microsoft.AspNetCore.Mvc;
 using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MediatR;
-using TrackIt.Commands.UpdatePassword;
 
 namespace TrackIt.WebApi.Controllers;
 

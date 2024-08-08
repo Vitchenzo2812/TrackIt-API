@@ -1,21 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Infraestructure.Database.Interceptor;
 using TrackIt.Infraestructure.Repository.Contracts;
+using TrackIt.Commands.UserCommands.UpdatePassword;
 using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using TrackIt.Infraestructure.Mailer.Contracts;
+using TrackIt.Commands.UserCommands.DeleteUser;
+using TrackIt.Commands.UserCommands.UpdateUser;
 using TrackIt.Commands.Auth.ForgotPassword;
 using TrackIt.Infraestructure.Repository;
 using TrackIt.Infraestructure.Database;
 using TrackIt.Infraestructure.Security;
-using TrackIt.Commands.UpdatePassword;
 using TrackIt.Infraestructure.Mailer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using TrackIt.Commands.Auth.SignUp;
-using TrackIt.Commands.DeleteUser;
-using TrackIt.Commands.UpdateUser;
 using TrackIt.Building.Contracts;
 using TrackIt.Events.Consumers;
 using TrackIt.Queries.GetUsers;
@@ -35,14 +36,16 @@ public abstract class TrackItStartup : IStartup
     ConfigureDbContext(services);
     ConfigureMassTransit(services);
     
+    services.TryAddSingleton<PublishEvents>();
     services.AddTransient<IJwtService, JwtService>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
     services.AddTransient<IMailerService, MailerService>();
     services.AddTransient<ISessionService, SessionService>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ITicketRepository, TicketRepository>();
+    services.AddTransient<IActivityRepository, ActivityRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
-    services.TryAddSingleton<PublishEvents>();
+    services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
@@ -53,6 +56,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<DeleteUserCommand, Unit>, DeleteUserRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdatePasswordCommand, Unit>, UpdatePasswordRealmHandle>();
     services.AddTransient<IPipelineBehavior<ForgotPasswordCommand, ForgotPasswordResponse>, ForgotPasswordRealmHandle>();
+    
+    services.AddTransient<IPipelineBehavior<CreateActivityCommand, Unit>, CreateActivityRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)

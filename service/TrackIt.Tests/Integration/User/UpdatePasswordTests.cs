@@ -1,10 +1,10 @@
 ﻿using PartialSession = TrackIt.Entities.Core.Session;
 using TrackIt.Infraestructure.Extensions;
-using TrackIt.Commands.UpdatePassword;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config;
 using TrackIt.Entities;
 using System.Net;
+using TrackIt.Commands.UserCommands.UpdatePassword;
 
 namespace TrackIt.Tests.Integration.User;
 

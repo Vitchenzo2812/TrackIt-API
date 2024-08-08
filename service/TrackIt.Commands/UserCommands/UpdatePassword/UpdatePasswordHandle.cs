@@ -1,11 +1,11 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Database.Contracts;
-using TrackIt.Entities.Errors;
+﻿using MediatR;
 using TrackIt.Commands.Errors;
 using TrackIt.Entities;
-using MediatR;
+using TrackIt.Entities.Errors;
+using TrackIt.Infraestructure.Database.Contracts;
+using TrackIt.Infraestructure.Repository.Contracts;
 
-namespace TrackIt.Commands.UpdatePassword;
+namespace TrackIt.Commands.UserCommands.UpdatePassword;
 
 public class UpdatePasswordHandle : IRequestHandler<UpdatePasswordCommand>
 {

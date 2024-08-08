@@ -1,9 +1,9 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Entities.Errors;
+﻿using MediatR;
 using TrackIt.Entities;
-using MediatR;
+using TrackIt.Entities.Errors;
+using TrackIt.Infraestructure.Repository.Contracts;
 
-namespace TrackIt.Commands.DeleteUser;
+namespace TrackIt.Commands.UserCommands.DeleteUser;
 
 public class DeleteUserRealmHandle : IPipelineBehavior<DeleteUserCommand, Unit>
 {

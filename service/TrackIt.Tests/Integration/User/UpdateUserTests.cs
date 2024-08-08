@@ -2,11 +2,11 @@
 using TrackIt.Infraestructure.Web.Dto;
 using TrackIt.Tests.Config.Builders;
 using TrackIt.Tests.Mocks.Entities;
-using TrackIt.Commands.UpdateUser;
 using TrackIt.Queries.Views;
 using TrackIt.Tests.Config;
 using TrackIt.Entities;
 using System.Net;
+using TrackIt.Commands.UserCommands.UpdateUser;
 
 namespace TrackIt.Tests.Integration.User;
 

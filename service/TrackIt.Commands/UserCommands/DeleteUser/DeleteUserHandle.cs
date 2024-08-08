@@ -1,9 +1,9 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Database.Contracts;
+﻿using MediatR;
 using TrackIt.Entities.Errors;
-using MediatR;
+using TrackIt.Infraestructure.Database.Contracts;
+using TrackIt.Infraestructure.Repository.Contracts;
 
-namespace TrackIt.Commands.DeleteUser;
+namespace TrackIt.Commands.UserCommands.DeleteUser;
 
 public class DeleteUserHandle : IRequestHandler<DeleteUserCommand>
 {

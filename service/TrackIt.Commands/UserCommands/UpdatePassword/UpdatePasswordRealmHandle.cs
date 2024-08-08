@@ -1,8 +1,8 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
+﻿using MediatR;
 using TrackIt.Entities.Errors;
-using MediatR;
+using TrackIt.Infraestructure.Repository.Contracts;
 
-namespace TrackIt.Commands.UpdatePassword;
+namespace TrackIt.Commands.UserCommands.UpdatePassword;
 
 public class UpdatePasswordRealmHandle : IPipelineBehavior<UpdatePasswordCommand, Unit>
 {

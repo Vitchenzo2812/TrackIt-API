@@ -18,6 +18,12 @@ public class TrackItDbContext : DbContext
   
   public DbSet<RefreshToken> RefreshToken { get; init; }
   
+  public DbSet<ActivityGroup> ActivityGroup { get; init; }
+  
+  public DbSet<Activity> Activity { get; init; }
+  
+  public DbSet<SubActivity> SubActivity { get; init; }
+  
   public TrackItDbContext (DbContextOptions<TrackItDbContext> options) : base(options)
   {
   }
@@ -46,6 +52,28 @@ public class TrackItDbContext : DbContext
       .HasForeignKey<Password>(p => p.UserId)
       .OnDelete(DeleteBehavior.Cascade)
       .IsRequired();
+
+    modelBuilder
+      .Entity<User>()
+      .HasMany<ActivityGroup>()
+      .WithOne()
+      .HasForeignKey(aG => aG.UserId)
+      .OnDelete(DeleteBehavior.Cascade);
+      
+    
+    modelBuilder
+      .Entity<ActivityGroup>()
+      .HasMany(aG => aG.Activities)
+      .WithOne()
+      .HasForeignKey(a => a.ActivityGroupId)
+      .OnDelete(DeleteBehavior.Cascade);
+    
+    modelBuilder
+      .Entity<Activity>()
+      .HasMany(a => a.SubActivities)
+      .WithOne()
+      .HasForeignKey(s => s.ActivityId)
+      .OnDelete(DeleteBehavior.Cascade);
     
     new UserMapper().Configure(modelBuilder.Entity<User>());
   }

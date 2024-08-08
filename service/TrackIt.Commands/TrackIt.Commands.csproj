@@ -11,4 +11,8 @@
       <ProjectReference Include="..\TrackIt.Infraestructure\TrackIt.Infraestructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UserCommands\" />
+    </ItemGroup>
+
 </Project>
