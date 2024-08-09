@@ -13,4 +13,34 @@ public class ActivityGroup : Entity
   public int Order { get; set; }
   
   public List<Activity> Activities { get; set; } = [];
+
+  public static ActivityGroup Create (
+    Guid userId,
+    string title,
+    string icon,
+    int order
+  )
+  {
+    return new ActivityGroup
+    {
+      UserId = userId,
+      
+      Title = title,
+      
+      Icon = icon,
+      
+      Order = order
+    };
+  }
+
+  public void Update (
+    string title,
+    string icon,
+    int order
+  )
+  {
+    Title = title;
+    Icon = icon;
+    Order = order;
+  }
 }

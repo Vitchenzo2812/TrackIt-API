@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Infraestructure.Database.Interceptor;
 using TrackIt.Infraestructure.Repository.Contracts;
@@ -24,6 +25,8 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
+using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
+using TrackIt.Queries.GetActivitiesGroups;
 
 namespace TrackIt.Building;
 
@@ -57,6 +60,9 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<UpdatePasswordCommand, Unit>, UpdatePasswordRealmHandle>();
     services.AddTransient<IPipelineBehavior<ForgotPasswordCommand, ForgotPasswordResponse>, ForgotPasswordRealmHandle>();
     
+    services.AddTransient<IPipelineBehavior<GetActivitiesGroupsQuery, PaginationView<List<ActivityGroupView>>>, GetActivitiesGroupsRealmHandle>();
+    services.AddTransient<IPipelineBehavior<CreateActivityGroupCommand, Unit>, CreateActivityGroupRealmHandle>();
+    services.AddTransient<IPipelineBehavior<UpdateActivityGroupCommand, Unit>, UpdateActivityGroupRealmHandle>();
     services.AddTransient<IPipelineBehavior<CreateActivityCommand, Unit>, CreateActivityRealmHandle>();
   }
 

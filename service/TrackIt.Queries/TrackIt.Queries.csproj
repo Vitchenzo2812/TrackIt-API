@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TrackIt.Commands\TrackIt.Commands.csproj" />
       <ProjectReference Include="..\TrackIt.Entities\TrackIt.Entities.csproj" />
       <ProjectReference Include="..\TrackIt.Infraestructure\TrackIt.Infraestructure.csproj" />
     </ItemGroup>

@@ -15,10 +15,16 @@ public class ActivityGroupRepository : IActivityGroupRepository
   {
     _db = db;
   }
+
+  public async Task<List<ActivityGroup>> GetAll ()
+  {
+    return await _db.ActivityGroup.ToListAsync();
+  }
   
   public async Task<ActivityGroup?> FindById (Guid aggregateId)
   {
     return await _db.ActivityGroup
+      .AsTracking()
       .Include(aG => aG.Activities)
       .FirstOrDefaultAsync(aG => aG.Id == aggregateId);
   }

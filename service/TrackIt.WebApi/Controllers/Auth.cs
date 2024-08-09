@@ -16,7 +16,7 @@ namespace TrackIt.WebApi.Controllers;
 [ApiController]
 public class Auth : BaseController
 {
-  private IMediator _mediator;
+  private readonly IMediator _mediator;
   
   public Auth (IMediator mediator)
   {
