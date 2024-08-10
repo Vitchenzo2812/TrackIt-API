@@ -30,7 +30,6 @@ public abstract class Command<TAggregateId, TPayload> : IRequest
     Session = session;
   }
 }
-
 public abstract class Command<TAggregateId, TPayload, TResult> : IRequest<TResult>
 {
   public TAggregateId AggregateId { get; set; }

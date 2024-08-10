@@ -36,4 +36,17 @@ public class Activity : Aggregate
       ActivityGroupId = activityGroupId
     };
   }
+
+  public void Update (
+    string title,
+    string description,
+    int order,
+    bool isChecked
+  )
+  {
+    Title = title;
+    Description = description;
+    Order = order;
+    Checked = isChecked;
+  }
 }

@@ -17,6 +17,7 @@ public class ActivityRepository : IActivityRepository
   public async Task<Activity?> FindById (Guid aggregateId)
   {
     return await _db.Activity
+      .AsTracking()
       .Include(a => a.SubActivities)
       .FirstOrDefaultAsync(a => a.Id == aggregateId);
   }
