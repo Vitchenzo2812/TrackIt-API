@@ -1,4 +1,5 @@
 ﻿using TrackIt.Infraestructure.Database;
+using Microsoft.EntityFrameworkCore;
 using TrackIt.Queries.Views;
 using MediatR;
 
@@ -12,9 +13,13 @@ public class GetActivitiesHandle : IRequestHandler<GetActivitiesQuery, List<Acti
   {
     _db = db;
   }
-  
+
   public async Task<List<ActivityView>> Handle (GetActivitiesQuery request, CancellationToken cancellationToken)
   {
-    throw new NotImplementedException();
+    var activities = await _db.Activity
+      .Where(a => a.ActivityGroupId == request.Params.ActivityGroupId)
+      .ToListAsync();
+
+    return activities.Select(ActivityView.Build).ToList();
   }
 }

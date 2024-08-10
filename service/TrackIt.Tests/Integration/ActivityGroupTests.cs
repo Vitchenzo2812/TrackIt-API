@@ -3,11 +3,11 @@ using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using PartialSession = TrackIt.Entities.Core.Session;
 using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
+using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Queries.Views;
 using TrackIt.Tests.Config;
 using System.Net;
-using Microsoft.EntityFrameworkCore;
 
 namespace TrackIt.Tests.Integration;
 

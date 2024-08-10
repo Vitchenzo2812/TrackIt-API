@@ -7,6 +7,7 @@ using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Infraestructure.Web.Controller;
 using TrackIt.Queries.GetActivitiesGroups;
+using TrackIt.Queries.GetActivities;
 using Microsoft.AspNetCore.Mvc;
 using TrackIt.Queries.Views;
 using MediatR;
@@ -59,6 +60,20 @@ public class Activity : BaseController
     await _mediator.Send(new DeleteActivityGroupCommand(id, SessionFromHeaders()));
     
     return Ok();
+  }
+
+  [HttpGet("{id}/activity")]
+  [SwaggerAuthorize]
+  public async Task<ActionResult<List<ActivityView>>> HandleGetActivities (Guid id)
+  {
+    return new ActionResult<List<ActivityView>>(
+      await _mediator.Send(
+        new GetActivitiesQuery(
+          new GetActivitiesParams(id), 
+          SessionFromHeaders()
+        )
+      )
+    );
   }
   
   [HttpPost("{id}/activity")]
