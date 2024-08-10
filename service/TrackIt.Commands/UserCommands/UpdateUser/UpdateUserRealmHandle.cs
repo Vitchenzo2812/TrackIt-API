@@ -22,10 +22,10 @@ public class UpdateUserRealmHandle : IPipelineBehavior<UpdateUserCommand, Unit>
     if (await _userRepository.FindById(request.Session.Id) is null)
       throw new NotFoundError("Session user not found");
     
-    if (await _userRepository.FindById(request.AggregateId) is null)
+    if (await _userRepository.FindById(request.Aggregate) is null)
       throw new NotFoundError("User not found");
 
-    if (request.Session.Id == request.AggregateId || request.Session.Hierarchy == Hierarchy.ADMIN)
+    if (request.Session.Id == request.Aggregate || request.Session.Hierarchy == Hierarchy.ADMIN)
       return await next();
     
     throw new ForbiddenError();

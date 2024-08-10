@@ -22,11 +22,11 @@ public class CreateActivityHandle : IRequestHandler<CreateActivityCommand>
   
   public async Task Handle (CreateActivityCommand request, CancellationToken cancellationToken)
   {
-    var activities = await _activityRepository.GetActivitiesByGroup(request.AggregateId);
+    var activities = await _activityRepository.GetActivitiesByGroup(request.Aggregate);
     
     _activityRepository.Save(
       Activity.Create(
-        activityGroupId: request.AggregateId,
+        activityGroupId: request.Aggregate,
         title: request.Payload.Title,
         order: (activities.Count + 1),
         description: request.Payload.Description

@@ -37,10 +37,10 @@ public class UpdateActivityRealmHandle : IPipelineBehavior<UpdateActivityCommand
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
 
-    if (await _activityGroupRepository.FindById(request.AggregateId) is null)
+    if (await _activityGroupRepository.FindById(request.Aggregate.Id) is null)
       throw new NotFoundError("Activity group not found");
 
-    if (await _activityRepository.FindById(request.Payload.ActivityId) is null)
+    if (await _activityRepository.FindById(request.Aggregate.EntityId) is null)
       throw new NotFoundError("Activity not found");
     
     return await next();

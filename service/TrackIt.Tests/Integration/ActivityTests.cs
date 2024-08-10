@@ -2,6 +2,7 @@
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using PartialSession = TrackIt.Entities.Core.Session;
 using TrackIt.Infraestructure.Extensions;
+using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Tests.Config;
@@ -57,17 +58,16 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
     AddAuthorizationData(PartialSession.Create(user));
     
     await CreateActivityGroups(user.Id);
-    await CreateActivity();
+    await CreateActivities();
     
     var payload = new UpdateActivityPayload(
       Title: "Diff Tarefa 2",
       Description: "Diff Descrição para a tarefa 2",
       Checked: true,
-      Order: 1,
-      ActivityId: activity2.Id
+      Order: 1
     ); 
     
-    var response = await _httpClient.PutAsync($"/activity-group/{group1.Id}/activity", payload.ToJson());
+    var response = await _httpClient.PutAsync($"/activity-group/{group1.Id}/activity/{activity2.Id}", payload.ToJson());
     
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -80,7 +80,43 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
     Assert.Equal(payload.Description, activity.Description);
   }
 
-  private async Task CreateActivity ()
+  [Fact]
+  public async Task ShouldDeleteActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+
+    AddAuthorizationData(PartialSession.Create(user));
+    
+    await CreateActivityGroups(user.Id);
+    await CreateActivities();
+
+    var response = await _httpClient.DeleteAsync($"/activity-group/{group1.Id}/activity/{activity2.Id}");
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var deleted = await _db.Activity.FirstOrDefaultAsync(a => a.Id == activity2.Id);
+    
+    Assert.Null(deleted);
+  }
+
+  [Fact]
+  public async Task ShouldThrowActivityNotFound ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    
+    AddAuthorizationData(PartialSession.Create(user));
+
+    await CreateActivityGroups(user.Id);
+
+    var response = await _httpClient.DeleteAsync($"activity-group/{group1.Id}/activity/{Guid.NewGuid()}");
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
+  }
+  
+  private async Task CreateActivities ()
   {
     activity1 = new ActivityMock()
       .ChangeTitle("Tarefa 1")

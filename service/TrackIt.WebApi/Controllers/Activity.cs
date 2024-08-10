@@ -1,5 +1,8 @@
 ﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
+using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
+using TrackIt.Commands.ActivityCommands.DeleteActivity;
+using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Infraestructure.Web.Controller;
@@ -7,8 +10,6 @@ using TrackIt.Queries.GetActivitiesGroups;
 using Microsoft.AspNetCore.Mvc;
 using TrackIt.Queries.Views;
 using MediatR;
-using TrackIt.Commands.ActivityCommands.UpdateActivity;
-using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -69,12 +70,32 @@ public class Activity : BaseController
     return StatusCode(201);
   }
   
-  [HttpPut("{id}/activity")]
+  [HttpPut("{id}/activity/{activityId}")]
   [SwaggerAuthorize]
-  public async Task<IActionResult> Handle (Guid id, [FromBody] UpdateActivityPayload payload)
+  public async Task<IActionResult> Handle (Guid id, Guid activityId, [FromBody] UpdateActivityPayload payload)
   {
-    await _mediator.Send(new UpdateActivityCommand(id, payload, SessionFromHeaders()));
+    await _mediator.Send(
+      new UpdateActivityCommand(
+        new UpdateActivityAggregate(id, activityId), 
+        payload, 
+        SessionFromHeaders()
+      )
+    );
     
+    return Ok();
+  }
+
+  [HttpDelete("{id}/activity/{activityId}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid id, Guid activityId)
+  {
+    await _mediator.Send(
+      new DeleteActivityCommand(
+        new DeleteActivityAggreagate(id, activityId), 
+        SessionFromHeaders()
+      )
+    );
+
     return Ok();
   }
 }

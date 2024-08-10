@@ -22,7 +22,7 @@ public class UpdateActivityGroupHandle : IRequestHandler<UpdateActivityGroupComm
   
   public async Task Handle (UpdateActivityGroupCommand request, CancellationToken cancellationToken)
   {
-    var group = await _activityGroupRepository.FindById(request.AggregateId);
+    var group = await _activityGroupRepository.FindById(request.Aggregate);
 
     if (group is null)
       throw new NotFoundError("Activity group not found");

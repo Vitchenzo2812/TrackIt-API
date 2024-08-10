@@ -3,15 +3,15 @@ using TrackIt.Infraestructure.Database.Contracts;
 using TrackIt.Entities.Errors;
 using MediatR;
 
-namespace TrackIt.Commands.ActivityCommands.UpdateActivity;
+namespace TrackIt.Commands.ActivityCommands.DeleteActivity;
 
-public class UpdateActivityHandle : IRequestHandler<UpdateActivityCommand>
+public class DeleteActivityHandle : IRequestHandler<DeleteActivityCommand>
 {
   private readonly IActivityRepository _activityRepository;
-  
-  private readonly IUnitOfWork _unitOfWork;
 
-  public UpdateActivityHandle (
+  private readonly IUnitOfWork _unitOfWork;
+  
+  public DeleteActivityHandle (
     IActivityRepository activityRepository,
     IUnitOfWork unitOfWork
   )
@@ -20,19 +20,14 @@ public class UpdateActivityHandle : IRequestHandler<UpdateActivityCommand>
     _unitOfWork = unitOfWork;
   }
   
-  public async Task Handle (UpdateActivityCommand request, CancellationToken cancellationToken)
+  public async Task Handle (DeleteActivityCommand request, CancellationToken cancellationToken)
   {
     var activity = await _activityRepository.FindById(request.Aggregate.EntityId);
 
     if (activity is null)
       throw new NotFoundError("Activity not found");
-
-    activity.Update(
-      title: request.Payload.Title,
-      description: request.Payload.Description,
-      order: request.Payload.Order,
-      isChecked: request.Payload.Checked
-    );
+    
+    _activityRepository.Delete(activity);
     
     await _unitOfWork.SaveChangesAsync();
   }

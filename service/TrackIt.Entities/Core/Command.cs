@@ -15,32 +15,32 @@ public abstract class Command<TPayload> : IRequest
   }
 }
 
-public abstract class Command<TAggregateId, TPayload> : IRequest 
+public abstract class Command<TAggregate, TPayload> : IRequest 
 {
-  public TAggregateId AggregateId { get; set; }
+  public TAggregate Aggregate { get; set; }
   
   public TPayload Payload { get; set; }
   
   public Session? Session { get; set; }
 
-  public Command (TAggregateId aggregateId, TPayload payload, Session? session = null)
+  public Command (TAggregate aggregate, TPayload payload, Session? session = null)
   {
-    AggregateId = aggregateId;
+    Aggregate = aggregate;
     Payload = payload;
     Session = session;
   }
 }
-public abstract class Command<TAggregateId, TPayload, TResult> : IRequest<TResult>
+public abstract class Command<TAggregate, TPayload, TResult> : IRequest<TResult>
 {
-  public TAggregateId AggregateId { get; set; }
+  public TAggregate Aggregate { get; set; }
   
   public TPayload Payload { get; set; }
   
   public Session? Session { get; set; }
 
-  public Command (TAggregateId aggregateId, TPayload payload, Session? session = null)
+  public Command (TAggregate aggregate, TPayload payload, Session? session = null)
   {
-    AggregateId = aggregateId;
+    Aggregate = aggregate;
     Payload = payload;
     Session = session;
   }

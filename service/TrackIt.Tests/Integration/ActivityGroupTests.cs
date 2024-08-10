@@ -2,10 +2,12 @@
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using PartialSession = TrackIt.Entities.Core.Session;
 using TrackIt.Infraestructure.Extensions;
+using TrackIt.Infraestructure.Web.Dto;
 using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Queries.Views;
 using TrackIt.Tests.Config;
 using System.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace TrackIt.Tests.Integration;
 
@@ -84,14 +86,15 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
   }
 
   [Fact]
-  public async Task ShouldDeleteAGroup ()
+  public async Task ShouldDeleteAGroupAndActivities ()
   {
     var user = await CreateUserWithEmailValidated();
     
     AddAuthorizationData(PartialSession.Create(user));
 
     await CreateActivityGroups(user.Id);
-
+    await CreateActivities(group3.Id);
+    
     var response = await _httpClient.DeleteAsync($"/activity-group/{group3.Id}");
     
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -116,6 +119,42 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
       Assert.Equal(group.Title, groupData.Title);
       Assert.Equal(group.Icon, groupData.Icon);
     }
+
+    var deletedActivities = await _db.Activity.ToListAsync();
+    
+    Assert.Empty(deletedActivities);
+  }
+
+  [Fact]
+  public async Task ShouldThrowActivityGroupNotFound ()
+  {
+    AddAuthorizationData(PartialSession.Create(await CreateUserWithEmailValidated()));
+
+    var response = await _httpClient.DeleteAsync($"activity-group/{Guid.NewGuid()}");
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity group not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
+  }
+  
+  private async Task CreateActivities (Guid groupId)
+  {
+    var activity1 = new ActivityMock()
+      .ChangeTitle("Tarefa 1")
+      .ChangeDescription("Descrição para tarefa 1")
+      .WithOrder(1)
+      .AssignToGroup(groupId);
+
+    var activity2 = new ActivityMock()
+      .ChangeTitle("Tarefa 2")
+      .ChangeDescription("Descrição para tarefa 2")
+      .WithOrder(2)
+      .AssignToGroup(groupId);
+    
+    _db.Activity.AddRange([activity1, activity2]);
+
+    await _db.SaveChangesAsync();
   }
   
   private async Task CreateActivityGroups (Guid userId)

@@ -22,7 +22,7 @@ public class DeleteActivityGroupHandle : IRequestHandler<DeleteActivityGroupComm
   
   public async Task Handle (DeleteActivityGroupCommand request, CancellationToken cancellationToken)
   {
-    var group = await _activityGroupRepository.FindById(request.AggregateId);
+    var group = await _activityGroupRepository.FindById(request.Aggregate);
 
     if (group is null)
       throw new NotFoundError("Activity group not found");
