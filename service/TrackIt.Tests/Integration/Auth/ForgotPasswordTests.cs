@@ -13,7 +13,7 @@ public class ForgotPasswordTests (TrackItWebApplication fixture) : TrackItSetup 
   [Fact]
   public async Task ShouldSendForgotPasswordEmail ()
   {
-    var user = await CreateUser();
+    var user = await CreateUserWithEmailValidated();
     
     var payload = new ForgotPasswordPayload(
       Email: "gvitchenzo@gmail.com"

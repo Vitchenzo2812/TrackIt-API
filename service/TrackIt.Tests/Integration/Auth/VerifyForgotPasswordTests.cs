@@ -16,7 +16,7 @@ public class VerifyForgotPasswordTests (TrackItWebApplication fixture) : TrackIt
   [Fact]
   public async Task ShouldVerifyCode ()
   {
-    var user = await CreateUser();
+    var user = await CreateUserWithEmailValidated();
 
     var payload = new ForgotPasswordPayload(
       Email: "gvitchenzo@gmail.com"
