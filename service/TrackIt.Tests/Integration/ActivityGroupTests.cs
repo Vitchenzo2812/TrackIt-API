@@ -83,6 +83,41 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
     }
   }
 
+  [Fact]
+  public async Task ShouldDeleteAGroup ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    
+    AddAuthorizationData(PartialSession.Create(user));
+
+    await CreateActivityGroups(user.Id);
+
+    var response = await _httpClient.DeleteAsync($"/activity-group/{group3.Id}");
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var response1 = await _httpClient.GetAsync("/activity-group?page=1&perPage=5");
+    var result1 = await response1.ToData<PaginationView<List<ActivityGroupView>>>();
+    
+    Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
+    
+    Assert.Equal(1, result1.Page);
+    Assert.Equal(1, result1.Pages);
+    Assert.Equal(2, result1.Data.Count);
+
+    List<ActivityGroupMock> groups = [group1, group2];
+    
+    foreach (var groupData in result1.Data)
+    {
+      var group = groups.Find(g => g.Id == groupData.Id);
+      
+      Assert.NotNull(group);
+      Assert.Equal(group.Order, groupData.Order);
+      Assert.Equal(group.Title, groupData.Title);
+      Assert.Equal(group.Icon, groupData.Icon);
+    }
+  }
+  
   private async Task CreateActivityGroups (Guid userId)
   {
     group1 = new ActivityGroupMock()
