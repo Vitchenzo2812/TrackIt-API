@@ -28,6 +28,9 @@ jobs:
           dotnet restore
           dotnet build --configuration Release
 
+      - name: Delay to ensure services are up
+        run: sleep 20s
+
       - name: Run tests
         run: dotnet test
 
