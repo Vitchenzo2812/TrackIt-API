@@ -10,8 +10,8 @@ public class SubActivityTests
     var subActivity = new SubActivityMock();
     
     Assert.False(subActivity.Checked);
+    Assert.Null(subActivity.Description);
     Assert.Equal(0, subActivity.Order);
-    Assert.Equal(string.Empty, subActivity.Description);
     Assert.Equal(string.Empty, subActivity.Title);
     Assert.Equal(Guid.Empty, subActivity.ActivityId);
   }
