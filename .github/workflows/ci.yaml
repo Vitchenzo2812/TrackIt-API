@@ -28,11 +28,16 @@ jobs:
           dotnet restore
           dotnet build --configuration Release
 
-      - name: Delay to ensure services are up
-        run: sleep 20s
-
       - name: Run tests
-        run: dotnet test
+        run: |
+          TEST_PROJECT_PATH="./service/TrackIt.Tests"
+          
+          for TEST_FILE in $(find $TEST_PROJECT_PATH -type f -name "*Tests.cs"); do
+          TEST_NAME=$(basename $TEST_FILE .cs)
+          
+          echo "Running tests in $TEST_FILE"
+          dotnet test $TEST_PROJECT_PATH --filter "FullyQualifiedName~$TEST_NAME"
+          done
 
       - name: Login to Dockerhub
         uses: docker/login-action@v1

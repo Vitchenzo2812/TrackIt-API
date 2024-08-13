@@ -9,7 +9,7 @@ public record UpdateActivityAggregate (
 public record UpdateActivityPayload (
   string Title,
   
-  string Description,
+  string? Description,
   
   bool Checked,
   

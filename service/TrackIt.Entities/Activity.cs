@@ -39,7 +39,7 @@ public class Activity : Aggregate
 
   public void Update (
     string title,
-    string description,
+    string? description,
     int order,
     bool isChecked
   )

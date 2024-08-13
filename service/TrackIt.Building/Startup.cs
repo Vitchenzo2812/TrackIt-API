@@ -1,6 +1,7 @@
 ﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
+using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
@@ -24,6 +25,7 @@ using TrackIt.Queries.GetActivities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using TrackIt.Commands.Auth.SignUp;
+using TrackIt.Queries.GetActivity;
 using TrackIt.Building.Contracts;
 using TrackIt.Events.Consumers;
 using TrackIt.Queries.GetUsers;
@@ -31,7 +33,6 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
-using TrackIt.Queries.GetActivity;
 
 namespace TrackIt.Building;
 
@@ -53,6 +54,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<ITicketRepository, TicketRepository>();
     services.AddTransient<IActivityRepository, ActivityRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
+    services.AddTransient<ISubActivityRepository, SubActivityRepository>();
     services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
@@ -75,6 +77,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<CreateActivityCommand, Unit>, CreateActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateActivityCommand, Unit>, UpdateActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteActivityCommand, Unit>, DeleteActivityRealmHandle>();
+    
+    services.AddTransient<IPipelineBehavior<CreateSubActivityCommand, Unit>, CreateSubActivityRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)

@@ -1,6 +1,7 @@
 ﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
+using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
@@ -127,5 +128,20 @@ public class Activity : BaseController
     );
 
     return Ok();
+  }
+
+  [HttpPost("{id}/activity/{activityId}/subActivity")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Hadle (Guid id, Guid activityId, [FromBody] CreateSubActivityPayload payload)
+  {
+    await _mediator.Send(
+      new CreateSubActivityCommand(
+          new CreateSubActivityAggregate(id, activityId),
+          payload,
+          SessionFromHeaders()
+        )
+    );
+    
+    return StatusCode(201);
   }
 }
