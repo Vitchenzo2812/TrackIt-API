@@ -81,6 +81,26 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
     Assert.Equal(payload.Description, updated.Description);
   }
 
+  [Fact]
+  public async Task ShouldDeleteSubActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    
+    AddAuthorizationData(PartialSession.Create(user));
+
+    await CreateActivityGroups(user.Id);
+    await CreateActivity();
+    await CreateSubActivity();
+
+    var response = await _httpClient.DeleteAsync($"/activity-group/{group.Id}/activity/{activity.Id}/subActivity/{subActivity.Id}");
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var deleted = await _db.SubActivity.FirstOrDefaultAsync(s => s.Id == subActivity.Id);
+    
+    Assert.Null(deleted);
+  }
+  
   private async Task CreateSubActivity ()
   {
     subActivity = new SubActivityMock()
