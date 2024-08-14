@@ -2,6 +2,7 @@
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
+using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
@@ -143,5 +144,20 @@ public class Activity : BaseController
     );
     
     return StatusCode(201);
+  }
+
+  [HttpPut("{id}/activity/{activityId}/subActivity/{subActivityId}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid id, Guid activityId, Guid subActivityId, [FromBody] UpdateSubActivityPayload payload)
+  {
+    await _mediator.Send(
+      new UpdateSubActivityCommand(
+        new UpdateSubActivityAggregate(id, activityId, subActivityId),
+        payload,
+        SessionFromHeaders()
+      )
+    );
+    
+    return Ok();
   }
 }

@@ -1,4 +1,5 @@
 ﻿using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
+using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 using PartialSession = TrackIt.Entities.Core.Session;
 using TrackIt.Infraestructure.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
   
   private ActivityMock activity { get; set; }
   
+  private SubActivityMock subActivity { get; set; }
+  
   [Fact]
   public async Task ShouldCreateSubActivity ()
   {
@@ -22,7 +25,7 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
     AddAuthorizationData(PartialSession.Create(user));
 
     await CreateActivityGroups(user.Id);
-    await CreateActivities();
+    await CreateActivity();
 
     var payload = new CreateSubActivityPayload(
       Title: "Sub Tarefa 1",
@@ -46,8 +49,51 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
     Assert.Equal(payload.Checked, created.SubActivities[0].Checked);
     Assert.Equal(payload.Description, created.SubActivities[0].Description);
   }
+
+  [Fact]
+  public async Task ShouldUpdateSubActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    
+    AddAuthorizationData(PartialSession.Create(user));
+
+    await CreateActivityGroups(user.Id);
+    await CreateActivity();
+    await CreateSubActivity();
+
+    var payload = new UpdateSubActivityPayload(
+      Title: "Diff Sub Tarefa 1",
+      Description: "Diff Descrição da Sub Tarefa 1",
+      Checked: true,
+      Order: 2
+    );
+    
+    var response = await _httpClient.PutAsync($"/activity-group/{group.Id}/activity/{activity.Id}/subActivity/{subActivity.Id}", payload.ToJson());
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var updated = await _db.SubActivity.FirstOrDefaultAsync(s => s.Id == subActivity.Id);
+    
+    Assert.NotNull(updated);
+    Assert.True(updated.Checked);
+    Assert.Equal(payload.Order, updated.Order);
+    Assert.Equal(payload.Title, updated.Title);
+    Assert.Equal(payload.Description, updated.Description);
+  }
+
+  private async Task CreateSubActivity ()
+  {
+    subActivity = new SubActivityMock()
+      .ChangeTitle("Sub Tarefa 1")
+      .ChangeDescription("Descrição para Sub Tarefa 1")
+      .WithOrder(1)
+      .AssignToActivity(activity.Id);
+
+    _db.SubActivity.Add(subActivity);
+    await _db.SaveChangesAsync();
+  }
   
-  private async Task CreateActivities ()
+  private async Task CreateActivity ()
   {
     activity = new ActivityMock()
       .ChangeTitle("Tarefa 1")

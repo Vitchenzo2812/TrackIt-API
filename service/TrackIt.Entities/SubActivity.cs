@@ -33,4 +33,17 @@ public class SubActivity : Entity
       ActivityId = activityId,
     };
   }
+
+  public void Update (
+    string title,
+    string? description,
+    bool isChecked,
+    int order
+  )
+  {
+    Title = title;
+    Description = description;
+    Checked = isChecked;
+    Order = order;
+  }
 }

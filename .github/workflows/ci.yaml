@@ -28,15 +28,19 @@ jobs:
           dotnet restore
           dotnet build --configuration Release
 
-      - name: Run tests
+      - name: Run unit tests
         run: |
-          TEST_PROJECT_PATH="./service/TrackIt.Tests"
+          dotnet test ./service/TrackIt.Tests/Unit
+
+      - name: Run integration tests
+        run: |
+          TEST_PROJECT_PATH="./service/TrackIt.Tests/Integration"
           
           for TEST_FILE in $(find $TEST_PROJECT_PATH -type f -name "*Tests.cs"); do
-          TEST_NAME=$(basename $TEST_FILE .cs)
+            TEST_NAME=$(basename $TEST_FILE .cs)
           
-          echo "Running tests in $TEST_FILE"
-          dotnet test $TEST_PROJECT_PATH --filter "FullyQualifiedName~$TEST_NAME"
+            echo "Running tests in $TEST_FILE"
+            dotnet test $TEST_PROJECT_PATH --filter "FullyQualifiedName~$TEST_NAME"
           done
 
       - name: Login to Dockerhub
