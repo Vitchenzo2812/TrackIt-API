@@ -35,6 +35,7 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
+using TrackIt.Commands.ExpenseCommands.CreateExpense;
 
 namespace TrackIt.Building;
 
@@ -54,10 +55,12 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<ISessionService, SessionService>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ITicketRepository, TicketRepository>();
+    services.AddTransient<IExpenseRepository, ExpenseRepository>();
     services.AddTransient<IActivityRepository, ActivityRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
     services.AddTransient<ISubActivityRepository, SubActivityRepository>();
     services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
+    services.AddTransient<IMonthlyExpensesRepository, MonthlyExpensesRepository>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
@@ -83,6 +86,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<CreateSubActivityCommand, Unit>, CreateSubActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateSubActivityCommand, Unit>, UpdateSubActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteSubActivityCommand, Unit>, DeleteSubActivityRealmHandle>();
+    
+    services.AddTransient<IPipelineBehavior<CreateExpenseCommand, Unit>, CreateExpenseRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)

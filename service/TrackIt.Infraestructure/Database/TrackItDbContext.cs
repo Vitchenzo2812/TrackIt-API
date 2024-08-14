@@ -24,6 +24,10 @@ public class TrackItDbContext : DbContext
   
   public DbSet<SubActivity> SubActivity { get; init; }
   
+  public DbSet<MonthlyExpenses> MonthlyExpenses { get; init; }
+  
+  public DbSet<Expense> Expense { get; init; }
+  
   public TrackItDbContext (DbContextOptions<TrackItDbContext> options) : base(options)
   {
   }
@@ -73,6 +77,13 @@ public class TrackItDbContext : DbContext
       .HasMany(a => a.SubActivities)
       .WithOne()
       .HasForeignKey(s => s.ActivityId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder
+      .Entity<MonthlyExpenses>()
+      .HasMany(m => m.Expenses)
+      .WithOne()
+      .HasForeignKey(e => e.MonthlyExpensesId)
       .OnDelete(DeleteBehavior.Cascade);
     
     new UserMapper().Configure(modelBuilder.Entity<User>());
