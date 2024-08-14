@@ -40,7 +40,7 @@ jobs:
             TEST_NAME=$(basename $TEST_FILE .cs)
           
             echo "Running tests in $TEST_FILE"
-            dotnet test $TEST_PROJECT_PATH/TrackIt.Tests.csproj --filter "FullyQualifiedName~$TEST_NAME"
+            dotnet test ./service/TrackIt.Tests/TrackIt.Tests.csproj --filter "FullyQualifiedName~$TEST_NAME"
           done
 
       - name: Login to Dockerhub
