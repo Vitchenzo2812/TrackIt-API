@@ -1,9 +1,9 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Database.Contracts;
+﻿using MediatR;
 using TrackIt.Entities;
-using MediatR;
+using TrackIt.Infraestructure.Database.Contracts;
+using TrackIt.Infraestructure.Repository.Contracts;
 
-namespace TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpense;
+namespace TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpenses;
 
 public class CreateMonthlyExpensesHandle : IRequestHandler<CreateMonthlyExpensesCommand>
 {

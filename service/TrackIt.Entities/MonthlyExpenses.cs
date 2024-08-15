@@ -27,4 +27,13 @@ public class MonthlyExpenses : Aggregate
       UserId = userId
     };
   }
+
+  public void Update (
+    string? title,
+    string? description
+  )
+  {
+    Title = title;
+    Description = description;
+  }
 }

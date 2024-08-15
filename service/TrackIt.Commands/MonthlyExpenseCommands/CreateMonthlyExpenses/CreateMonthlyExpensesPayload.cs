@@ -1,4 +1,4 @@
-﻿namespace TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpense;
+﻿namespace TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpenses;
 
 public record CreateMonthlyExpensesPayload (
   string? Title,

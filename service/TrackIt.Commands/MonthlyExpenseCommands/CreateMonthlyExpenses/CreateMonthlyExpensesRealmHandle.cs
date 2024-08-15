@@ -1,23 +1,17 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
+﻿using MediatR;
 using TrackIt.Commands.Errors;
 using TrackIt.Entities.Errors;
-using MediatR;
+using TrackIt.Infraestructure.Repository.Contracts;
 
-namespace TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpense;
+namespace TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpenses;
 
 public class CreateMonthlyExpensesRealmHandle : IPipelineBehavior<CreateMonthlyExpensesCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
   
-  private readonly IMonthlyExpensesRepository _monthlyExpensesRepository;
-
-  public CreateMonthlyExpensesRealmHandle (
-    IUserRepository userRepository,
-    IMonthlyExpensesRepository monthlyExpensesRepository
-  )
+  public CreateMonthlyExpensesRealmHandle (IUserRepository userRepository)
   {
     _userRepository = userRepository;
-    _monthlyExpensesRepository = monthlyExpensesRepository;
   }
   
   public async Task<Unit> Handle (CreateMonthlyExpensesCommand request, RequestHandlerDelegate<Unit> next, CancellationToken cancellationToken)

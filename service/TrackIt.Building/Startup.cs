@@ -36,7 +36,9 @@ using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
 using TrackIt.Commands.ExpenseCommands.CreateExpense;
-using TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpense;
+using TrackIt.Commands.MonthlyExpenseCommands.CreateMonthlyExpenses;
+using TrackIt.Commands.MonthlyExpenseCommands.DeleteMonthlyExpenses;
+using TrackIt.Commands.MonthlyExpenseCommands.UpdateMonthlyExpenses;
 
 namespace TrackIt.Building;
 
@@ -89,6 +91,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<DeleteSubActivityCommand, Unit>, DeleteSubActivityRealmHandle>();
     
     services.AddTransient<IPipelineBehavior<CreateMonthlyExpensesCommand, Unit>, CreateMonthlyExpensesRealmHandle>();
+    services.AddTransient<IPipelineBehavior<UpdateMonthlyExpensesCommand, Unit>, UpdateMonthlyExpensesRealmHandle>();
+    services.AddTransient<IPipelineBehavior<DeleteMonthlyExpensesCommand, Unit>, DeleteMonthlyExpensesRealmHandle>();
     
     services.AddTransient<IPipelineBehavior<CreateExpenseCommand, Unit>, CreateExpenseRealmHandle>();
   }
