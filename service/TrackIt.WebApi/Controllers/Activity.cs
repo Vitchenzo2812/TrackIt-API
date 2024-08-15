@@ -3,6 +3,7 @@ using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
+using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
@@ -14,7 +15,6 @@ using TrackIt.Queries.GetActivity;
 using Microsoft.AspNetCore.Mvc;
 using TrackIt.Queries.Views;
 using MediatR;
-using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 
 namespace TrackIt.WebApi.Controllers;
 

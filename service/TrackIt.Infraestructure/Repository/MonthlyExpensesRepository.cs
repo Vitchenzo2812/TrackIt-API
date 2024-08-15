@@ -18,6 +18,7 @@ public class MonthlyExpensesRepository : IMonthlyExpensesRepository
   {
     return await _db.MonthlyExpenses
       .AsTracking()
+      .Include(m => m.Expenses)
       .FirstOrDefaultAsync(m => m.Id == aggregateId);
   }
 

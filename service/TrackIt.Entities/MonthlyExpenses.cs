@@ -13,4 +13,18 @@ public class MonthlyExpenses : Aggregate
   public DateTime Date { get; set; } = DateTime.Now;
 
   public List<Expense> Expenses { get; set; } = [];
+
+  public static MonthlyExpenses Create (
+    string? title,
+    string? description,
+    Guid userId
+  )
+  {
+    return new MonthlyExpenses
+    {
+      Title = title,
+      Description = description,
+      UserId = userId
+    };
+  }
 }
