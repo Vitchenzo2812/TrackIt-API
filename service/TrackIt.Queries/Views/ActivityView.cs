@@ -11,7 +11,9 @@ public record ActivityView (
 
   bool Checked,
 
-  int Order
+  int Order,
+  
+  List<SubActivityView> SubActivities
 )
 {
   public static ActivityView Build (Activity activity)
@@ -21,7 +23,8 @@ public record ActivityView (
       Title: activity.Title,
       Description: activity.Description,
       Checked: activity.Checked,
-      Order: activity.Order
+      Order: activity.Order,
+      SubActivities: activity.SubActivities.Select(SubActivityView.Build).ToList()
     );
   }
 }
