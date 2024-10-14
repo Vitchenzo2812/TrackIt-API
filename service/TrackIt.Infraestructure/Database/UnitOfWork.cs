@@ -6,10 +6,7 @@ public class UnitOfWork : IUnitOfWork
 {
   private readonly TrackItDbContext _db;
 
-  public UnitOfWork (TrackItDbContext db)
-  {
-    _db = db;
-  }
+  public UnitOfWork (TrackItDbContext db) => _db = db;
   
   public async Task SaveChangesAsync ()
   {
