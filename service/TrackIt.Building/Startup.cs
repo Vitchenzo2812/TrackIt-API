@@ -23,6 +23,7 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
+using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 
 namespace TrackIt.Building;
 
@@ -42,6 +43,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<ISessionService, SessionService>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ITicketRepository, TicketRepository>();
+    services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
@@ -53,6 +55,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<DeleteUserCommand, Unit>, DeleteUserRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdatePasswordCommand, Unit>, UpdatePasswordRealmHandle>();
     services.AddTransient<IPipelineBehavior<ForgotPasswordCommand, ForgotPasswordResponse>, ForgotPasswordRealmHandle>();
+    
+    services.AddTransient<IPipelineBehavior<CreateActivityGroupCommand, Unit>, CreateActivityGroupRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
