@@ -7,7 +7,7 @@ public class ActivityGroup : Entity
   public required Guid UserId { get; set; }
   public required string Title { get; set; }
   public required int Order { get; set; }
-  public required List<Activity> Activities { get; set; } = [];
+  public List<Activity> Activities { get; set; } = [];
 
   public static ActivityGroup Create ()
   {
@@ -15,8 +15,7 @@ public class ActivityGroup : Entity
     {
       UserId = default,
       Title = string.Empty,
-      Order = 0,
-      Activities = []
+      Order = 0
     };
   }
 
