@@ -24,6 +24,7 @@ using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
 using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
+using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 
 namespace TrackIt.Building;
 
@@ -57,6 +58,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<ForgotPasswordCommand, ForgotPasswordResponse>, ForgotPasswordRealmHandle>();
     
     services.AddTransient<IPipelineBehavior<CreateActivityGroupCommand, Unit>, CreateActivityGroupRealmHandle>();
+    services.AddTransient<IPipelineBehavior<UpdateActivityGroupCommand, Unit>, UpdateActivityGroupRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
