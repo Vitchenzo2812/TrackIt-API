@@ -57,6 +57,30 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
     Assert.Equal(3, updated.Order);
   }
 
+  [Fact]
+  public async Task ShouldDeleteActivityGroup ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateActivityGroups(user);
+
+    var response = await _httpClient.DeleteAsync($"/activity/group/{activityGroup1.Id}");
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var existingGroups = await _db.ActivityGroups.ToListAsync();
+
+    Assert.Single(existingGroups);
+    Assert.Equal(existingGroups[0].Id, activityGroup2.Id);
+
+    var deletedActivities = await _db.Activities.ToListAsync();
+    var deletedSubActivities = await _db.SubActivities.ToListAsync();
+    
+    Assert.Empty(deletedActivities);
+    Assert.Empty(deletedSubActivities);
+  }
+  
   private async Task CreateActivityGroups (UserMock user)
   {
     activityGroup1 = ActivityGroup.Create()
@@ -68,8 +92,26 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
       .AssignUser(user.Id)
       .WithTitle("GROUP_2")
       .WithOrder(2);
+
+    var activity1 = Activity.Create()
+      .WithTitle("ACTIVITY_1")
+      .WithOrder(2)
+      .AssignToGroup(activityGroup1.Id);
+    
+    var activity2 = Activity.Create()
+      .WithTitle("ACTIVITY_2")
+      .WithOrder(1)
+      .AssignToGroup(activityGroup1.Id);
+
+    var subActivity1 = SubActivity.Create()
+      .WithTitle("SUB_ACTIVITY_1")
+      .WithOrder(1)
+      .AssignToActivity(activity1.Id);
     
     _db.ActivityGroups.AddRange([activityGroup1, activityGroup2]);
+    _db.Activities.AddRange([activity1, activity2]);
+    _db.SubActivities.Add(subActivity1);
+    
     await _db.SaveChangesAsync();
   }
 }

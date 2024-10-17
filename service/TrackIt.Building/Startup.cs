@@ -24,6 +24,7 @@ using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
 using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
+using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 
 namespace TrackIt.Building;
@@ -59,6 +60,7 @@ public abstract class TrackItStartup : IStartup
     
     services.AddTransient<IPipelineBehavior<CreateActivityGroupCommand, Unit>, CreateActivityGroupRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateActivityGroupCommand, Unit>, UpdateActivityGroupRealmHandle>();
+    services.AddTransient<IPipelineBehavior<DeleteActivityGroupCommand, Unit>, DeleteActivityGroupRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
