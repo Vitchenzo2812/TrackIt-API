@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
+using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
+using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Infraestructure.Database.Interceptor;
 using TrackIt.Infraestructure.Repository.Contracts;
 using TrackIt.Commands.UserCommands.UpdatePassword;
@@ -23,9 +27,6 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
-using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
-using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
-using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 
 namespace TrackIt.Building;
 
@@ -45,8 +46,9 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<ISessionService, SessionService>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ITicketRepository, TicketRepository>();
-    services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
+    services.AddTransient<IActivityRepository, ActivityRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
+    services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
@@ -61,6 +63,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<CreateActivityGroupCommand, Unit>, CreateActivityGroupRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateActivityGroupCommand, Unit>, UpdateActivityGroupRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteActivityGroupCommand, Unit>, DeleteActivityGroupRealmHandle>();
+    
+    services.AddTransient<IPipelineBehavior<CreateActivityCommand, Unit>, CreateActivityRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)

@@ -18,7 +18,7 @@ public class ActivityBase<TEntity> : Aggregate where TEntity : ActivityBase<TEnt
     return (TEntity)this;
   }
 
-  public TEntity WithDescription (string description)
+  public TEntity WithDescription (string? description)
   {
     Description = description;
     return (TEntity)this;

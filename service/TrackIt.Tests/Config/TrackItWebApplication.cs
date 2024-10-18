@@ -28,7 +28,7 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
     .WithCleanUp(true)
     .Build();
 
-  public Mock<IMailerService> MailerServiceMock = new Mock<IMailerService>();
+  public Mock<IMailerService> MailerServiceMock = new ();
   
   protected override void ConfigureWebHost (IWebHostBuilder builder)
   {

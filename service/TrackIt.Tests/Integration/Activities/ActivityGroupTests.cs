@@ -1,12 +1,13 @@
-﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
+﻿using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
+using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 using TrackIt.Infraestructure.Extensions;
+using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
+using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Tests.Config;
 using TrackIt.Entities;
 using System.Net;
-using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
-using TrackIt.Tests.Mocks.Entities;
 
 namespace TrackIt.Tests.Integration.Activities;
 
@@ -24,7 +25,7 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
     const string titleActivityGroup = "GROUP_1";
     
     var payload = new CreateActivityGroupPayload(titleActivityGroup);
-    var response = await _httpClient.PostAsync("/activity/group", payload.ToJson());
+    var response = await _httpClient.PostAsync("/group", payload.ToJson());
     
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -45,7 +46,7 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
 
     var payload = new UpdateActivityGroupPayload("DIFF_GROUP_2", 3);
     
-    var response = await _httpClient.PutAsync($"activity/group/{activityGroup2.Id}", payload.ToJson());
+    var response = await _httpClient.PutAsync($"group/{activityGroup2.Id}", payload.ToJson());
     
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -65,7 +66,7 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
 
     await CreateActivityGroups(user);
 
-    var response = await _httpClient.DeleteAsync($"/activity/group/{activityGroup1.Id}");
+    var response = await _httpClient.DeleteAsync($"/group/{activityGroup1.Id}");
     
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -79,6 +80,36 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
     
     Assert.Empty(deletedActivities);
     Assert.Empty(deletedSubActivities);
+  }
+  
+  [Fact]
+  public async Task ShouldThrowActivityGroupNotFoundUpdate ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    var payload = new UpdateActivityGroupPayload("DIFF_GROUP_2", 3);
+    
+    var response = await _httpClient.PutAsync($"/group/{Guid.NewGuid()}", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity Group not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
+  }
+  
+  [Fact]
+  public async Task ShouldThrowActivityGroupNotFoundDelete ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    var response = await _httpClient.DeleteAsync($"/group/{Guid.NewGuid()}");
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity Group not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
   }
   
   private async Task CreateActivityGroups (UserMock user)
