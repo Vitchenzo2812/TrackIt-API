@@ -3,9 +3,9 @@ using TrackIt.Entities;
 
 namespace TrackIt.Tests.Mocks.Entities;
 
-public class ActivityMock : Activity, IMock<Activity>
+public class ActivityMock : Activity
 {
-  public void Verify (Activity expect, Activity current)
+  public static void Verify (Activity expect, Activity current)
   {
     Assert.Equal(expect.Id, current.Id);
     Assert.Equal(expect.Title, current.Title);

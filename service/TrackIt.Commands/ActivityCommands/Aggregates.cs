@@ -1,4 +1,4 @@
-﻿namespace TrackIt.Commands.ActivityCommands.UpdateActivity;
+﻿namespace TrackIt.Commands.ActivityCommands;
 
 public record Aggregates(
   Guid GroupId,

@@ -3,8 +3,10 @@ using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
+using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Infraestructure.Web.Controller;
+using TrackIt.Commands.ActivityCommands;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 
@@ -64,6 +66,15 @@ public class Activities : BaseController
       payload,
       SessionFromHeaders()
     ));
+    
+    return Ok();
+  }
+
+  [HttpDelete("{groupId}/activity/{activityId}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid groupId, Guid activityId)
+  {
+    await _mediator.Send(new DeleteActivityCommand(new Aggregates(groupId, activityId), SessionFromHeaders()));
     
     return Ok();
   }

@@ -78,6 +78,23 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
   }
 
   [Fact]
+  public async Task ShouldDeleteActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateActivities(user.Id);
+    
+    var response = await _httpClient.DeleteAsync($"/group/{activityGroup2.Id}/activity/{activity2.Id}");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var deleted = await _db.Activities.FirstOrDefaultAsync(x => x.Id == activity2.Id);
+    
+    Assert.Null(deleted);
+  }
+    
+  [Fact]
   public async Task ShouldThrowActivityNotFoundUpdate ()
   {
     var user = await CreateUserWithEmailValidated();
@@ -99,7 +116,23 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
     Assert.Equal("NOT_FOUND", result.Code);
     Assert.Equal(404, result.StatusCode);
   }
+  
+  [Fact]
+  public async Task ShouldThrowActivityNotFoundDelete ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
 
+    await CreateGroups(user.Id);
+    
+    var response = await _httpClient.DeleteAsync($"/group/{activityGroup2.Id}/activity/{Guid.NewGuid()}");
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
+  }
+  
   [Fact]
   public async Task ShouldThrowActivityGroupNotFoundError ()
   {

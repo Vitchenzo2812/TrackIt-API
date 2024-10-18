@@ -1,8 +1,10 @@
 ﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
-using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
+using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
+using TrackIt.Commands.ActivityCommands.UpdateActivity;
+using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Infraestructure.Database.Interceptor;
 using TrackIt.Infraestructure.Repository.Contracts;
 using TrackIt.Commands.UserCommands.UpdatePassword;
@@ -27,7 +29,6 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
-using TrackIt.Commands.ActivityCommands.UpdateActivity;
 
 namespace TrackIt.Building;
 
@@ -67,6 +68,7 @@ public abstract class TrackItStartup : IStartup
     
     services.AddTransient<IPipelineBehavior<CreateActivityCommand, Unit>, CreateActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateActivityCommand, Unit>, UpdateActivityRealmHandle>();
+    services.AddTransient<IPipelineBehavior<DeleteActivityCommand, Unit>, DeleteActivityRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
