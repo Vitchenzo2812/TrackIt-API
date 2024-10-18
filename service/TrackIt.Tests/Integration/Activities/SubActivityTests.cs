@@ -1,6 +1,7 @@
 ﻿using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 using TrackIt.Infraestructure.Extensions;
+using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
 using TrackIt.Tests.Config;
@@ -88,6 +89,113 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
     Assert.Equal(updated.Title, payload.Title);
     Assert.Equal(updated.Order, payload.Order);
     Assert.Equal(updated.Priority, payload.Priority);
+  }
+
+  [Fact]
+  public async Task ShouldDeleteSubActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateSubActivities(user.Id);
+
+    var response = await _httpClient.DeleteAsync($"/group/{activityGroup2.Id}/activity/{activity2.Id}/sub/{subActivity3.Id}");
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var deleted = await _db.SubActivities.FirstOrDefaultAsync(x => x.Id == subActivity3.Id);
+    
+    Assert.Null(deleted);
+  }
+  
+  [Fact]
+  public async Task ShouldThrowSubActivityNotFoundUpdate ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+    
+    await CreateSubActivities(user.Id);
+
+    var payload = new UpdateSubActivityPayload(
+      Title: "DIFF_SUB_ACTIVITY_2",
+      Description: null,
+      Priority: ActivityPriority.MEDIUM,
+      Order: 2,
+      IsChecked: false
+    );
+    
+    var response = await _httpClient.PutAsync($"/group/{activityGroup2.Id}/activity/{activity1.Id}/sub/{Guid.NewGuid()}", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("SubActivity not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
+  }
+  
+  [Fact]
+  public async Task ShouldThrowSubActivityNotFoundDelete ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+    
+    await CreateSubActivities(user.Id);
+    
+    var response = await _httpClient.DeleteAsync($"/group/{activityGroup2.Id}/activity/{activity1.Id}/sub/{Guid.NewGuid()}");
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("SubActivity not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
+  }
+  
+  [Fact]
+  public async Task ShouldThrowActivityNotFound ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateGroups(user.Id);
+    
+    await CreateSubActivities(user.Id);
+
+    var payload = new UpdateSubActivityPayload(
+      Title: "DIFF_SUB_ACTIVITY_2",
+      Description: null,
+      Priority: ActivityPriority.MEDIUM,
+      Order: 2,
+      IsChecked: false
+    );
+    
+    var response = await _httpClient.PutAsync($"/group/{activityGroup2.Id}/activity/{Guid.NewGuid()}/sub/{subActivity2.Id}", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
+  }
+  
+  [Fact]
+  public async Task ShouldThrowActivityGroupNotFoundError ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+    
+    await CreateSubActivities(user.Id);
+
+    var payload = new UpdateSubActivityPayload(
+      Title: "DIFF_SUB_ACTIVITY_2",
+      Description: null,
+      Priority: ActivityPriority.MEDIUM,
+      Order: 2,
+      IsChecked: false
+    );
+    
+    var response = await _httpClient.PutAsync($"/group/{Guid.NewGuid()}/activity/{activity1.Id}/sub/{subActivity2.Id}", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity Group not found", result.Message);
+    Assert.Equal("NOT_FOUND", result.Code);
+    Assert.Equal(404, result.StatusCode);
   }
   
   #region setup for tests

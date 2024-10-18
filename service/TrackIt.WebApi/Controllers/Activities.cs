@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using TrackIt.Commands.SubActivityCommands;
 using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
+using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 
 namespace TrackIt.WebApi.Controllers;
@@ -102,6 +103,18 @@ public class Activities : BaseController
     await _mediator.Send(new UpdateSubActivityCommand(
       new SubActivityAggregates(groupId, activityId, subId),
       payload,
+      SessionFromHeaders()
+    ));
+    
+    return Ok();
+  }
+
+  [HttpDelete("{groupId}/activity/{activityId}/sub/{subId}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid groupId, Guid activityId, Guid subId)
+  {
+    await _mediator.Send(new DeleteSubActivityCommand(
+      new SubActivityAggregates(groupId, activityId, subId), 
       SessionFromHeaders()
     ));
     
