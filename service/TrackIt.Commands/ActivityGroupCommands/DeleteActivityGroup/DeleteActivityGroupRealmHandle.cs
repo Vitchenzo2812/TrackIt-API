@@ -32,7 +32,7 @@ public class DeleteActivityGroupRealmHandle : IPipelineBehavior<DeleteActivityGr
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
 
-    var group = await _activityGroupRepository.FindById(request.Aggregate);
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate);
 
     if (group is null)
       throw new NotFoundError("Activity Group not found");

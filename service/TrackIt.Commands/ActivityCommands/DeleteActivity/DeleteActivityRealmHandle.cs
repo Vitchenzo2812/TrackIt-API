@@ -35,7 +35,7 @@ public class DeleteActivityRealmHandle : IPipelineBehavior<DeleteActivityCommand
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
 
-    var group = await _activityGroupRepository.FindById(request.Aggregate.GroupId);
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate.GroupId);
 
     if (group is null)
       throw new NotFoundError("Activity Group not found");
@@ -43,7 +43,7 @@ public class DeleteActivityRealmHandle : IPipelineBehavior<DeleteActivityCommand
     if (group.UserId != user.Id)
       throw new ForbiddenError("Activity group doesn't belong to this user");
 
-    var activity = await _activityRepository.FindById(request.Aggregate.ActivityId);
+    var activity = await _activityRepository.FindById(request.ActivitySubActivityAggregate.ActivityId);
 
     if (activity is null)
       throw new NotFoundError("Activity not found");

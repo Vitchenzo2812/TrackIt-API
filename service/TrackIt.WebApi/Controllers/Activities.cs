@@ -9,6 +9,8 @@ using TrackIt.Infraestructure.Web.Controller;
 using TrackIt.Commands.ActivityCommands;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using TrackIt.Commands.SubActivityCommands;
+using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -62,7 +64,7 @@ public class Activities : BaseController
   public async Task<IActionResult> Handle (Guid groupId, Guid activityId, [FromBody] UpdateActivityPayload payload)
   {
     await _mediator.Send(new UpdateActivityCommand(
-      new Aggregates(groupId, activityId),
+      new ActivityAggregates(groupId, activityId),
       payload,
       SessionFromHeaders()
     ));
@@ -74,8 +76,21 @@ public class Activities : BaseController
   [SwaggerAuthorize]
   public async Task<IActionResult> Handle (Guid groupId, Guid activityId)
   {
-    await _mediator.Send(new DeleteActivityCommand(new Aggregates(groupId, activityId), SessionFromHeaders()));
+    await _mediator.Send(new DeleteActivityCommand(new ActivityAggregates(groupId, activityId), SessionFromHeaders()));
     
     return Ok();
+  }
+
+  [HttpPost("{groupId}/activity/{activityId}/sub")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid groupId, Guid activityId, [FromBody] CreateSubActivityPayload payload)
+  {
+    await _mediator.Send(new CreateSubActivityCommand(
+      new SubActivityAggregates(groupId, activityId),
+      payload,
+      SessionFromHeaders()
+    ));
+    
+    return StatusCode(201);
   }
 }

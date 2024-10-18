@@ -21,7 +21,7 @@ public class UpdateActivityHandle : IRequestHandler<UpdateActivityCommand>
   
   public async Task Handle (UpdateActivityCommand request, CancellationToken cancellationToken)
   {
-    var activity = await _activityRepository.FindById(request.Aggregate.ActivityId);
+    var activity = await _activityRepository.FindById(request.ActivitySubActivityAggregate.ActivityId);
 
     if (activity is null)
       throw new NotFoundError("Activity not found");
