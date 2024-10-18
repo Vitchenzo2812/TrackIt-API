@@ -1,4 +1,5 @@
 ﻿using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
+using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 using TrackIt.Infraestructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
@@ -57,6 +58,36 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
       Assert.Equal(subActivity.Priority, payload.Priority);
       Assert.Equal(subActivity.Order, payload.Order);
     }
+  }
+
+  [Fact]
+  public async Task ShouldUpdateSubActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateSubActivities(user.Id);
+
+    var payload = new UpdateSubActivityPayload(
+      Title: "DIFF_SUB_ACTIVITY_2",
+      Description: null,
+      Priority: ActivityPriority.MEDIUM,
+      Order: 2,
+      IsChecked: false
+    );
+    
+    var response = await _httpClient.PutAsync($"/group/{activityGroup2.Id}/activity/{activity1.Id}/sub/{subActivity2.Id}", payload.ToJson());
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var updated = await _db.SubActivities.FirstOrDefaultAsync(x => x.Id == subActivity2.Id);
+    
+    Assert.NotNull(updated);
+    Assert.False(updated.Checked);
+    Assert.Null(updated.Description);
+    Assert.Equal(updated.Title, payload.Title);
+    Assert.Equal(updated.Order, payload.Order);
+    Assert.Equal(updated.Priority, payload.Priority);
   }
   
   #region setup for tests

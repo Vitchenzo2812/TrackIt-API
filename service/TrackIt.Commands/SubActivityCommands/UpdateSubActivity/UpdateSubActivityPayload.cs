@@ -1,8 +1,8 @@
 ﻿using TrackIt.Entities;
 
-namespace TrackIt.Commands.ActivityCommands.UpdateActivity;
+namespace TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 
-public record UpdateActivityPayload (
+public record UpdateSubActivityPayload (
   string Title,
   string? Description,
   ActivityPriority Priority,

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using TrackIt.Commands.SubActivityCommands;
 using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
+using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -92,5 +93,18 @@ public class Activities : BaseController
     ));
     
     return StatusCode(201);
+  }
+
+  [HttpPut("{groupId}/activity/{activityId}/sub/{subId}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid groupId, Guid activityId, Guid subId, [FromBody] UpdateSubActivityPayload payload)
+  {
+    await _mediator.Send(new UpdateSubActivityCommand(
+      new SubActivityAggregates(groupId, activityId, subId),
+      payload,
+      SessionFromHeaders()
+    ));
+    
+    return Ok();
   }
 }

@@ -38,8 +38,10 @@ public class ActivityBase<TEntity> : Aggregate where TEntity : ActivityBase<TEnt
 
   public TEntity ShouldCheck (bool check)
   {
-    if (check) 
+    if (check)
       CompletedAt = DateTime.Now;
+    else
+      CompletedAt = null;
     
     Checked = check;
     return (TEntity)this;

@@ -60,7 +60,8 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
       Title: "DIFF_ACTIVITY_1",
       Description: "DIFF_ACTIVITY_1_DESCRIPTION",
       Priority: ActivityPriority.HIGH,
-      Order: 2
+      Order: 2,
+      IsChecked: true
     );
     
     var response = await _httpClient.PutAsync($"/group/{activityGroup2.Id}/activity/{activity1.Id}", payload.ToJson());
@@ -70,6 +71,7 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
     var updated = await _db.Activities.FirstOrDefaultAsync(x => x.Id == activity1.Id);
     
     Assert.NotNull(updated);
+    Assert.True(updated.Checked);
     Assert.NotNull(updated.Description);
     Assert.Equal(updated.Title, payload.Title);
     Assert.Equal(updated.Description, payload.Description);
@@ -106,7 +108,8 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
       Title: "DIFF_ACTIVITY_1",
       Description: "DIFF_ACTIVITY_1_DESCRIPTION",
       Priority: ActivityPriority.HIGH,
-      Order: 2
+      Order: 2,
+      IsChecked: false
     );
     
     var response = await _httpClient.PutAsync($"/group/{activityGroup2.Id}/activity/{Guid.NewGuid()}", payload.ToJson());

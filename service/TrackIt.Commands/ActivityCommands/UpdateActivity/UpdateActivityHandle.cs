@@ -30,7 +30,8 @@ public class UpdateActivityHandle : IRequestHandler<UpdateActivityCommand>
       .WithTitle(request.Payload.Title)
       .WithDescription(request.Payload.Description)
       .WithPriority(request.Payload.Priority)
-      .WithOrder(request.Payload.Order);
+      .WithOrder(request.Payload.Order)
+      .ShouldCheck(request.Payload.IsChecked);
     
     await _unitOfWork.SaveChangesAsync();
   }
