@@ -71,7 +71,9 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
     
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-    var existingGroups = await _db.ActivityGroups.ToListAsync();
+    var existingGroups = await _db.ActivityGroups
+      .Where(x => x.UserId == user.Id)
+      .ToListAsync();
 
     Assert.Single(existingGroups);
     Assert.Equal(existingGroups[0].Id, activityGroup2.Id);
