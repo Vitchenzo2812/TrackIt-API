@@ -15,6 +15,7 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
 {
   private ActivityGroup activityGroup1 { get; set; }
   private ActivityGroup activityGroup2 { get; set; }
+  private ActivityGroup activityGroup3 { get; set; }
   
   [Fact]
   public async Task ShouldCreateActivityGroup ()
@@ -112,6 +113,24 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
     Assert.Equal(404, result.StatusCode);
   }
   
+  [Fact]
+  public async Task ShouldThrowForbiddenIfGroupDoesntBelongToTheUser ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateActivityGroups(user);
+
+    var payload = new UpdateActivityGroupPayload("DIFF_GROUP_2", 3);
+    
+    var response = await _httpClient.PutAsync($"group/{activityGroup3.Id}", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Forbidden Error", result.Message);
+    Assert.Equal("FORBIDDEN_ERROR", result.Code);
+    Assert.Equal(403, result.StatusCode);
+  }
+  
   private async Task CreateActivityGroups (UserMock user)
   {
     activityGroup1 = ActivityGroup.Create()
@@ -123,6 +142,13 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
       .AssignUser(user.Id)
       .WithTitle("GROUP_2")
       .WithOrder(2);
+
+    var diffUser = await CreateUserWithEmailValidated();
+    
+    activityGroup3 = ActivityGroup.Create()
+      .AssignUser(diffUser.Id)
+      .WithTitle("GROUP_3")
+      .WithOrder(1);
 
     var activity1 = Activity.Create()
       .WithTitle("ACTIVITY_1")
@@ -139,7 +165,7 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
       .WithOrder(1)
       .AssignToActivity(activity1.Id);
     
-    _db.ActivityGroups.AddRange([activityGroup1, activityGroup2]);
+    _db.ActivityGroups.AddRange([activityGroup1, activityGroup2, activityGroup3]);
     _db.Activities.AddRange([activity1, activity2]);
     _db.SubActivities.Add(subActivity1);
     

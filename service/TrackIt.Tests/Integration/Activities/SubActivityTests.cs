@@ -149,6 +149,31 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
   }
   
   [Fact]
+  public async Task ShouldThrowForbiddenIfSubActivityDoesntBelongToTheActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateSubActivities(user.Id);
+
+    var payload = new UpdateSubActivityPayload(
+      Title: "DIFF_SUB_ACTIVITY_3",
+      Description: null,
+      Priority: ActivityPriority.MEDIUM,
+      Order: 2,
+      IsChecked: false
+    );
+    
+    var response = await _httpClient.PutAsync($"/group/{activityGroup2.Id}/activity/{activity1.Id}/sub/{subActivity3.Id}", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("SubActivity doesn't belong to this activity", result.Message);
+    Assert.Equal("FORBIDDEN_ERROR", result.Code);
+    Assert.Equal(403, result.StatusCode);
+  }
+
+  
+  [Fact]
   public async Task ShouldThrowActivityNotFound ()
   {
     var user = await CreateUserWithEmailValidated();
@@ -211,15 +236,13 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
         .WithTitle("GROUP_2")
         .WithOrder(2)
         .AssignUser(userId);
-
-      var diffUser = await CreateUserWithEmailValidated();
-        
+      
       activityGroup3 = ActivityGroup.Create()
         .WithTitle("GROUP_1_DIFF_USER")
         .WithOrder(1)
-        .AssignUser(diffUser.Id);
+        .AssignUser(userId);
         
-      _db.ActivityGroups.AddRange([activityGroup1, activityGroup2]);
+      _db.ActivityGroups.AddRange([activityGroup1, activityGroup2, activityGroup3]);
       await _db.SaveChangesAsync();
     }
 

@@ -137,6 +137,31 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
   }
   
   [Fact]
+  public async Task ShouldThrowForbiddenIfActivityDoesntBelongToTheGroup ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateActivities(user.Id);
+
+    var payload = new UpdateActivityPayload(
+      Title: "DIFF_ACTIVITY_1",
+      Description: "DIFF_ACTIVITY_1_DESCRIPTION",
+      Priority: ActivityPriority.HIGH,
+      Order: 2,
+      IsChecked: true
+    );
+    
+    var response = await _httpClient.PutAsync($"/group/{activityGroup3.Id}/activity/{activity1.Id}", payload.ToJson());
+    var result = await response.ToData<ErrorResponseDto>();
+    
+    Assert.Equal("Activity doesn't belong to this activity group", result.Message);
+    Assert.Equal("FORBIDDEN_ERROR", result.Code);
+    Assert.Equal(403, result.StatusCode);
+  }
+
+  
+  [Fact]
   public async Task ShouldThrowActivityGroupNotFoundError ()
   {
     var user = await CreateUserWithEmailValidated();
@@ -170,38 +195,36 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
         .WithTitle("GROUP_2")
         .WithOrder(2)
         .AssignUser(userId);
-
-      var diffUser = await CreateUserWithEmailValidated();
       
       activityGroup3 = ActivityGroup.Create()
-        .WithTitle("GROUP_1_DIFF_USER")
-        .WithOrder(1)
-        .AssignUser(diffUser.Id);
+        .WithTitle("GROUP_3")
+        .WithOrder(3)
+        .AssignUser(userId);
       
-      _db.ActivityGroups.AddRange([activityGroup1, activityGroup2]);
+      _db.ActivityGroups.AddRange([activityGroup1, activityGroup2, activityGroup3]);
       await _db.SaveChangesAsync();
     }
 
     private async Task CreateActivities (Guid userId)
-  {
-    await CreateGroups(userId);
-    
-    activity1 = Activity.Create()
-      .WithTitle("ACTIVITY_1")
-      .WithDescription("ACTIVITY_1_DESCRIPTION")
-      .WithPriority(ActivityPriority.MEDIUM)
-      .WithOrder(2)
-      .AssignToGroup(activityGroup2.Id);
-    
-    activity2 = Activity.Create()
-      .WithTitle("ACTIVITY_2")
-      .WithPriority(ActivityPriority.HIGH)
-      .WithOrder(1)
-      .AssignToGroup(activityGroup2.Id);
+    {
+      await CreateGroups(userId);
+      
+      activity1 = Activity.Create()
+        .WithTitle("ACTIVITY_1")
+        .WithDescription("ACTIVITY_1_DESCRIPTION")
+        .WithPriority(ActivityPriority.MEDIUM)
+        .WithOrder(2)
+        .AssignToGroup(activityGroup2.Id);
+      
+      activity2 = Activity.Create()
+        .WithTitle("ACTIVITY_2")
+        .WithPriority(ActivityPriority.HIGH)
+        .WithOrder(1)
+        .AssignToGroup(activityGroup2.Id);
 
-    _db.Activities.AddRange([activity1, activity2]);
-    await _db.SaveChangesAsync();
-  }
+      _db.Activities.AddRange([activity1, activity2]);
+      await _db.SaveChangesAsync();
+    }
   
   #endregion
 }
