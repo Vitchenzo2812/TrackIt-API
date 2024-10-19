@@ -1,7 +1,3 @@
 ﻿namespace TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 
-public record CreateActivityGroupPayload (
-  string Title,
-  
-  string Icon
-);
+public record CreateActivityGroupPayload (string Title);

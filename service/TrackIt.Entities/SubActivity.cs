@@ -1,49 +1,26 @@
-﻿using TrackIt.Entities.Core;
+﻿namespace TrackIt.Entities;
 
-namespace TrackIt.Entities;
-
-public class SubActivity : Entity
+public class SubActivity : ActivityBase<SubActivity>
 {
-  public Guid ActivityId { get; set; }
-  
-  public string Title { get; set; } = string.Empty;
-  
-  public string? Description { get; set; }
-  
-  public bool Checked { get; set; }
-  
-  public int Order { get; set; }
-  
-  public DateTime CreatedAt = DateTime.Now;
+  public required Guid ActivityId { get; set; }
 
-  public static SubActivity Create (
-    string title,
-    string? description,
-    bool isChecked,
-    int order,
-    Guid activityId
-  )
+  public static SubActivity Create ()
   {
     return new SubActivity
     {
-      Title = title,
-      Description = description,
-      Checked = isChecked,
-      Order = order,
-      ActivityId = activityId,
-    };
+      Title = string.Empty,
+      Description = null,
+      Priority = ActivityPriority.LOW,
+      Order = 0,
+      Checked = false,
+      ActivityId = default,
+      CompletedAt = null
+    };  
   }
 
-  public void Update (
-    string title,
-    string? description,
-    bool isChecked,
-    int order
-  )
+  public SubActivity AssignToActivity (Guid activityId)
   {
-    Title = title;
-    Description = description;
-    Checked = isChecked;
-    Order = order;
+    ActivityId = activityId;
+    return this;
   }
 }

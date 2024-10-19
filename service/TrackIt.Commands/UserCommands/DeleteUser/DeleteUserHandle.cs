@@ -22,7 +22,7 @@ public class DeleteUserHandle : IRequestHandler<DeleteUserCommand>
   
   public async Task Handle (DeleteUserCommand request, CancellationToken cancellationToken)
   {
-    var user = await _userRepository.FindById(request.Aggregate);
+    var user = await _userRepository.FindById(request.ActivitySubActivityAggregate);
 
     if (user is null)
       throw new NotFoundError("User not found");

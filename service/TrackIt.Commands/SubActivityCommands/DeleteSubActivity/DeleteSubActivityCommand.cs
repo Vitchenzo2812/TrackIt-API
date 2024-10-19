@@ -2,5 +2,5 @@
 
 namespace TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 
-public class DeleteSubActivityCommand (DeleteSubActivityAggregate aggregate, Session? session = null)
-  : Command<DeleteSubActivityAggregate, object>(aggregate, null, session);
+public class DeleteSubActivityCommand(SubActivityAggregates aggregates, Session? session = null)
+  : Command<SubActivityAggregates, object>(aggregates, null, session);

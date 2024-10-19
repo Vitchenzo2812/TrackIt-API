@@ -8,7 +8,6 @@ namespace TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 public class CreateActivityGroupHandle : IRequestHandler<CreateActivityGroupCommand>
 {
   private readonly IActivityGroupRepository _activityGroupRepository;
-
   private readonly IUnitOfWork _unitOfWork;
 
   public CreateActivityGroupHandle (
@@ -25,12 +24,10 @@ public class CreateActivityGroupHandle : IRequestHandler<CreateActivityGroupComm
     var groups = await _activityGroupRepository.GetAll();
     
     _activityGroupRepository.Save(
-      ActivityGroup.Create(
-        userId: request.Session!.Id,
-        title: request.Payload.Title,
-        icon: request.Payload.Icon,
-        order: (groups.Count + 1)
-      )
+      ActivityGroup.Create()
+        .WithTitle(request.Payload.Title)
+        .WithOrder((groups.Count + 1))
+        .AssignUser(request.Session!.Id)
     );
 
     await _unitOfWork.SaveChangesAsync();

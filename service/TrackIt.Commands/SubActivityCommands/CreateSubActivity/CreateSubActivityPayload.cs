@@ -1,15 +1,10 @@
-﻿namespace TrackIt.Commands.SubActivityCommands.CreateSubActivity;
+﻿using TrackIt.Entities;
 
-public record CreateSubActivityAggregate (
-  Guid ActivityGroupId,
-  
-  Guid ActivityId
-);
+namespace TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 
 public record CreateSubActivityPayload (
   string Title,
-  
   string? Description,
-  
-  bool Checked
+  ActivityPriority Priority,
+  int Order
 );

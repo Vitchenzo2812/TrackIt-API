@@ -8,7 +8,6 @@ namespace TrackIt.Commands.ActivityCommands.CreateActivity;
 public class CreateActivityRealmHandle : IPipelineBehavior<CreateActivityCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
-  
   private readonly IActivityGroupRepository _activityGroupRepository;
 
   public CreateActivityRealmHandle (
@@ -26,16 +25,21 @@ public class CreateActivityRealmHandle : IPipelineBehavior<CreateActivityCommand
       throw new ForbiddenError();
 
     var user = await _userRepository.FindById(request.Session.Id);
-    
+
     if (user is null)
       throw new NotFoundError("User not found");
 
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
 
-    if (await _activityGroupRepository.FindById(request.Aggregate) is null)
-      throw new NotFoundError("Activity group not found");
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate);
 
+    if (group is null)
+      throw new NotFoundError("Activity Group not found");
+
+    if (group.UserId != user.Id)
+      throw new ForbiddenError();
+    
     return await next();
   }
 }

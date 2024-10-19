@@ -8,7 +8,6 @@ namespace TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 public class UpdateActivityGroupHandle : IRequestHandler<UpdateActivityGroupCommand>
 {
   private readonly IActivityGroupRepository _activityGroupRepository;
-
   private readonly IUnitOfWork _unitOfWork;
 
   public UpdateActivityGroupHandle (
@@ -18,21 +17,19 @@ public class UpdateActivityGroupHandle : IRequestHandler<UpdateActivityGroupComm
   {
     _activityGroupRepository = activityGroupRepository;
     _unitOfWork = unitOfWork;
-  }
+  } 
   
   public async Task Handle (UpdateActivityGroupCommand request, CancellationToken cancellationToken)
   {
-    var group = await _activityGroupRepository.FindById(request.Aggregate);
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate);
 
     if (group is null)
-      throw new NotFoundError("Activity group not found");
-    
-    group.Update(
-      title: request.Payload.Title,
-      icon: request.Payload.Icon,
-      order: request.Payload.Order
-    );
-    
+      throw new NotFoundError("Activity Group not found");
+
+    group
+      .WithTitle(request.Payload.Title)
+      .WithOrder(request.Payload.Order);
+
     await _unitOfWork.SaveChangesAsync();
   }
 }

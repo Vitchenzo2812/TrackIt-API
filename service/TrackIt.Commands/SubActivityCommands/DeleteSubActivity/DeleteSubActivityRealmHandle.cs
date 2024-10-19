@@ -8,19 +8,20 @@ namespace TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 public class DeleteSubActivityRealmHandle : IPipelineBehavior<DeleteSubActivityCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
-
   private readonly IActivityRepository _activityRepository;
-
+  private readonly ISubActivityRepository _subActivityRepository;
   private readonly IActivityGroupRepository _activityGroupRepository;
 
   public DeleteSubActivityRealmHandle (
     IUserRepository userRepository,
     IActivityRepository activityRepository,
+    ISubActivityRepository subActivityRepository,
     IActivityGroupRepository activityGroupRepository
   )
   {
     _userRepository = userRepository;
     _activityRepository = activityRepository;
+    _subActivityRepository = subActivityRepository;
     _activityGroupRepository = activityGroupRepository;
   }
   
@@ -36,23 +37,34 @@ public class DeleteSubActivityRealmHandle : IPipelineBehavior<DeleteSubActivityC
 
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
-      
-    var activityGroup = await _activityGroupRepository.FindById(request.Aggregate.ActivityGroupId);
 
-    if (activityGroup is null)
-      throw new NotFoundError("Activity group not found");
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate.GroupId);
 
-    var activity = await _activityRepository.FindById(request.Aggregate.ActivityId);
-    
+    if (group is null)
+      throw new NotFoundError("Activity Group not found");
+
+    if (group.UserId != user.Id)
+      throw new ForbiddenError("Activity group doesn't belong to this user");
+
+    var activity = await _activityRepository.FindById(request.ActivitySubActivityAggregate.ActivityId);
+
     if (activity is null)
       throw new NotFoundError("Activity not found");
     
-    if (!activity.SubActivities.Any(x => x.Id == request.Aggregate.SubActivityId))
-      throw new NotFoundError("Sub Activity not found");
+    if (activity.ActivityGroupId != group.Id)
+      throw new ForbiddenError("Activity doesn't belong to this activity group");
+
+    if (request.ActivitySubActivityAggregate.SubActivityId is null)
+      throw new ForbiddenError("SubActivityId not provided");
     
-    if (request.Session.Id == activityGroup.UserId)
-      return await next();
+    var subActivity = await _subActivityRepository.FindById((Guid)request.ActivitySubActivityAggregate.SubActivityId);
+
+    if (subActivity is null)
+      throw new NotFoundError("SubActivity not found");
     
-    throw new ForbiddenError();
+    if (subActivity.ActivityId != activity.Id)
+      throw new ForbiddenError("SubActivity doesn't belong to this activity");
+    
+    return await next();
   }
 }

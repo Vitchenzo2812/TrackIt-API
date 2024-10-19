@@ -1,17 +1,11 @@
-﻿namespace TrackIt.Commands.ActivityCommands.UpdateActivity;
+﻿using TrackIt.Entities;
 
-public record UpdateActivityAggregate (
-  Guid Id,
-  
-  Guid EntityId
-);
+namespace TrackIt.Commands.ActivityCommands.UpdateActivity;
 
 public record UpdateActivityPayload (
   string Title,
-  
   string? Description,
-  
-  bool Checked,
-  
-  int Order
+  ActivityPriority Priority,
+  int Order,
+  bool IsChecked
 );

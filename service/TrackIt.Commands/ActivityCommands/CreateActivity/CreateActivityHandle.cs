@@ -8,9 +8,8 @@ namespace TrackIt.Commands.ActivityCommands.CreateActivity;
 public class CreateActivityHandle : IRequestHandler<CreateActivityCommand>
 {
   private readonly IActivityRepository _activityRepository;
-  
   private readonly IUnitOfWork _unitOfWork;
-  
+
   public CreateActivityHandle (
     IActivityRepository activityRepository,
     IUnitOfWork unitOfWork
@@ -22,15 +21,13 @@ public class CreateActivityHandle : IRequestHandler<CreateActivityCommand>
   
   public async Task Handle (CreateActivityCommand request, CancellationToken cancellationToken)
   {
-    var activities = await _activityRepository.GetActivitiesByGroup(request.Aggregate);
-    
     _activityRepository.Save(
-      Activity.Create(
-        activityGroupId: request.Aggregate,
-        title: request.Payload.Title,
-        order: (activities.Count + 1),
-        description: request.Payload.Description
-      )
+      Activity.Create()
+        .AssignToGroup(request.ActivitySubActivityAggregate)
+        .WithTitle(request.Payload.Title)
+        .WithDescription(request.Payload.Description)
+        .WithPriority(request.Payload.Priority)
+        .WithOrder(request.Payload.Order)
     );
     
     await _unitOfWork.SaveChangesAsync();

@@ -1,7 +1,10 @@
-﻿namespace TrackIt.Commands.ActivityCommands.CreateActivity;
+﻿using TrackIt.Entities;
+
+namespace TrackIt.Commands.ActivityCommands.CreateActivity;
 
 public record CreateActivityPayload (
   string Title,
-  
-  string Description
+  string? Description,
+  ActivityPriority Priority,
+  int Order
 );

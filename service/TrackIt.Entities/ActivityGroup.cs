@@ -4,43 +4,36 @@ namespace TrackIt.Entities;
 
 public class ActivityGroup : Entity
 {
-  public Guid UserId { get; set; }
-
-  public string Icon { get; set; } = string.Empty;
-  
-  public string Title { get; set; } = string.Empty;
-
-  public int Order { get; set; }
-  
+  public required Guid UserId { get; set; }
+  public required string Title { get; set; }
+  public required int Order { get; set; }
   public List<Activity> Activities { get; set; } = [];
 
-  public static ActivityGroup Create (
-    Guid userId,
-    string title,
-    string icon,
-    int order
-  )
+  public static ActivityGroup Create ()
   {
     return new ActivityGroup
     {
-      UserId = userId,
-      
-      Title = title,
-      
-      Icon = icon,
-      
-      Order = order
+      UserId = default,
+      Title = string.Empty,
+      Order = 0
     };
   }
 
-  public void Update (
-    string title,
-    string icon,
-    int order
-  )
+  public ActivityGroup WithTitle (string title)
   {
     Title = title;
-    Icon = icon;
+    return this;
+  }
+  
+  public ActivityGroup WithOrder (int order)
+  {
     Order = order;
+    return this;
+  }
+  
+  public ActivityGroup AssignUser (Guid userId)
+  {
+    UserId = userId;
+    return this;
   }
 }

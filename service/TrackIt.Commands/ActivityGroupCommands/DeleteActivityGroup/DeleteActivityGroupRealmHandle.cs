@@ -8,10 +8,15 @@ namespace TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 public class DeleteActivityGroupRealmHandle : IPipelineBehavior<DeleteActivityGroupCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
-  
-  public DeleteActivityGroupRealmHandle (IUserRepository userRepository)
+  private readonly IActivityGroupRepository _activityGroupRepository;
+
+  public DeleteActivityGroupRealmHandle (
+    IUserRepository userRepository,
+    IActivityGroupRepository activityGroupRepository
+  )
   {
     _userRepository = userRepository;
+    _activityGroupRepository = activityGroupRepository;
   }
   
   public async Task<Unit> Handle (DeleteActivityGroupCommand request, RequestHandlerDelegate<Unit> next, CancellationToken cancellationToken)
@@ -26,6 +31,14 @@ public class DeleteActivityGroupRealmHandle : IPipelineBehavior<DeleteActivityGr
 
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
+
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate);
+
+    if (group is null)
+      throw new NotFoundError("Activity Group not found");
+
+    if (group.UserId != user.Id)
+      throw new ForbiddenError();
     
     return await next();
   }

@@ -2,5 +2,5 @@
 
 namespace TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 
-public class UpdateSubActivityCommand (UpdateSubActivityAggregate aggregate, UpdateSubActivityPayload payload, Session? session = null)
-  : Command<UpdateSubActivityAggregate, UpdateSubActivityPayload>(aggregate, payload, session);
+public class UpdateSubActivityCommand(SubActivityAggregates aggregates, UpdateSubActivityPayload payload, Session? session = null)
+  : Command<SubActivityAggregates, UpdateSubActivityPayload>(aggregates, payload, session);

@@ -5,10 +5,9 @@ using MediatR;
 
 namespace TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
 
-public class DeleteActivityGroupHandle : IRequestHandler<DeleteActivityGroupCommand>
+public class DeleteActivityGroupHandle: IRequestHandler<DeleteActivityGroupCommand>
 {
   private readonly IActivityGroupRepository _activityGroupRepository;
-  
   private readonly IUnitOfWork _unitOfWork;
 
   public DeleteActivityGroupHandle (
@@ -22,13 +21,12 @@ public class DeleteActivityGroupHandle : IRequestHandler<DeleteActivityGroupComm
   
   public async Task Handle (DeleteActivityGroupCommand request, CancellationToken cancellationToken)
   {
-    var group = await _activityGroupRepository.FindById(request.Aggregate);
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate);
 
     if (group is null)
-      throw new NotFoundError("Activity group not found");
+      throw new NotFoundError("Activity Group not found");
     
     _activityGroupRepository.Delete(group);
-    
     await _unitOfWork.SaveChangesAsync();
   }
 }

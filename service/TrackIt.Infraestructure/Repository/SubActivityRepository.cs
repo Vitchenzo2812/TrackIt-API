@@ -9,25 +9,22 @@ public class SubActivityRepository : ISubActivityRepository
 {
   private readonly TrackItDbContext _db;
 
-  public SubActivityRepository (TrackItDbContext db)
-  {
-    _db = db;
-  }
+  public SubActivityRepository (TrackItDbContext db) => _db = db; 
   
   public async Task<SubActivity?> FindById (Guid aggregateId)
   {
-    return await _db.SubActivity
+    return await _db.SubActivities
       .AsTracking()
-      .FirstOrDefaultAsync(s => s.Id == aggregateId) ;
+      .FirstOrDefaultAsync(x => x.Id == aggregateId);
   }
 
   public void Save (SubActivity aggregate)
   {
-    _db.SubActivity.Add(aggregate);
+    _db.SubActivities.Add(aggregate);
   }
 
   public void Delete (SubActivity aggregate)
   {
-    _db.SubActivity.Remove(aggregate);
+    _db.SubActivities.Remove(aggregate);
   }
 }

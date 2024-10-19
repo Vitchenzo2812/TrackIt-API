@@ -1,15 +1,17 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
+﻿using MediatR;
 using TrackIt.Commands.Errors;
 using TrackIt.Entities.Errors;
-using MediatR;
+using TrackIt.Infraestructure.Repository.Contracts;
 
 namespace TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 
 public class CreateActivityGroupRealmHandle : IPipelineBehavior<CreateActivityGroupCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
-  
-  public CreateActivityGroupRealmHandle (IUserRepository userRepository)
+
+  public CreateActivityGroupRealmHandle (
+    IUserRepository userRepository
+  )
   {
     _userRepository = userRepository;
   }

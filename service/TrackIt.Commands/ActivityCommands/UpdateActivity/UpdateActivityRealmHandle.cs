@@ -8,9 +8,7 @@ namespace TrackIt.Commands.ActivityCommands.UpdateActivity;
 public class UpdateActivityRealmHandle : IPipelineBehavior<UpdateActivityCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
-  
   private readonly IActivityRepository _activityRepository;
-  
   private readonly IActivityGroupRepository _activityGroupRepository;
 
   public UpdateActivityRealmHandle (
@@ -30,18 +28,28 @@ public class UpdateActivityRealmHandle : IPipelineBehavior<UpdateActivityCommand
       throw new ForbiddenError();
 
     var user = await _userRepository.FindById(request.Session.Id);
-    
+
     if (user is null)
       throw new NotFoundError("User not found");
 
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
 
-    if (await _activityGroupRepository.FindById(request.Aggregate.Id) is null)
-      throw new NotFoundError("Activity group not found");
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate.GroupId);
 
-    if (await _activityRepository.FindById(request.Aggregate.EntityId) is null)
+    if (group is null)
+      throw new NotFoundError("Activity Group not found");
+
+    if (group.UserId != user.Id)
+      throw new ForbiddenError("Activity group doesn't belong to this user");
+
+    var activity = await _activityRepository.FindById(request.ActivitySubActivityAggregate.ActivityId);
+
+    if (activity is null)
       throw new NotFoundError("Activity not found");
+    
+    if (activity.ActivityGroupId != group.Id)
+      throw new ForbiddenError("Activity doesn't belong to this activity group");
     
     return await next();
   }

@@ -8,7 +8,6 @@ namespace TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 public class DeleteSubActivityHandle : IRequestHandler<DeleteSubActivityCommand>
 {
   private readonly ISubActivityRepository _subActivityRepository;
-  
   private readonly IUnitOfWork _unitOfWork;
 
   public DeleteSubActivityHandle (
@@ -22,13 +21,15 @@ public class DeleteSubActivityHandle : IRequestHandler<DeleteSubActivityCommand>
   
   public async Task Handle (DeleteSubActivityCommand request, CancellationToken cancellationToken)
   {
-    var subActivity = await _subActivityRepository.FindById(request.Aggregate.SubActivityId);
-
+    if (request.ActivitySubActivityAggregate.SubActivityId is null)
+      throw new ForbiddenError("SubActivityId not provided");
+    
+    var subActivity = await _subActivityRepository.FindById((Guid)request.ActivitySubActivityAggregate.SubActivityId);
+    
     if (subActivity is null)
       throw new NotFoundError("SubActivity not found");
-    
+
     _subActivityRepository.Delete(subActivity);
-    
     await _unitOfWork.SaveChangesAsync();
   }
 }

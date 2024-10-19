@@ -18,10 +18,7 @@ public class Auth : BaseController
 {
   private readonly IMediator _mediator;
   
-  public Auth (IMediator mediator)
-  {
-    _mediator = mediator;
-  }
+  public Auth (IMediator mediator) => _mediator = mediator;
 
   [HttpPost("sign-in")]
   public async Task<ActionResult<Session>> Handle ([FromBody] SignInPayload payload)

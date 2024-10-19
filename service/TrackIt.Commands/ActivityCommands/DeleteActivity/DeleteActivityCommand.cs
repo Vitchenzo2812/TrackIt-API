@@ -2,5 +2,5 @@
 
 namespace TrackIt.Commands.ActivityCommands.DeleteActivity;
 
-public class DeleteActivityCommand (DeleteActivityAggreagate aggregate, Session? session = null)
-  : Command<DeleteActivityAggreagate, object>(aggregate, null, session);
+public class DeleteActivityCommand(ActivityAggregates activityAggregates, Session? session = null)
+  : Command<ActivityAggregates, object>(activityAggregates, null, session);

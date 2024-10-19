@@ -1,8 +1,8 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using TrackIt.Entities.Core;
-using MassTransit;
+using System.Reflection;
 using Newtonsoft.Json;
+using MassTransit;
 
 namespace TrackIt.Infraestructure.Database.Interceptor;
 
@@ -10,10 +10,7 @@ public class PublishEvents : SaveChangesInterceptor
 {
   private readonly IBus _bus;
 
-  public PublishEvents (IBus bus)
-  {
-    _bus = bus;
-  }
+  public PublishEvents (IBus bus) => _bus = bus;
     
   public override async ValueTask<int> SavedChangesAsync (
     SaveChangesCompletedEventData eventData, 

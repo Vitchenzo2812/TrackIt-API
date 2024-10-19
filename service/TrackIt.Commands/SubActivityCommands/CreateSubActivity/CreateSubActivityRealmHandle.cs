@@ -8,9 +8,7 @@ namespace TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 public class CreateSubActivityRealmHandle : IPipelineBehavior<CreateSubActivityCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
-
   private readonly IActivityRepository _activityRepository;
-
   private readonly IActivityGroupRepository _activityGroupRepository;
 
   public CreateSubActivityRealmHandle (
@@ -36,18 +34,23 @@ public class CreateSubActivityRealmHandle : IPipelineBehavior<CreateSubActivityC
 
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
-      
-    var activityGroup = await _activityGroupRepository.FindById(request.Aggregate.ActivityGroupId);
 
-    if (activityGroup is null)
-      throw new NotFoundError("Activity group not found");
-    
-    if (await _activityRepository.FindById(request.Aggregate.ActivityId) is null)
+    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate.GroupId);
+
+    if (group is null)
+      throw new NotFoundError("Activity Group not found");
+
+    if (group.UserId != user.Id)
+      throw new ForbiddenError("Activity group doesn't belong to this user");
+
+    var activity = await _activityRepository.FindById(request.ActivitySubActivityAggregate.ActivityId);
+
+    if (activity is null)
       throw new NotFoundError("Activity not found");
     
-    if (request.Session.Id == activityGroup.UserId)
-      return await next();
+    if (activity.ActivityGroupId != group.Id)
+      throw new ForbiddenError("Activity doesn't belong to this activity group");
     
-    throw new ForbiddenError();
+    return await next();
   }
 }

@@ -1,4 +1,4 @@
-﻿using TrackIt.Tests.Mocks.Entities;
+﻿using TrackIt.Entities;
 
 namespace TrackIt.Tests.Unit;
 
@@ -7,33 +7,36 @@ public class SubActivityTests
   [Fact]
   public void ShouldCreateAnEmpty ()
   {
-    var subActivity = new SubActivityMock();
+    var subActivity = SubActivity.Create();
     
     Assert.False(subActivity.Checked);
     Assert.Null(subActivity.Description);
+    Assert.Null(subActivity.CompletedAt);
     Assert.Equal(0, subActivity.Order);
     Assert.Equal(string.Empty, subActivity.Title);
-    Assert.Equal(Guid.Empty, subActivity.ActivityId);
+    Assert.Equal(default, subActivity.ActivityId);
+    Assert.Equal(ActivityPriority.LOW, subActivity.Priority);
   }
-  
+
   [Fact]
   public void ShouldCreateWithSomeValues ()
   {
     var activityId = Guid.NewGuid();
     
-    var subActivity = new SubActivityMock()
-      .ChangeTitle("Sub Tarefa")
-      .ChangeDescription("Sub Tarefa de teste")
-      .WithOrder(1)
+    var subActivity = SubActivity.Create()
       .AssignToActivity(activityId)
-      .WithChecked()
-      .ChangeCreatedAt(DateTime.Parse("2024-08-07T00:00:00"));
+      .WithTitle("SUB_ACTIVITY_TITLE")
+      .WithDescription("SUB_ACTIVITY_DESCRIPTION")
+      .WithPriority(ActivityPriority.HIGH)
+      .WithOrder(1)
+      .ShouldCheck(true);
     
     Assert.True(subActivity.Checked);
+    Assert.NotNull(subActivity.CompletedAt);
     Assert.Equal(1, subActivity.Order);
-    Assert.Equal("Sub Tarefa", subActivity.Title);
-    Assert.Equal("Sub Tarefa de teste", subActivity.Description);
-    Assert.Equal(DateTime.Parse("2024-08-07T00:00:00"), subActivity.CreatedAt);
     Assert.Equal(activityId, subActivity.ActivityId);
+    Assert.Equal("SUB_ACTIVITY_TITLE", subActivity.Title);
+    Assert.Equal("SUB_ACTIVITY_DESCRIPTION", subActivity.Description);
+    Assert.Equal(ActivityPriority.HIGH, subActivity.Priority);
   }
 }

@@ -2,8 +2,5 @@
 
 public record UpdateActivityGroupPayload (
   string Title,
-  
-  string Icon,
-  
   int Order
 );

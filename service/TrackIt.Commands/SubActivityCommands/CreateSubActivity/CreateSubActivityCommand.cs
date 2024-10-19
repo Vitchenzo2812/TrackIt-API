@@ -2,5 +2,5 @@
 
 namespace TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 
-public class CreateSubActivityCommand (CreateSubActivityAggregate aggregate, CreateSubActivityPayload payload, Session? session = null)
-  : Command<CreateSubActivityAggregate, CreateSubActivityPayload>(aggregate, payload, session);
+public class CreateSubActivityCommand(SubActivityAggregates subActivityAggregates, CreateSubActivityPayload payload, Session? session = null)
+  : Command<SubActivityAggregates, CreateSubActivityPayload>(subActivityAggregates, payload, session);

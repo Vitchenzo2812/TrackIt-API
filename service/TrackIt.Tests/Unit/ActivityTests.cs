@@ -1,4 +1,4 @@
-﻿using TrackIt.Tests.Mocks.Entities;
+﻿using TrackIt.Entities;
 
 namespace TrackIt.Tests.Unit;
 
@@ -7,51 +7,36 @@ public class ActivityTests
   [Fact]
   public void ShouldCreateAnEmpty ()
   {
-    var activity = new ActivityMock();
+    var activity = Activity.Create();
     
     Assert.False(activity.Checked);
     Assert.Null(activity.Description);
-    Assert.Empty(activity.SubActivities);
+    Assert.Null(activity.CompletedAt);
     Assert.Equal(0, activity.Order);
     Assert.Equal(string.Empty, activity.Title);
-    Assert.Equal(Guid.Empty, activity.ActivityGroupId);
+    Assert.Equal(default, activity.ActivityGroupId);
+    Assert.Equal(ActivityPriority.LOW, activity.Priority);
   }
-  
+
   [Fact]
   public void ShouldCreateWithSomeValues ()
   {
     var activityGroupId = Guid.NewGuid();
     
-    var activity = new ActivityMock()
-      .ChangeTitle("Tarefa")
-      .ChangeDescription("Tarefa de teste")
-      .WithOrder(1)
+    var activity = Activity.Create()
       .AssignToGroup(activityGroupId)
-      .ChangeCreatedAt(DateTime.Parse("2024-08-07T00:00:00"))
-      .WithChecked();
-
-    var subActivity = new SubActivityMock()
-      .ChangeTitle("Sub Tarefa")
-      .ChangeDescription("Sub Tarefa de teste")
-      .AssignToActivity(activity.Id)
-      .ChangeCreatedAt(DateTime.Parse("2024-08-08T00:00:00"))
-      .WithOrder(0);
-
-    activity.InsertSubActivity(subActivity);
+      .WithTitle("ACTIVITY_TITLE")
+      .WithDescription("ACTIVITY_DESCRIPTION")
+      .WithPriority(ActivityPriority.MEDIUM)
+      .WithOrder(1)
+      .ShouldCheck(true);
     
     Assert.True(activity.Checked);
+    Assert.NotNull(activity.CompletedAt);
     Assert.Equal(1, activity.Order);
-    Assert.Equal("Tarefa", activity.Title);
-    Assert.Equal("Tarefa de teste", activity.Description);
-    Assert.Equal(DateTime.Parse("2024-08-07T00:00:00"), activity.CreatedAt);
     Assert.Equal(activityGroupId, activity.ActivityGroupId);
-    Assert.Single(activity.SubActivities);
-    
-    Assert.False(activity.SubActivities[0].Checked);
-    Assert.Equal(0, activity.SubActivities[0].Order);
-    Assert.Equal(activity.Id, activity.SubActivities[0].ActivityId);
-    Assert.Equal("Sub Tarefa", activity.SubActivities[0].Title);
-    Assert.Equal("Sub Tarefa de teste", activity.SubActivities[0].Description);
-    Assert.Equal(DateTime.Parse("2024-08-08T00:00:00"), activity.SubActivities[0].CreatedAt);
+    Assert.Equal("ACTIVITY_TITLE", activity.Title);
+    Assert.Equal("ACTIVITY_DESCRIPTION", activity.Description);
+    Assert.Equal(ActivityPriority.MEDIUM, activity.Priority);
   }
 }
