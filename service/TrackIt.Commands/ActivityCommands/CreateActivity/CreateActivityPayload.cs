@@ -1,4 +1,5 @@
 ﻿using TrackIt.Entities;
+using TrackIt.Entities.Activities;
 
 namespace TrackIt.Commands.ActivityCommands.CreateActivity;
 

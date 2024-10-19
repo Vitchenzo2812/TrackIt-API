@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrackIt.Infraestructure.Database;
 
@@ -11,9 +12,11 @@ using TrackIt.Infraestructure.Database;
 namespace TrackIt.Infraestructure.Database.Migrations
 {
     [DbContext(typeof(TrackItDbContext))]
-    partial class TrackItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241019223006_Expense_Entities")]
+    partial class Expense_Entities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,4 +1,4 @@
-﻿namespace TrackIt.Entities;
+﻿namespace TrackIt.Entities.Activities;
 
 public class Activity : ActivityBase<Activity>
 {

@@ -1,6 +1,6 @@
 ﻿using TrackIt.Entities.Core;
 
-namespace TrackIt.Entities;
+namespace TrackIt.Entities.Activities;
 
 public class ActivityGroup : Entity
 {

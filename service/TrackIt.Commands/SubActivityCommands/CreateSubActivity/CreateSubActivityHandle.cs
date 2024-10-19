@@ -2,6 +2,7 @@
 using TrackIt.Infraestructure.Database.Contracts;
 using TrackIt.Entities;
 using MediatR;
+using TrackIt.Entities.Activities;
 
 namespace TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 

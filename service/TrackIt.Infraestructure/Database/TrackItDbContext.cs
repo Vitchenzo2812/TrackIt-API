@@ -3,6 +3,8 @@ using TrackIt.Infraestructure.Security.Models;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Entities.Core;
 using TrackIt.Entities;
+using TrackIt.Entities.Activities;
+using TrackIt.Entities.Expenses;
 
 namespace TrackIt.Infraestructure.Database;
 
@@ -17,6 +19,12 @@ public class TrackItDbContext : DbContext
   public DbSet<Activity> Activities { get; set; }
   public DbSet<SubActivity> SubActivities { get; set; }
   public DbSet<ActivityGroup> ActivityGroups { get; set; }
+  public DbSet<Expense> Expenses { get; set; }
+  public DbSet<MonthlyExpenses> MonthlyExpenses { get; set; }
+  public DbSet<PaymentFormat> PaymentFormats { get; set; }
+  public DbSet<PaymentFormatConfig> PaymentFormatConfigs { get; set; }
+  public DbSet<Category> Categories { get; set; }
+  public DbSet<CategoryConfig> CategoryConfigs { get; set; }
   
   public TrackItDbContext (DbContextOptions<TrackItDbContext> options) : base(options)
   {
@@ -41,25 +49,44 @@ public class TrackItDbContext : DbContext
 
     modelBuilder
       .Entity<User>()
-      .HasOne(u => u.Password)
-      .WithOne(p => p.User)
-      .HasForeignKey<Password>(p => p.UserId)
+      .HasOne(x => x.Password)
+      .WithOne(x => x.User)
+      .HasForeignKey<Password>(x => x.UserId)
       .OnDelete(DeleteBehavior.Cascade)
       .IsRequired();
 
     modelBuilder
       .Entity<ActivityGroup>()
-      .HasMany(aG => aG.Activities)
+      .HasMany(x => x.Activities)
       .WithOne()
-      .HasForeignKey(a => a.ActivityGroupId)
+      .HasForeignKey(x => x.ActivityGroupId)
       .OnDelete(DeleteBehavior.Cascade);
 
     modelBuilder
       .Entity<Activity>()
-      .HasMany(a => a.SubActivities)
+      .HasMany(x => x.SubActivities)
       .WithOne()
-      .HasForeignKey(s => s.ActivityId)
+      .HasForeignKey(x => x.ActivityId)
       .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder
+      .Entity<MonthlyExpenses>()
+      .HasMany<Expense>()
+      .WithOne()
+      .HasForeignKey(x => x.MonthlyExpensesId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder
+      .Entity<Expense>()
+      .HasOne<PaymentFormat>()
+      .WithMany()
+      .HasForeignKey(x => x.PaymentFormatId);
+    
+    modelBuilder
+      .Entity<Expense>()
+      .HasOne<Category>()
+      .WithMany()
+      .HasForeignKey(x => x.CategoryId);
     
     new UserMapper().Configure(modelBuilder.Entity<User>());
   }

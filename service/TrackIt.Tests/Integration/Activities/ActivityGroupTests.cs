@@ -5,8 +5,8 @@ using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
 using TrackIt.Tests.Mocks.Entities;
+using TrackIt.Entities.Activities;
 using TrackIt.Tests.Config;
-using TrackIt.Entities;
 using System.Net;
 
 namespace TrackIt.Tests.Integration.Activities;

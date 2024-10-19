@@ -2,6 +2,7 @@
 using TrackIt.Infraestructure.Database;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Entities;
+using TrackIt.Entities.Activities;
 
 namespace TrackIt.Infraestructure.Repository;
 

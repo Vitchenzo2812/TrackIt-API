@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace TrackIt.Entities;
+namespace TrackIt.Entities.Activities;
 
 public enum ActivityPriority
 {

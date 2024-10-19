@@ -4,8 +4,8 @@ using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
+using TrackIt.Entities.Activities;
 using TrackIt.Tests.Config;
-using TrackIt.Entities;
 using System.Net;
 
 namespace TrackIt.Tests.Integration.Activities;
@@ -17,6 +17,7 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
   private ActivityGroup activityGroup3 { get; set; }
   private Activity activity1 { get; set; }
   private Activity activity2 { get; set; }
+  private SubActivity subActivity1 { get; set; }
   
   [Fact]
   public async Task ShouldCreateActivity ()
@@ -91,9 +92,11 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
 
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-    var deleted = await _db.Activities.FirstOrDefaultAsync(x => x.Id == activity2.Id);
+    var deletedActivity = await _db.Activities.FirstOrDefaultAsync(x => x.Id == activity2.Id);
+    var subActivities = await _db.SubActivities.ToListAsync();
     
-    Assert.Null(deleted);
+    Assert.Null(deletedActivity);
+    Assert.Empty(subActivities);
   }
     
   [Fact]
@@ -222,7 +225,14 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
         .WithOrder(1)
         .AssignToGroup(activityGroup2.Id);
 
+      subActivity1 = SubActivity.Create()
+        .WithTitle("SUB_ACTIVITY_1")
+        .WithPriority(ActivityPriority.LOW)
+        .WithOrder(1)
+        .AssignToActivity(activity2.Id);
+      
       _db.Activities.AddRange([activity1, activity2]);
+      _db.SubActivities.Add(subActivity1);
       await _db.SaveChangesAsync();
     }
   
