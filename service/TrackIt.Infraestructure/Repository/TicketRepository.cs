@@ -1,6 +1,6 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Database;
+﻿using TrackIt.Infraestructure.Database;
 using Microsoft.EntityFrameworkCore;
+using TrackIt.Entities.Repository;
 using TrackIt.Entities.Core;
 
 namespace TrackIt.Infraestructure.Repository;

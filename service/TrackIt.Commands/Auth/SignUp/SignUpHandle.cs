@@ -1,8 +1,8 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Database.Contracts;
+﻿using TrackIt.Infraestructure.Database.Contracts;
 using TrackIt.Entities.Core;
 using TrackIt.Entities;
 using MediatR;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Commands.Auth.SignUp;
 

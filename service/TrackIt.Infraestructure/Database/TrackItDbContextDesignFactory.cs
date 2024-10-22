@@ -11,11 +11,11 @@ public class TrackItDbContextDesignFactory : IDesignTimeDbContextFactory<TrackIt
 
     optionsBuilder
       .UseMySql(
-        "Server=localhost;Port=3306;Database=trackitservice;User=root;Password=password;SSL Mode=None;",
-        new MySqlServerVersion(new Version()),
-        opt => opt.EnableRetryOnFailure()
+        Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING")!,
+        new MySqlServerVersion(new Version())
       )
-      .EnableSensitiveDataLogging();
+      .EnableSensitiveDataLogging()
+      .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     
     return new TrackItDbContext(optionsBuilder.Options);
   }

@@ -1,8 +1,8 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Database.Contracts;
+﻿using TrackIt.Infraestructure.Database.Contracts;
 using TrackIt.Entities;
 using MediatR;
 using TrackIt.Entities.Activities;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Commands.ActivityCommands.CreateActivity;
 

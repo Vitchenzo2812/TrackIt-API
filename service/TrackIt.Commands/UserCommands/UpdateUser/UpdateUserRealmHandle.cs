@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using TrackIt.Entities;
 using TrackIt.Entities.Errors;
-using TrackIt.Infraestructure.Repository.Contracts;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Commands.UserCommands.UpdateUser;
 

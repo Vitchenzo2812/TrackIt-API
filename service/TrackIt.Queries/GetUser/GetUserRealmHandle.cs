@@ -1,8 +1,8 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Entities.Errors;
+﻿using TrackIt.Entities.Errors;
 using TrackIt.Queries.Views;
 using TrackIt.Entities;
 using MediatR;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Queries.GetUser;
 

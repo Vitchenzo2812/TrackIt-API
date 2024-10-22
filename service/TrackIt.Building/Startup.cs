@@ -6,7 +6,6 @@ using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Infraestructure.Database.Interceptor;
-using TrackIt.Infraestructure.Repository.Contracts;
 using TrackIt.Commands.UserCommands.UpdatePassword;
 using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
@@ -29,9 +28,12 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
+using TrackIt.Commands.ExpenseCommands.CreateExpense;
 using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
+using TrackIt.Entities.Repository;
+using TrackIt.Entities.Services;
 
 namespace TrackIt.Building;
 
@@ -45,16 +47,19 @@ public abstract class TrackItStartup : IStartup
     ConfigureMassTransit(services);
     
     services.TryAddSingleton<PublishEvents>();
+    services.AddTransient<MonthlyExpensesService>();
     services.AddTransient<IJwtService, JwtService>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
     services.AddTransient<IMailerService, MailerService>();
     services.AddTransient<ISessionService, SessionService>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ITicketRepository, TicketRepository>();
+    services.AddTransient<IExpenseRepository, ExpenseRepository>();
     services.AddTransient<IActivityRepository, ActivityRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
     services.AddTransient<ISubActivityRepository, SubActivityRepository>();
     services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
+    services.AddTransient<IMonthlyExpensesRepository, MonthlyExpensesRepository>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetUserQuery)));
@@ -77,6 +82,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<CreateSubActivityCommand, Unit>, CreateSubActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<UpdateSubActivityCommand, Unit>, UpdateSubActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteSubActivityCommand, Unit>, DeleteSubActivityRealmHandle>();
+    
+    services.AddTransient<IPipelineBehavior<CreateExpenseCommand, Unit>, CreateExpenseRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
@@ -104,16 +111,13 @@ public abstract class TrackItStartup : IStartup
 
   public void ConfigureDbContext (IServiceCollection services)
   {
-    TrackItDbContext.IsMigration = false;
-    
     services.AddDbContext<TrackItDbContext>((sp, options) =>
     {
       options
         .AddInterceptors(sp.GetRequiredService<PublishEvents>())
         .UseMySql(
           Environment.GetEnvironmentVariable("MYSQL_TRACKIT_CONNECTION_STRING"),
-          new MySqlServerVersion(new Version()),
-          opt => opt.EnableRetryOnFailure()
+          new MySqlServerVersion(new Version())
         )
         .EnableSensitiveDataLogging()
         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

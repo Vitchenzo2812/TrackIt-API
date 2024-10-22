@@ -1,7 +1,7 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Commands.Errors;
+﻿using TrackIt.Commands.Errors;
 using TrackIt.Entities.Errors;
 using MediatR;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Commands.ActivityCommands.UpdateActivity;
 

@@ -1,6 +1,6 @@
 ﻿using TrackIt.Entities.Core;
 
-namespace TrackIt.Infraestructure.Repository.Contracts;
+namespace TrackIt.Entities.Repository;
 
 public interface ITicketRepository : IRepository<Ticket>
 {

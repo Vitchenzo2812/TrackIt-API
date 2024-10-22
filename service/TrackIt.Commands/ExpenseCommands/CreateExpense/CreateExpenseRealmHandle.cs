@@ -1,22 +1,22 @@
-﻿using MediatR;
+﻿using TrackIt.Entities.Repository;
 using TrackIt.Commands.Errors;
 using TrackIt.Entities.Errors;
-using TrackIt.Entities.Repository;
+using MediatR;
 
-namespace TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
+namespace TrackIt.Commands.ExpenseCommands.CreateExpense;
 
-public class CreateActivityGroupRealmHandle : IPipelineBehavior<CreateActivityGroupCommand, Unit>
+public class CreateExpenseRealmHandle : IPipelineBehavior<CreateExpenseCommand, Unit>
 {
   private readonly IUserRepository _userRepository;
 
-  public CreateActivityGroupRealmHandle (
+  public CreateExpenseRealmHandle (
     IUserRepository userRepository
   )
   {
     _userRepository = userRepository;
   }
   
-  public async Task<Unit> Handle (CreateActivityGroupCommand request, RequestHandlerDelegate<Unit> next, CancellationToken cancellationToken)
+  public async Task<Unit> Handle (CreateExpenseCommand request, RequestHandlerDelegate<Unit> next, CancellationToken cancellationToken)
   {
     if (request.Session is null)
       throw new ForbiddenError();

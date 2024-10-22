@@ -1,6 +1,4 @@
-﻿using TrackIt.Entities;
-
-namespace TrackIt.Infraestructure.Repository.Contracts;
+﻿namespace TrackIt.Entities.Repository;
 
 public interface IUserRepository : IRepository<User>
 {

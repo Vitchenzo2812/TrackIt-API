@@ -1,7 +1,7 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Database.Contracts;
+﻿using TrackIt.Infraestructure.Database.Contracts;
 using TrackIt.Entities.Errors;
 using MediatR;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 

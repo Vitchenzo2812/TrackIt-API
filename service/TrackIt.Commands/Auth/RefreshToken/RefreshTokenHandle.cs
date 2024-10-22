@@ -1,9 +1,9 @@
-﻿using TrackIt.Infraestructure.Repository.Contracts;
-using TrackIt.Infraestructure.Security.Contracts;
+﻿using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Infraestructure.Security.Models;
 using TrackIt.Commands.Errors;
 using TrackIt.Entities.Errors;
 using MediatR;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Commands.Auth.RefreshToken;
 

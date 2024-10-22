@@ -2,8 +2,8 @@
 using TrackIt.Commands.Errors;
 using TrackIt.Entities;
 using TrackIt.Entities.Errors;
+using TrackIt.Entities.Repository;
 using TrackIt.Infraestructure.Database.Contracts;
-using TrackIt.Infraestructure.Repository.Contracts;
 
 namespace TrackIt.Commands.UserCommands.UpdatePassword;
 

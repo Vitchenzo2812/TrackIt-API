@@ -1,10 +1,10 @@
 ﻿using Session = TrackIt.Infraestructure.Security.Models.Session;
-using TrackIt.Infraestructure.Repository.Contracts;
 using TrackIt.Infraestructure.Database.Contracts;
 using TrackIt.Infraestructure.Security.Contracts;
 using TrackIt.Entities.Errors;
 using TrackIt.Entities.Core;
 using MediatR;
+using TrackIt.Entities.Repository;
 
 namespace TrackIt.Commands.Auth.VerifyForgotPassword;
 
