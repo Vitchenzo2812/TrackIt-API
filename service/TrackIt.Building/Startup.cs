@@ -28,6 +28,7 @@ using TrackIt.Queries.GetUser;
 using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
+using TrackIt.Commands.CategoryCommands.CreateCategory;
 using TrackIt.Commands.ExpenseCommands.CreateExpense;
 using TrackIt.Commands.ExpenseCommands.DeleteExpense;
 using TrackIt.Commands.ExpenseCommands.UpdateExpense;
@@ -65,6 +66,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<ISubActivityRepository, SubActivityRepository>();
     services.AddTransient<IPaymentFormatRepository, PaymentFormatRepository>();
     services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
+    services.AddTransient<ICategoryConfigRepository, CategoryConfigRepository>();
     services.AddTransient<IMonthlyExpensesRepository, MonthlyExpensesRepository>();
     
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(SignUpCommand)));
@@ -95,6 +97,8 @@ public abstract class TrackItStartup : IStartup
     
     services.AddTransient<IPipelineBehavior<UpdateMonthlyExpensesCommand, Unit>, UpdateMonthlyExpensesRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteMonthlyExpensesCommand, Unit>, DeleteMonthlyExpensesRealmHandle>();
+    
+    services.AddTransient<IPipelineBehavior<CreateCategoryCommand, Unit>, CreateCategoryRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
@@ -103,6 +107,7 @@ public abstract class TrackItStartup : IStartup
 
     services.AddMassTransit(x =>
     {
+      x.AddConsumer<CreateCategoryConsumer>();
       x.AddConsumer<SendEmailAboutSignUpConsumer>();
       x.AddConsumer<EmailForgotPasswordConsumer>();
       

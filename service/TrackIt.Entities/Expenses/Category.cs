@@ -1,4 +1,5 @@
 ﻿using TrackIt.Entities.Core;
+using TrackIt.Entities.Events;
 
 namespace TrackIt.Entities.Expenses;
 
@@ -16,6 +17,12 @@ public class Category : Aggregate
       Title = string.Empty,
       Description = string.Empty
     };
+  }
+
+  public Category SendCreateCategoryEvent (string icon, string iconColor, string backgroundIconColor)
+  {
+    Commit(new CreateCategoryEvent(Id, icon, iconColor, backgroundIconColor));
+    return this;
   }
 
   public Category WithTitle (string title)

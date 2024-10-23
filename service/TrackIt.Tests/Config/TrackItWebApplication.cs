@@ -53,6 +53,7 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
       
       services.AddMassTransitTestHarness(x =>
       {
+        x.AddConsumer<CreateCategoryConsumer>();
         x.AddConsumer<SendEmailAboutSignUpConsumer>();
         x.AddConsumer<EmailForgotPasswordConsumer>();
 
