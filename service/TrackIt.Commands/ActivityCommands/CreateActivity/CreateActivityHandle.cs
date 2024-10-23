@@ -24,7 +24,7 @@ public class CreateActivityHandle : IRequestHandler<CreateActivityCommand>
   {
     _activityRepository.Save(
       Activity.Create()
-        .AssignToGroup(request.ActivitySubActivityAggregate)
+        .AssignToGroup(request.Aggregate)
         .WithTitle(request.Payload.Title)
         .WithDescription(request.Payload.Description)
         .WithPriority(request.Payload.Priority)

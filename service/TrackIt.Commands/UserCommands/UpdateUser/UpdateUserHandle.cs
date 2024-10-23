@@ -22,7 +22,7 @@ public class UpdateUserHandle : IRequestHandler<UpdateUserCommand>
   
   public async Task Handle (UpdateUserCommand request, CancellationToken cancellationToken)
   {
-    var user = await _userRepository.FindById(request.ActivitySubActivityAggregate);
+    var user = await _userRepository.FindById(request.Aggregate);
     
     if (user is null)
       throw new NotFoundError("User not found");

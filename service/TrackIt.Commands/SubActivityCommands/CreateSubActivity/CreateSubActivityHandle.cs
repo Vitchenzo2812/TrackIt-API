@@ -24,7 +24,7 @@ public class CreateSubActivityHandle : IRequestHandler<CreateSubActivityCommand>
   {
     _subActivityRepository.Save(
       SubActivity.Create()
-        .AssignToActivity(request.ActivitySubActivityAggregate.ActivityId)
+        .AssignToActivity(request.Aggregate.ActivityId)
         .WithTitle(request.Payload.Title)
         .WithDescription(request.Payload.Description)
         .WithPriority(request.Payload.Priority)

@@ -21,10 +21,10 @@ public class DeleteSubActivityHandle : IRequestHandler<DeleteSubActivityCommand>
   
   public async Task Handle (DeleteSubActivityCommand request, CancellationToken cancellationToken)
   {
-    if (request.ActivitySubActivityAggregate.SubActivityId is null)
+    if (request.Aggregate.SubActivityId is null)
       throw new ForbiddenError("SubActivityId not provided");
     
-    var subActivity = await _subActivityRepository.FindById((Guid)request.ActivitySubActivityAggregate.SubActivityId);
+    var subActivity = await _subActivityRepository.FindById((Guid)request.Aggregate.SubActivityId);
     
     if (subActivity is null)
       throw new NotFoundError("SubActivity not found");

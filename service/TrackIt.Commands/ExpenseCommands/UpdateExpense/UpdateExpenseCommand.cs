@@ -1,6 +1,6 @@
-﻿namespace TrackIt.Commands.ExpenseCommands.UpdateExpense;
+﻿using TrackIt.Entities.Core;
 
-public class UpdateExpenseCommand
-{
-  
-}
+namespace TrackIt.Commands.ExpenseCommands.UpdateExpense;
+
+public class UpdateExpenseCommand(Guid aggregateId, UpdateExpensePayload payload, Session? session = null)
+  : Command<Guid, UpdateExpensePayload>(aggregateId, payload, session);

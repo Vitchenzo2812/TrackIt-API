@@ -1,6 +1,6 @@
-﻿namespace TrackIt.Commands.ExpenseCommands.DeleteExpense;
+﻿using TrackIt.Entities.Core;
 
-public class DeleteExpenseCommand
-{
-  
-}
+namespace TrackIt.Commands.ExpenseCommands.DeleteExpense;
+
+public class DeleteExpenseCommand(Guid aggregateId, Session? session = null)
+  : Command<Guid, object>(aggregateId, null, session);

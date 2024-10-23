@@ -29,6 +29,8 @@ using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
 using TrackIt.Commands.ExpenseCommands.CreateExpense;
+using TrackIt.Commands.ExpenseCommands.DeleteExpense;
+using TrackIt.Commands.ExpenseCommands.UpdateExpense;
 using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
@@ -86,6 +88,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<DeleteSubActivityCommand, Unit>, DeleteSubActivityRealmHandle>();
     
     services.AddTransient<IPipelineBehavior<CreateExpenseCommand, Unit>, CreateExpenseRealmHandle>();
+    services.AddTransient<IPipelineBehavior<UpdateExpenseCommand, Unit>, UpdateExpenseRealmHandle>();
+    services.AddTransient<IPipelineBehavior<DeleteExpenseCommand, Unit>, DeleteExpenseRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)

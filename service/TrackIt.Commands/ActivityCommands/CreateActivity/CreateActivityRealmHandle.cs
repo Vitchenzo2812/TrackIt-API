@@ -32,7 +32,7 @@ public class CreateActivityRealmHandle : IPipelineBehavior<CreateActivityCommand
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
 
-    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate);
+    var group = await _activityGroupRepository.FindById(request.Aggregate);
 
     if (group is null)
       throw new NotFoundError("Activity Group not found");

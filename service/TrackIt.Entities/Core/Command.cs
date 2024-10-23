@@ -17,15 +17,15 @@ public abstract class Command<TPayload> : IRequest
 
 public abstract class Command<TAggregate, TPayload> : IRequest 
 {
-  public TAggregate ActivitySubActivityAggregate { get; set; }
+  public TAggregate Aggregate { get; set; }
   
   public TPayload Payload { get; set; }
   
   public Session? Session { get; set; }
 
-  public Command (TAggregate activitySubActivityAggregate, TPayload payload, Session? session = null)
+  public Command (TAggregate aggregate, TPayload payload, Session? session = null)
   {
-    ActivitySubActivityAggregate = activitySubActivityAggregate;
+    Aggregate = aggregate;
     Payload = payload;
     Session = session;
   }

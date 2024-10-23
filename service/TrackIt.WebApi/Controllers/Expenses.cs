@@ -1,8 +1,10 @@
-﻿using TrackIt.Commands.ExpenseCommands.CreateExpense;
+﻿using TrackIt.Infraestructure.Web.Swagger.Annotations;
+using TrackIt.Commands.ExpenseCommands.CreateExpense;
+using TrackIt.Commands.ExpenseCommands.UpdateExpense;
 using TrackIt.Infraestructure.Web.Controller;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using TrackIt.Infraestructure.Web.Swagger.Annotations;
+using TrackIt.Commands.ExpenseCommands.DeleteExpense;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -22,5 +24,23 @@ public class Expenses : BaseController
     await _mediator.Send(new CreateExpenseCommand(payload, SessionFromHeaders()));
     
     return StatusCode(201);
+  }
+
+  [HttpPut("{id}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid id, [FromBody] UpdateExpensePayload payload)
+  {
+    await _mediator.Send(new UpdateExpenseCommand(id, payload, SessionFromHeaders()));
+    
+    return Ok();
+  }
+
+  [HttpDelete("{id}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid id)
+  {
+    await _mediator.Send(new DeleteExpenseCommand(id, SessionFromHeaders()));
+    
+    return Ok();
   }
 }

@@ -38,7 +38,7 @@ public class UpdateSubActivityRealmHandle : IPipelineBehavior<UpdateSubActivityC
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
 
-    var group = await _activityGroupRepository.FindById(request.ActivitySubActivityAggregate.GroupId);
+    var group = await _activityGroupRepository.FindById(request.Aggregate.GroupId);
 
     if (group is null)
       throw new NotFoundError("Activity Group not found");
@@ -46,7 +46,7 @@ public class UpdateSubActivityRealmHandle : IPipelineBehavior<UpdateSubActivityC
     if (group.UserId != user.Id)
       throw new ForbiddenError("Activity group doesn't belong to this user");
 
-    var activity = await _activityRepository.FindById(request.ActivitySubActivityAggregate.ActivityId);
+    var activity = await _activityRepository.FindById(request.Aggregate.ActivityId);
 
     if (activity is null)
       throw new NotFoundError("Activity not found");
@@ -54,10 +54,10 @@ public class UpdateSubActivityRealmHandle : IPipelineBehavior<UpdateSubActivityC
     if (activity.ActivityGroupId != group.Id)
       throw new ForbiddenError("Activity doesn't belong to this activity group");
 
-    if (request.ActivitySubActivityAggregate.SubActivityId is null)
+    if (request.Aggregate.SubActivityId is null)
       throw new ForbiddenError("SubActivityId not provided");
     
-    var subActivity = await _subActivityRepository.FindById((Guid)request.ActivitySubActivityAggregate.SubActivityId);
+    var subActivity = await _subActivityRepository.FindById((Guid)request.Aggregate.SubActivityId);
 
     if (subActivity is null)
       throw new NotFoundError("SubActivity not found");
