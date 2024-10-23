@@ -30,6 +30,12 @@ public class Category : Aggregate
     Commit(new UpdateCategoryEvent(Id, icon, iconColor, backgroundIconColor));
     return this;
   }
+  
+  public Category SendDeleteCategoryEvent ()
+  {
+    Commit(new DeleteCategoryEvent(Id));
+    return this;
+  }
 
   public Category WithTitle (string title)
   {

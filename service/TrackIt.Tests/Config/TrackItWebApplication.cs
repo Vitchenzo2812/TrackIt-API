@@ -55,6 +55,7 @@ public class TrackItWebApplication : WebApplicationFactory<TrackItProgram>, IAsy
       {
         x.AddConsumer<CreateCategoryConsumer>();
         x.AddConsumer<UpdateCategoryConsumer>();
+        x.AddConsumer<DeleteCategoryConsumer>();
         x.AddConsumer<SendEmailAboutSignUpConsumer>();
         x.AddConsumer<EmailForgotPasswordConsumer>();
 

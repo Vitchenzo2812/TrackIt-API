@@ -70,6 +70,23 @@ public class CategoryTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
     Assert.Equal(payload.Description, updated.Description);
   }
 
+  [Fact]
+  public async Task ShouldDeleteCategory ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateCategories();
+
+    var response = await _httpClient.DeleteAsync($"/category/{category1.Id}");
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var deleted = await _db.Categories.FirstOrDefaultAsync(x => x.Id == category1.Id);
+    
+    Assert.Null(deleted);
+  }
+  
   private async Task CreateCategories ()
   {
     category1 = Category.Create()

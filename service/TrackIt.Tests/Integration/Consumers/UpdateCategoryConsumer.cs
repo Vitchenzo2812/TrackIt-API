@@ -26,13 +26,13 @@ public class UpdateCategoryConsumer (TrackItWebApplication fixture) : TrackItSet
 
     var configs = await _db.CategoryConfigs.ToListAsync();
 
-    var createdConfig = configs.Find(x => x.CategoryId == category.Id);
+    var updatedConfig = configs.Find(x => x.CategoryId == category.Id);
     
-    Assert.NotNull(createdConfig);
-    Assert.Equal(category.Id, createdConfig.CategoryId);
-    Assert.Equal(icon, createdConfig.Icon);
-    Assert.Equal(iconColor, createdConfig.IconColor);
-    Assert.Equal(backgroundIconColor, createdConfig.BackgroundIconColor);
+    Assert.NotNull(updatedConfig);
+    Assert.Equal(category.Id, updatedConfig.CategoryId);
+    Assert.Equal(icon, updatedConfig.Icon);
+    Assert.Equal(iconColor, updatedConfig.IconColor);
+    Assert.Equal(backgroundIconColor, updatedConfig.BackgroundIconColor);
   }
   
   private async Task<Category> CreateCategoryAndConfig ()
