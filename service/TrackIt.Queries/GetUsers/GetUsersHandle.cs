@@ -18,7 +18,9 @@ public class GetUsersHandle : IRequestHandler<GetUsersQuery, PaginationView<List
   
   public async Task<PaginationView<List<UserResourceView>>> Handle (GetUsersQuery request, CancellationToken cancellationToken)
   {
-    var usersQuery = await _db.User.Where(u => u.Hierarchy != Hierarchy.ADMIN).ToListAsync(cancellationToken);
+    var usersQuery = await _db.User
+      .Where(u => u.Hierarchy != Hierarchy.ADMIN)
+      .ToListAsync(cancellationToken);
 
     if (request.Params.Sort is not null && request.Params.Sort.Description() == "RECENTLY")
     {
@@ -36,7 +38,7 @@ public class GetUsersHandle : IRequestHandler<GetUsersQuery, PaginationView<List
       .Select(UserResourceView.Build)
       .ToList();
     
-    var totalPages = (int)Math.Ceiling((double)usersQuery.Count() / request.Params.PerPage);
+    var totalPages = (int)Math.Ceiling((double)usersQuery.Count / request.Params.PerPage);
     
     return PaginationView<List<UserResourceView>>.Build(request.Params.Page, totalPages, users);
   }

@@ -1,18 +1,20 @@
 ﻿using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.DeleteActivityGroup;
+using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
+using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
+using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 using TrackIt.Commands.ActivityCommands.CreateActivity;
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using TrackIt.Commands.ActivityCommands.DeleteActivity;
 using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Infraestructure.Web.Controller;
+using TrackIt.Commands.SubActivityCommands;
 using TrackIt.Commands.ActivityCommands;
+using TrackIt.Queries.GetHomePageInfo;
+using TrackIt.Queries.Views.HomePage;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using TrackIt.Commands.SubActivityCommands;
-using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
-using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
-using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -25,6 +27,13 @@ public class Activities : BaseController
 
   public Activities (IMediator mediator) => _mediator = mediator;
 
+  [HttpGet("home-page")]
+  [SwaggerAuthorize]
+  public async Task<HomePageView> Handle ([FromQuery] GetHomePageInfoParams @params)
+  {
+    return await _mediator.Send(new GetHomePageInfoQuery(@params, SessionFromHeaders()));
+  }
+  
   [HttpPost]
   [SwaggerAuthorize]
   public async Task<IActionResult> Handle ([FromBody] CreateActivityGroupPayload payload)

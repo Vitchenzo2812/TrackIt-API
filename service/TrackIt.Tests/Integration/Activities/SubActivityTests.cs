@@ -171,7 +171,6 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
     Assert.Equal("FORBIDDEN_ERROR", result.Code);
     Assert.Equal(403, result.StatusCode);
   }
-
   
   [Fact]
   public async Task ShouldThrowActivityNotFound ()

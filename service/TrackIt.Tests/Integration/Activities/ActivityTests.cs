@@ -7,6 +7,7 @@ using TrackIt.Tests.Config.Builders;
 using TrackIt.Entities.Activities;
 using TrackIt.Tests.Config;
 using System.Net;
+using TrackIt.Queries.Views.HomePage;
 
 namespace TrackIt.Tests.Integration.Activities;
 
@@ -18,6 +19,40 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
   private Activity activity1 { get; set; }
   private Activity activity2 { get; set; }
   private SubActivity subActivity1 { get; set; }
+
+  [Fact]
+  public async Task ShouldGetHomePageInfo ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+    
+    await CreateActivities(user.Id);
+    
+    var response = await _httpClient.GetAsync($"/group/home-page?activityGroupId={activityGroup2.Id}&completedActivitiesPerPage=2&incompletedActivitiesPerPage=2");
+    var result = await response.ToData<HomePageView>();
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    
+    Assert.Equal(50, result.PercentageCompletedActivities);
+
+    Assert.Equal(1, result.CompletedActivities.Page);
+    Assert.Equal(1, result.CompletedActivities.Pages);
+    
+    foreach (var completedActivity in result.CompletedActivities.Data)
+    {
+      Assert.Equal(activity1.Title, completedActivity.Title);
+      Assert.Equal(activity1.Description,completedActivity.Description);
+    }
+    
+    Assert.Equal(1, result.IncompleteActivities.Page);
+    Assert.Equal(1, result.IncompleteActivities.Pages);
+
+    foreach (var incompletedActivity in result.IncompleteActivities.Data)
+    {
+      Assert.Equal(activity2.Title, incompletedActivity.Title);
+      Assert.Equal(activity2.Description,incompletedActivity.Description);
+    }
+  }
   
   [Fact]
   public async Task ShouldCreateActivity ()
@@ -162,7 +197,6 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
     Assert.Equal("FORBIDDEN_ERROR", result.Code);
     Assert.Equal(403, result.StatusCode);
   }
-
   
   [Fact]
   public async Task ShouldThrowActivityGroupNotFoundError ()
@@ -217,12 +251,14 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
         .WithDescription("ACTIVITY_1_DESCRIPTION")
         .WithPriority(ActivityPriority.MEDIUM)
         .WithOrder(2)
+        .ShouldCheck(true)
         .AssignToGroup(activityGroup2.Id);
       
       activity2 = Activity.Create()
         .WithTitle("ACTIVITY_2")
         .WithPriority(ActivityPriority.HIGH)
         .WithOrder(1)
+        .ShouldCheck(false)
         .AssignToGroup(activityGroup2.Id);
 
       subActivity1 = SubActivity.Create()
