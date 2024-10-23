@@ -7,17 +7,11 @@ namespace TrackIt.Entities;
 public class User : Aggregate
 {
   public string? Name { get; set; }
-  
   public Email? Email { get; set; }
-
   public bool EmailValidated { get; set; }
-  
   public Password? Password { get; set; }
-
   public Hierarchy Hierarchy { get; set; } = Hierarchy.CLIENT;
-  
   public double? Income { get; set; }
-
   public DateTime CreatedAt { get; set; } = DateTimeProvider.Now;
   
   public static User Create (Email email, Password password)

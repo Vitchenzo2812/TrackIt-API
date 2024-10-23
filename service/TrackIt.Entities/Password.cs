@@ -9,13 +9,10 @@ namespace TrackIt.Entities;
 public class Password : Entity
 {
   public Guid UserId { get; set; }
-  
   public User User { get; set; }
   
   public string Hash { get; set; }
-  
   public string Salt { get; set; }
-
   public int PasswordLength { get; set; }
 
   public static Password Create (string password)

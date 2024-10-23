@@ -55,9 +55,11 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ITicketRepository, TicketRepository>();
     services.AddTransient<IExpenseRepository, ExpenseRepository>();
+    services.AddTransient<ICategoryRepository, CategoryRepository>();
     services.AddTransient<IActivityRepository, ActivityRepository>();
     services.AddTransient<IRefreshTokenService, RefreshTokenService>();
     services.AddTransient<ISubActivityRepository, SubActivityRepository>();
+    services.AddTransient<IPaymentFormatRepository, PaymentFormatRepository>();
     services.AddTransient<IActivityGroupRepository, ActivityGroupRepository>();
     services.AddTransient<IMonthlyExpensesRepository, MonthlyExpensesRepository>();
     

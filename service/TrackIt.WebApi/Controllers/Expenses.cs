@@ -2,6 +2,7 @@
 using TrackIt.Infraestructure.Web.Controller;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using TrackIt.Infraestructure.Web.Swagger.Annotations;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -15,6 +16,7 @@ public class Expenses : BaseController
   public Expenses (IMediator mediator) => _mediator = mediator;
   
   [HttpPost]
+  [SwaggerAuthorize]
   public async Task<IActionResult> Handle ([FromBody] CreateExpensePayload payload)
   {
     await _mediator.Send(new CreateExpenseCommand(payload, SessionFromHeaders()));

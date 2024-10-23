@@ -72,6 +72,20 @@ public class TrackItDbContext : DbContext
       .HasOne<Category>()
       .WithMany()
       .HasForeignKey(x => x.CategoryId);
+
+    modelBuilder
+      .Entity<PaymentFormat>()
+      .HasOne(x => x.PaymentFormatConfig)
+      .WithOne(x => x.PaymentFormat)
+      .HasForeignKey<PaymentFormatConfig>(x => x.PaymentFormatId)
+      .OnDelete(DeleteBehavior.Cascade);
+    
+    modelBuilder
+      .Entity<Category>()
+      .HasOne(x => x.CategoryConfig)
+      .WithOne(x => x.Category)
+      .HasForeignKey<CategoryConfig>(x => x.CategoryId)
+      .OnDelete(DeleteBehavior.Cascade);
     
     new UserMapper().Configure(modelBuilder.Entity<User>());
   }
