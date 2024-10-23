@@ -14,5 +14,11 @@ public enum PaymentFormatKey
   PAYMENT_SLIP,
   
   [Description("MONEY")]
-  MONEY
+  MONEY,
+  
+  [Description("PIX")]
+  PIX,
+  
+  [Description("TICKET")]
+  TICKET
 }
