@@ -33,4 +33,16 @@ public class MonthlyExpenses : Entity
       Limit = null
     };
   }
+
+  public MonthlyExpenses WithTitle (string title)
+  {
+    Title = title;
+    return this;
+  }
+
+  public MonthlyExpenses WithLimit (int? limit)
+  {
+    Limit = limit;
+    return this;
+  }
 }

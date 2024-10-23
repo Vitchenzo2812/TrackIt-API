@@ -1,10 +1,10 @@
 ﻿using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Commands.ExpenseCommands.CreateExpense;
 using TrackIt.Commands.ExpenseCommands.UpdateExpense;
+using TrackIt.Commands.ExpenseCommands.DeleteExpense;
 using TrackIt.Infraestructure.Web.Controller;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using TrackIt.Commands.ExpenseCommands.DeleteExpense;
 
 namespace TrackIt.WebApi.Controllers;
 
