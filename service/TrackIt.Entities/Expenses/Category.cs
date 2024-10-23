@@ -24,6 +24,12 @@ public class Category : Aggregate
     Commit(new CreateCategoryEvent(Id, icon, iconColor, backgroundIconColor));
     return this;
   }
+  
+  public Category SendUpdateCategoryEvent (string icon, string iconColor, string backgroundIconColor)
+  {
+    Commit(new UpdateCategoryEvent(Id, icon, iconColor, backgroundIconColor));
+    return this;
+  }
 
   public Category WithTitle (string title)
   {

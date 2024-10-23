@@ -1,4 +1,5 @@
 ﻿using TrackIt.Commands.CategoryCommands.CreateCategory;
+using TrackIt.Commands.CategoryCommands.UpdateCategory;
 using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Infraestructure.Web.Controller;
 using Microsoft.AspNetCore.Mvc;
@@ -22,5 +23,14 @@ public class Categories : BaseController
     await _mediator.Send(new CreateCategoryCommand(payload, SessionFromHeaders()));
     
     return StatusCode(201);
+  }
+
+  [HttpPut("{id}")]
+  [SwaggerAuthorize]
+  public async Task<IActionResult> Handle (Guid id, [FromBody] UpdateCategoryPayload payload)
+  {
+    await _mediator.Send(new UpdateCategoryCommand(id, payload, SessionFromHeaders()));
+    
+    return Ok();
   }
 }

@@ -29,6 +29,7 @@ using TrackIt.Queries.Views;
 using MassTransit;
 using MediatR;
 using TrackIt.Commands.CategoryCommands.CreateCategory;
+using TrackIt.Commands.CategoryCommands.UpdateCategory;
 using TrackIt.Commands.ExpenseCommands.CreateExpense;
 using TrackIt.Commands.ExpenseCommands.DeleteExpense;
 using TrackIt.Commands.ExpenseCommands.UpdateExpense;
@@ -99,6 +100,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<DeleteMonthlyExpensesCommand, Unit>, DeleteMonthlyExpensesRealmHandle>();
     
     services.AddTransient<IPipelineBehavior<CreateCategoryCommand, Unit>, CreateCategoryRealmHandle>();
+    services.AddTransient<IPipelineBehavior<UpdateCategoryCommand, Unit>, UpdateCategoryRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
@@ -108,6 +110,7 @@ public abstract class TrackItStartup : IStartup
     services.AddMassTransit(x =>
     {
       x.AddConsumer<CreateCategoryConsumer>();
+      x.AddConsumer<UpdateCategoryConsumer>();
       x.AddConsumer<SendEmailAboutSignUpConsumer>();
       x.AddConsumer<EmailForgotPasswordConsumer>();
       

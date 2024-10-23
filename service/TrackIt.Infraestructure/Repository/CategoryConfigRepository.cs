@@ -18,6 +18,13 @@ public class CategoryConfigRepository : ICategoryConfigRepository
       .FirstOrDefaultAsync(x => x.Id == aggregateId);
   }
 
+  public async Task<CategoryConfig?> FindByCategoryId (Guid categoryId)
+  {
+    return await _db.CategoryConfigs
+      .AsTracking()
+      .FirstOrDefaultAsync(x => x.CategoryId == categoryId);
+  }
+  
   public void Save (CategoryConfig aggregate)
   {
     _db.CategoryConfigs.Add(aggregate);
