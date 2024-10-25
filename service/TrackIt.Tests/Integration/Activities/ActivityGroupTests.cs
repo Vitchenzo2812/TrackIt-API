@@ -1,6 +1,7 @@
 ﻿using TrackIt.Commands.ActivityGroupCommands.UpdateActivityGroup;
 using TrackIt.Commands.ActivityGroupCommands.CreateActivityGroup;
 using TrackIt.Infraestructure.Extensions;
+using TrackIt.Queries.GetActivityGroups;
 using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
@@ -16,6 +17,34 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
   private ActivityGroup activityGroup1 { get; set; }
   private ActivityGroup activityGroup2 { get; set; }
   private ActivityGroup activityGroup3 { get; set; }
+
+  [Fact]
+  public async Task ShouldGetActivityGroups ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateActivityGroups(user);
+
+    var response = await _httpClient.GetAsync("/group");
+    var result = await response.ToData<List<GetActivityGroupsResult>>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    Assert.Equal(2, result.Count);
+    
+    List<ActivityGroup> groups = [activityGroup1, activityGroup2];
+
+    foreach (var resultGroup in result)
+    {
+      var group = groups.Find(x => x.Id == resultGroup.Id);
+      
+      Assert.NotNull(group);
+      Assert.Equal(resultGroup.Id, group.Id);
+      Assert.Equal(resultGroup.Title, group.Title);
+      Assert.Equal(resultGroup.Order, group.Order);
+    }
+  }
   
   [Fact]
   public async Task ShouldCreateActivityGroup ()

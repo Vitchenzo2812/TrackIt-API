@@ -39,8 +39,10 @@ using TrackIt.Commands.MonthlyExpensesCommands.UpdateMonthlyExpenses;
 using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using TrackIt.Commands.SubActivityCommands.DeleteSubActivity;
 using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
+using TrackIt.Entities.Activities;
 using TrackIt.Entities.Repository;
 using TrackIt.Entities.Services;
+using TrackIt.Queries.GetActivityGroups;
 using TrackIt.Queries.GetHomePageInfo;
 using TrackIt.Queries.Views.HomePage;
 
@@ -107,6 +109,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<DeleteCategoryCommand, Unit>, DeleteCategoryRealmHandle>();
     
     services.AddTransient<IPipelineBehavior<GetHomePageInfoQuery, HomePageView>, GetHomePageInfoRealmHandle>();
+    services.AddTransient<IPipelineBehavior<GetActivityGroupsQuery, List<GetActivityGroupsResult>>, GetActivityGroupsRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)

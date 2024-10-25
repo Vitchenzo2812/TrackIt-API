@@ -15,6 +15,7 @@ using TrackIt.Queries.GetHomePageInfo;
 using TrackIt.Queries.Views.HomePage;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using TrackIt.Queries.GetActivityGroups;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -32,6 +33,13 @@ public class Activities : BaseController
   public async Task<HomePageView> Handle ([FromQuery] GetHomePageInfoParams @params)
   {
     return await _mediator.Send(new GetHomePageInfoQuery(@params, SessionFromHeaders()));
+  }
+
+  [HttpGet]
+  [SwaggerAuthorize]
+  public async Task<List<GetActivityGroupsResult>> Handle ()
+  {
+    return await _mediator.Send(new GetActivityGroupsQuery(SessionFromHeaders()));
   }
   
   [HttpPost]
