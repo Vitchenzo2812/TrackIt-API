@@ -2,12 +2,13 @@
 using TrackIt.Commands.ActivityCommands.UpdateActivity;
 using TrackIt.Infraestructure.Extensions;
 using TrackIt.Infraestructure.Web.Dto;
+using TrackIt.Queries.Views.HomePage;
 using Microsoft.EntityFrameworkCore;
+using TrackIt.Queries.GetActivities;
 using TrackIt.Tests.Config.Builders;
 using TrackIt.Entities.Activities;
 using TrackIt.Tests.Config;
 using System.Net;
-using TrackIt.Queries.Views.HomePage;
 
 namespace TrackIt.Tests.Integration.Activities;
 
@@ -51,6 +52,40 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
     {
       Assert.Equal(activity2.Title, incompletedActivity.Title);
       Assert.Equal(activity2.Description,incompletedActivity.Description);
+    }
+  }
+
+  [Fact]
+  public async Task ShouldGetActivitiesByGroupId ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+    
+    await CreateActivities(user.Id);
+
+    var response = await _httpClient.GetAsync($"/group/{activityGroup2.Id}/activity");
+    var result = await response.ToData<List<GetActivitiesResult>>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal(2, result.Count);
+    
+    Assert.Equal(activity2.Id, result[0].Id);
+    Assert.Equal(activity1.Id, result[1].Id);
+    
+    List<Activity> activities = [activity1, activity2];
+
+    foreach (var resultActivity in result)
+    {
+      var activity = activities.Find(x => x.Id == resultActivity.Id);
+      
+      Assert.NotNull(activity);
+      Assert.Equal(resultActivity.Id, activity.Id);
+      Assert.Equal(resultActivity.Title, activity.Title);
+      Assert.Equal(resultActivity.Description, activity.Description);
+      Assert.Equal(resultActivity.Order, activity.Order);
+      Assert.Equal(resultActivity.Checked, activity.Checked);
+      Assert.Equal(resultActivity.Priority, activity.Priority);
+      Assert.Equal(resultActivity.CompletedAt.HasValue, activity.CompletedAt.HasValue);
     }
   }
   

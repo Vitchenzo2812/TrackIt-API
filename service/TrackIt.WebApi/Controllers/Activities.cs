@@ -11,11 +11,12 @@ using TrackIt.Infraestructure.Web.Swagger.Annotations;
 using TrackIt.Infraestructure.Web.Controller;
 using TrackIt.Commands.SubActivityCommands;
 using TrackIt.Commands.ActivityCommands;
+using TrackIt.Queries.GetActivityGroups;
 using TrackIt.Queries.GetHomePageInfo;
 using TrackIt.Queries.Views.HomePage;
+using TrackIt.Queries.GetActivities;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using TrackIt.Queries.GetActivityGroups;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -69,6 +70,13 @@ public class Activities : BaseController
     return Ok();
   }
 
+  [HttpGet("{id}/activity")]
+  [SwaggerAuthorize]
+  public async Task<List<GetActivitiesResult>> HandleGetActivities (Guid id)
+  {
+    return await _mediator.Send(new GetActivitiesQuery(new GetActivitiesParams(id), SessionFromHeaders()));
+  }
+  
   [HttpPost("{id}/activity")]
   [SwaggerAuthorize]
   public async Task<IActionResult> Handle (Guid id, [FromBody] CreateActivityPayload payload)

@@ -42,6 +42,7 @@ using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 using TrackIt.Entities.Activities;
 using TrackIt.Entities.Repository;
 using TrackIt.Entities.Services;
+using TrackIt.Queries.GetActivities;
 using TrackIt.Queries.GetActivityGroups;
 using TrackIt.Queries.GetHomePageInfo;
 using TrackIt.Queries.Views.HomePage;
@@ -108,6 +109,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<UpdateCategoryCommand, Unit>, UpdateCategoryRealmHandle>();
     services.AddTransient<IPipelineBehavior<DeleteCategoryCommand, Unit>, DeleteCategoryRealmHandle>();
     
+    services.AddTransient<IPipelineBehavior<GetActivitiesQuery, List<Activity>>, GetActivitiesRealmHandle>();
     services.AddTransient<IPipelineBehavior<GetHomePageInfoQuery, HomePageView>, GetHomePageInfoRealmHandle>();
     services.AddTransient<IPipelineBehavior<GetActivityGroupsQuery, List<GetActivityGroupsResult>>, GetActivityGroupsRealmHandle>();
   }
