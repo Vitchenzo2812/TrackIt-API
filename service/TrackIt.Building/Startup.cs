@@ -43,8 +43,10 @@ using TrackIt.Entities.Activities;
 using TrackIt.Entities.Repository;
 using TrackIt.Entities.Services;
 using TrackIt.Queries.GetActivities;
+using TrackIt.Queries.GetActivity;
 using TrackIt.Queries.GetActivityGroups;
 using TrackIt.Queries.GetHomePageInfo;
+using TrackIt.Queries.GetSubActivities;
 using TrackIt.Queries.Views.HomePage;
 
 namespace TrackIt.Building;
@@ -112,6 +114,8 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<GetActivitiesQuery, List<Activity>>, GetActivitiesRealmHandle>();
     services.AddTransient<IPipelineBehavior<GetHomePageInfoQuery, HomePageView>, GetHomePageInfoRealmHandle>();
     services.AddTransient<IPipelineBehavior<GetActivityGroupsQuery, List<GetActivityGroupsResult>>, GetActivityGroupsRealmHandle>();
+    services.AddTransient<IPipelineBehavior<GetSubActivitiesQuery, List<GetSubActivitiesResult>>, GetSubActivitiesRealmHandle>();
+    services.AddTransient<IPipelineBehavior<GetActivityQuery, GetActivityResult>, GetActivityRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)

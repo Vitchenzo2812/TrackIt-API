@@ -6,7 +6,9 @@ using TrackIt.Queries.Views.HomePage;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Queries.GetActivities;
 using TrackIt.Tests.Config.Builders;
+using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Entities.Activities;
+using TrackIt.Queries.GetActivity;
 using TrackIt.Tests.Config;
 using System.Net;
 
@@ -87,6 +89,22 @@ public class ActivityTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
       Assert.Equal(resultActivity.Priority, activity.Priority);
       Assert.Equal(resultActivity.CompletedAt.HasValue, activity.CompletedAt.HasValue);
     }
+  }
+
+  [Fact]
+  public async Task ShouldGetActivityById ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateActivities(user.Id);
+
+    var response = await _httpClient.GetAsync($"group/{activityGroup2.Id}/activity/{activity2.Id}");
+    var result = await response.ToData<GetActivityResult>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    
+    ActivityMock.Verify(result, activity2);
   }
   
   [Fact]

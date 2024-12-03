@@ -12,11 +12,13 @@ using TrackIt.Infraestructure.Web.Controller;
 using TrackIt.Commands.SubActivityCommands;
 using TrackIt.Commands.ActivityCommands;
 using TrackIt.Queries.GetActivityGroups;
+using TrackIt.Queries.GetSubActivities;
 using TrackIt.Queries.GetHomePageInfo;
 using TrackIt.Queries.Views.HomePage;
 using TrackIt.Queries.GetActivities;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using TrackIt.Queries.GetActivity;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -77,6 +79,15 @@ public class Activities : BaseController
     return await _mediator.Send(new GetActivitiesQuery(new GetActivitiesParams(id), SessionFromHeaders()));
   }
   
+  [HttpGet("{id}/activity/{activityId}")]
+  [SwaggerAuthorize]
+  public async Task<GetActivityResult> HandleGetActivity (Guid id, Guid activityId)
+  {
+    return await _mediator.Send(
+      new GetActivityQuery(new GetActivityParams(id, activityId), SessionFromHeaders())
+    );
+  }
+  
   [HttpPost("{id}/activity")]
   [SwaggerAuthorize]
   public async Task<IActionResult> Handle (Guid id, [FromBody] CreateActivityPayload payload)
@@ -108,6 +119,15 @@ public class Activities : BaseController
     return Ok();
   }
 
+  [HttpGet("{groupId}/activity/{activityId}/sub")]
+  [SwaggerAuthorize]
+  public async Task<List<GetSubActivitiesResult>> HandleGetSubActivities (Guid groupId, Guid activityId)
+  {
+    return await _mediator.Send(
+      new GetSubActivitiesQuery(new GetSubActivitiesParams(groupId, activityId), SessionFromHeaders())
+    );
+  }
+  
   [HttpPost("{groupId}/activity/{activityId}/sub")]
   [SwaggerAuthorize]
   public async Task<IActionResult> Handle (Guid groupId, Guid activityId, [FromBody] CreateSubActivityPayload payload)

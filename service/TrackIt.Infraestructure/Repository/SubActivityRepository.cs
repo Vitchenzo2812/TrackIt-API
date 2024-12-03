@@ -18,6 +18,13 @@ public class SubActivityRepository : ISubActivityRepository
       .FirstOrDefaultAsync(x => x.Id == aggregateId);
   }
 
+  public async Task<List<SubActivity>> FindByActivityId (Guid activityId)
+  {
+    return await _db.SubActivities
+      .Where(x => x.ActivityId == activityId)
+      .ToListAsync();
+  }
+
   public void Save (SubActivity aggregate)
   {
     _db.SubActivities.Add(aggregate);

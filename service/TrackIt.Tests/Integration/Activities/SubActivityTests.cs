@@ -1,12 +1,14 @@
 ﻿using TrackIt.Commands.SubActivityCommands.CreateSubActivity;
 using TrackIt.Commands.SubActivityCommands.UpdateSubActivity;
 using TrackIt.Infraestructure.Extensions;
+using TrackIt.Queries.GetSubActivities;
 using TrackIt.Infraestructure.Web.Dto;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
 using TrackIt.Entities.Activities;
 using TrackIt.Tests.Config;
 using System.Net;
+using TrackIt.Tests.Mocks.Entities;
 
 namespace TrackIt.Tests.Integration.Activities;
 
@@ -20,6 +22,31 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
   private SubActivity subActivity1 { get; set; }
   private SubActivity subActivity2 { get; set; }
   private SubActivity subActivity3 { get; set; }
+
+  [Fact]
+  public async Task ShouldGetSubActivities ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateSubActivities(user.Id);
+    
+    var response = await _httpClient.GetAsync($"/group/{activityGroup2.Id}/activity/{activity1.Id}/sub");
+    var result = await response.ToData<List<GetSubActivitiesResult>>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal(2, result.Count);
+
+    List<SubActivity> subActivities = [subActivity1, subActivity2];
+    
+    foreach (var subActivity in result)
+    {
+      var expect = subActivities.Find(x => x.Id == subActivity.Id);
+      
+      Assert.NotNull(expect);
+      SubActivityMock.Verify(expect, subActivity);
+    }
+  }
   
   [Fact]
   public async Task ShouldCreateSubActivity ()
