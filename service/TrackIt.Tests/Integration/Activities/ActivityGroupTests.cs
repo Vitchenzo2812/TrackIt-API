@@ -9,6 +9,7 @@ using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Entities.Activities;
 using TrackIt.Tests.Config;
 using System.Net;
+using TrackIt.Queries.GetActivityGroup;
 
 namespace TrackIt.Tests.Integration.Activities;
 
@@ -45,7 +46,23 @@ public class ActivityGroupTests (TrackItWebApplication fixture) : TrackItSetup (
       Assert.Equal(resultGroup.Order, group.Order);
     }
   }
-  
+
+  [Fact]
+  public async Task ShouldGetActivityGroup ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateActivityGroups(user);
+
+    var response = await _httpClient.GetAsync($"/group/{activityGroup1.Id}");
+    var result = await response.ToData<GetActivityGroupResult>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    
+    ActivityGroupMock.Verify(result, activityGroup1);
+  }
+    
   [Fact]
   public async Task ShouldCreateActivityGroup ()
   {

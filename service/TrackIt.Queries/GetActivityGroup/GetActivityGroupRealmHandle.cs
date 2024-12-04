@@ -1,17 +1,16 @@
 ﻿using TrackIt.Entities.Repository;
-using TrackIt.Entities.Activities;
 using TrackIt.Commands.Errors;
 using TrackIt.Entities.Errors;
 using MediatR;
 
-namespace TrackIt.Queries.GetActivities;
+namespace TrackIt.Queries.GetActivityGroup;
 
-public class GetActivitiesRealmHandle : IPipelineBehavior<GetActivitiesQuery, List<Activity>>
+public class GetActivityGroupRealmHandle : IPipelineBehavior<GetActivityGroupQuery, GetActivityGroupResult>
 {
   private readonly IUserRepository _userRepository;
   private readonly IActivityGroupRepository _activityGroupRepository;
-
-  public GetActivitiesRealmHandle (
+  
+  public GetActivityGroupRealmHandle (
     IUserRepository userRepository,
     IActivityGroupRepository activityGroupRepository
   )
@@ -20,7 +19,7 @@ public class GetActivitiesRealmHandle : IPipelineBehavior<GetActivitiesQuery, Li
     _activityGroupRepository = activityGroupRepository;
   }
   
-  public async Task<List<Activity>> Handle (GetActivitiesQuery request, RequestHandlerDelegate<List<Activity>> next, CancellationToken cancellationToken)
+  public async Task<GetActivityGroupResult> Handle (GetActivityGroupQuery request, RequestHandlerDelegate<GetActivityGroupResult> next, CancellationToken cancellationToken)
   {
     if (request.Session is null)
       throw new ForbiddenError();
@@ -32,7 +31,7 @@ public class GetActivitiesRealmHandle : IPipelineBehavior<GetActivitiesQuery, Li
 
     if (!user.EmailValidated)
       throw new EmailMustBeValidatedError();
-
+    
     if (await _activityGroupRepository.FindById(request.Params.ActivityGroupId) is null)
       throw new NotFoundError("Activity Group not found");
     
