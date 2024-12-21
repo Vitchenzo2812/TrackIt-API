@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using TrackIt.Entities.Expenses;
 using TrackIt.Tests.Config;
 using System.Net;
+using TrackIt.Queries.GetExpense;
+using TrackIt.Tests.Mocks.Entities;
 
 namespace TrackIt.Tests.Integration.Expenses;
 
@@ -16,6 +18,22 @@ public class ExpenseTests (TrackItWebApplication fixture) : TrackItSetup (fixtur
   private PaymentFormat paymentFormat3 { get; set; }
   private Category category1 { get; set; }
   private Category category2 { get; set; }
+
+  [Fact]
+  public async Task ShouldGetExpense ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    var expense = await CreateExpense(user.Id);
+
+    var response = await _httpClient.GetAsync($"expense/{expense.Id}");
+    var result = await response.ToData<GetExpenseResult>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    
+    ExpenseMock.Verify(result, expense);
+  }
   
   [Fact]
   public async Task ShouldCreateExpenseAndMonthly ()
@@ -384,78 +402,107 @@ public class ExpenseTests (TrackItWebApplication fixture) : TrackItSetup (fixtur
 
     #endregion
   }
-  
-  private async Task CreatePaymentFormats ()
-  {
-    paymentFormat1 = PaymentFormat.Create()
-      .WithKey(PaymentFormatKey.MONEY)
-      .WithTitle("Débito");
 
-    var paymentFormatConfig1 = PaymentFormatConfig.Create()
-      .WithIcon("/icon/debit_card.svg")
-      .WithIconColor("#F4F4F4")
-      .WithBackgroundIconColor("#120DF1")
-      .AssignToPaymentFormat(paymentFormat1.Id);
+  #region setup for tests
 
-    paymentFormat2 = PaymentFormat.Create()
-      .WithKey(PaymentFormatKey.PAYMENT_SLIP)
-      .WithTitle("Boleto");
-    
-    var paymentFormatConfig2 = PaymentFormatConfig.Create()
-      .WithIcon("/icon/payment_slip.svg")
-      .WithIconColor("#F4F4F4")
-      .WithBackgroundIconColor("#9100D6")
-      .AssignToPaymentFormat(paymentFormat2.Id);
-    
-    paymentFormat3 = PaymentFormat.Create()
-      .WithKey(PaymentFormatKey.CREDIT_CARD)
-      .WithTitle("Crédito");
-    
-    var paymentFormatConfig3 = PaymentFormatConfig.Create()
-      .WithIcon("/icon/credit_card.svg")
-      .WithIconColor("#F4F4F4")
-      .WithBackgroundIconColor("#000000")
-      .AssignToPaymentFormat(paymentFormat3.Id);
+    private async Task CreatePaymentFormats ()
+    {
+      paymentFormat1 = PaymentFormat.Create()
+        .WithKey(PaymentFormatKey.MONEY)
+        .WithTitle("Débito");
 
-    _db.PaymentFormats.AddRange([paymentFormat1, paymentFormat2, paymentFormat3]);
-    _db.PaymentFormatConfigs.AddRange([paymentFormatConfig1, paymentFormatConfig2, paymentFormatConfig3]);
-    
-    await _db.SaveChangesAsync();
-  }
-  
-  private async Task CreateCategories ()
-  {
-    category1 = Category.Create()
-      .WithTitle("Educação")
-      .WithDescription("Faculdade, cursos etc.");
-    
-    var categoryConfig1 = CategoryConfig.Create()
-      .WithIcon("/icon/school.svg")
-      .WithIconColor("#F4F4F4")
-      .WithBackgroundIconColor("#120DF1")
-      .AssignToCategory(category1.Id);
-    
-    category2 = Category.Create()
-      .WithTitle("Alimentação")
-      .WithDescription("Fast-Food, Almoço em familia etc.");
-    
-    var categoryConfig2 = CategoryConfig.Create()
-      .WithIcon("/icon/food.svg")
-      .WithIconColor("#F4F4F4")
-      .WithBackgroundIconColor("#000000")
-      .AssignToCategory(category2.Id);
+      var paymentFormatConfig1 = PaymentFormatConfig.Create()
+        .WithIcon("/icon/debit_card.svg")
+        .WithIconColor("#F4F4F4")
+        .WithBackgroundIconColor("#120DF1")
+        .AssignToPaymentFormat(paymentFormat1.Id);
 
-    _db.Categories.AddRange([category1, category2]);
-    _db.CategoryConfigs.AddRange([categoryConfig1, categoryConfig2]);
+      paymentFormat2 = PaymentFormat.Create()
+        .WithKey(PaymentFormatKey.PAYMENT_SLIP)
+        .WithTitle("Boleto");
+      
+      var paymentFormatConfig2 = PaymentFormatConfig.Create()
+        .WithIcon("/icon/payment_slip.svg")
+        .WithIconColor("#F4F4F4")
+        .WithBackgroundIconColor("#9100D6")
+        .AssignToPaymentFormat(paymentFormat2.Id);
+      
+      paymentFormat3 = PaymentFormat.Create()
+        .WithKey(PaymentFormatKey.CREDIT_CARD)
+        .WithTitle("Crédito");
+      
+      var paymentFormatConfig3 = PaymentFormatConfig.Create()
+        .WithIcon("/icon/credit_card.svg")
+        .WithIconColor("#F4F4F4")
+        .WithBackgroundIconColor("#000000")
+        .AssignToPaymentFormat(paymentFormat3.Id);
+
+      _db.PaymentFormats.AddRange([paymentFormat1, paymentFormat2, paymentFormat3]);
+      _db.PaymentFormatConfigs.AddRange([paymentFormatConfig1, paymentFormatConfig2, paymentFormatConfig3]);
+      
+      await _db.SaveChangesAsync();
+    }
     
-    await _db.SaveChangesAsync();
-  }
+    private async Task CreateCategories ()
+    {
+      category1 = Category.Create()
+        .WithTitle("Educação")
+        .WithDescription("Faculdade, cursos etc.");
+      
+      var categoryConfig1 = CategoryConfig.Create()
+        .WithIcon("/icon/school.svg")
+        .WithIconColor("#F4F4F4")
+        .WithBackgroundIconColor("#120DF1")
+        .AssignToCategory(category1.Id);
+      
+      category2 = Category.Create()
+        .WithTitle("Alimentação")
+        .WithDescription("Fast-Food, Almoço em familia etc.");
+      
+      var categoryConfig2 = CategoryConfig.Create()
+        .WithIcon("/icon/food.svg")
+        .WithIconColor("#F4F4F4")
+        .WithBackgroundIconColor("#000000")
+        .AssignToCategory(category2.Id);
 
-  private async Task CreateMonthlyExpenses (Guid userId, DateTime date)
-  {
-    var monthlyExpense = MonthlyExpenses.Create(userId, date);
+      _db.Categories.AddRange([category1, category2]);
+      _db.CategoryConfigs.AddRange([categoryConfig1, categoryConfig2]);
+      
+      await _db.SaveChangesAsync();
+    }
 
-    _db.MonthlyExpenses.Add(monthlyExpense);
-    await _db.SaveChangesAsync();
-  }
+    private async Task<MonthlyExpenses> CreateMonthlyExpenses (Guid userId, DateTime date)
+    {
+      var monthlyExpense = MonthlyExpenses.Create(userId, date);
+
+      _db.MonthlyExpenses.Add(monthlyExpense);
+      await _db.SaveChangesAsync();
+
+      return monthlyExpense;
+    }
+
+    private async Task<Expense> CreateExpense (Guid userId)
+    {
+      var date = DateTime.Parse("2024-09-10T00:10:00");
+      
+      await CreatePaymentFormats();
+      await CreateCategories();
+      var monthlyExpenses = await CreateMonthlyExpenses(userId, date);
+    
+      var expense = Expense.Create()
+        .WithTitle("EXPENSE_1")
+        .WithDescription("EXPENSE_1_DESCRIPTION")
+        .WithDate(date)
+        .WithAmount(150)
+        .AssignToCategory(category2.Id)
+        .AssignToPaymentFormat(paymentFormat1.Id)
+        .AssignToMonthly(monthlyExpenses.Id);
+
+      _db.Expenses.Add(expense);
+      await _db.SaveChangesAsync(); 
+      
+      return expense;
+    }
+    
+  #endregion
 }

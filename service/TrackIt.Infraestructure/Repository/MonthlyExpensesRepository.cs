@@ -18,6 +18,13 @@ public class MonthlyExpensesRepository : IMonthlyExpensesRepository
       .FirstOrDefaultAsync(x => x.Id == aggregateId);
   }
 
+  public async Task<List<MonthlyExpenses>> GetAllByUserId (Guid userId)
+  {
+    return await _db.MonthlyExpenses
+      .Where(x => x.UserId == userId)
+      .ToListAsync();
+  }
+
   public async Task<MonthlyExpenses?> FindByDate (DateTime date)
   {
     return await _db.MonthlyExpenses

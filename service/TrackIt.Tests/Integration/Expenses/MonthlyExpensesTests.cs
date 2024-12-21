@@ -1,7 +1,9 @@
 ﻿using TrackIt.Commands.MonthlyExpensesCommands.UpdateMonthlyExpenses;
 using TrackIt.Infraestructure.Extensions;
+using TrackIt.Queries.GetExpensePageInfo;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
+using TrackIt.Tests.Mocks.Entities;
 using TrackIt.Entities.Expenses;
 using TrackIt.Tests.Config;
 using System.Net;
@@ -10,6 +12,27 @@ namespace TrackIt.Tests.Integration.Expenses;
 
 public class MonthlyExpensesTests (TrackItWebApplication fixture) : TrackItSetup (fixture)
 {
+  [Fact]
+  public async Task ShouldGetExpensePageInfo ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+    
+    var monthlyExpenses = await CreateForExpensesPageInfo(user.Id);
+
+    var response = await _httpClient.GetAsync($"monthly-expenses");
+    var result = await response.ToData<List<GetExpensePageInfoResult>>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    var expenses = await _db.Expenses
+      .Where(x => x.MonthlyExpensesId == monthlyExpenses.Id)
+      .ToListAsync();
+    
+    Assert.Single(result);
+    MonthlyExpensesMock.Verify(result[0], monthlyExpenses, expenses.Count);
+  }
+  
   [Fact]
   public async Task ShouldUpdateMonthlyExpenses ()
   {
@@ -66,66 +89,82 @@ public class MonthlyExpensesTests (TrackItWebApplication fixture) : TrackItSetup
     Assert.Empty(deletedMonthlyExpenses);
     Assert.Empty(deletedExpenses);
   }
-  
-  private async Task<MonthlyExpenses> CreateMonthlyExpenses (Guid userId, DateTime date)
-  {
-    var monthlyExpense = MonthlyExpenses.Create(userId, date);
 
-    _db.MonthlyExpenses.Add(monthlyExpense);
-    await _db.SaveChangesAsync();
+  #region setup for tests
 
-    return monthlyExpense;
-  }
+    private async Task<MonthlyExpenses> CreateMonthlyExpenses (Guid userId, DateTime date)
+    {
+      var monthlyExpense = MonthlyExpenses.Create(userId, date);
 
-  private async Task CreateExpenses (Guid monthlyExpensesId)
-  {
-    var paymentFormat1 = PaymentFormat.Create()
-      .WithTitle("Débito")
-      .WithKey(PaymentFormatKey.DEBIT_CARD);
+      _db.MonthlyExpenses.Add(monthlyExpense);
+      await _db.SaveChangesAsync();
 
-    var paymentFormatConfig1 = PaymentFormatConfig.Create()
-      .WithIcon("ICON")
-      .WithIconColor("ICON_COLOR")
-      .WithBackgroundIconColor("BACKGROUND_ICON_COLOR")
-      .AssignToPaymentFormat(paymentFormat1.Id);
+      return monthlyExpense;
+    }
 
-    _db.PaymentFormats.Add(paymentFormat1);
-    _db.PaymentFormatConfigs.Add(paymentFormatConfig1);
+    private async Task CreateExpenses (Guid monthlyExpensesId)
+    {
+      var paymentFormat1 = PaymentFormat.Create()
+        .WithTitle("Débito")
+        .WithKey(PaymentFormatKey.DEBIT_CARD);
+
+      var paymentFormatConfig1 = PaymentFormatConfig.Create()
+        .WithIcon("ICON")
+        .WithIconColor("ICON_COLOR")
+        .WithBackgroundIconColor("BACKGROUND_ICON_COLOR")
+        .AssignToPaymentFormat(paymentFormat1.Id);
+
+      _db.PaymentFormats.Add(paymentFormat1);
+      _db.PaymentFormatConfigs.Add(paymentFormatConfig1);
+      
+      var category1 = Category.Create()
+        .WithTitle("Educação")
+        .WithDescription("Descrição qualquer");
+      
+      var categoryConfig1 = CategoryConfig.Create()
+        .WithIcon("ICON")
+        .WithIconColor("ICON_COLOR")
+        .WithBackgroundIconColor("BACKGROUND_ICON_COLOR")
+        .AssignToCategory(category1.Id);
+
+      _db.Categories.Add(category1);
+      _db.CategoryConfigs.Add(categoryConfig1);
+      
+      var expense1 = Expense.Create()
+        .WithTitle("EXPENSE_1")
+        .WithDescription("EXPENSE_1_DESCRIPTION")
+        .WithDate(DateTime.Parse("2024-10-20T00:00:00"))
+        .WithAmount(500)
+        .IsRecurringExpense(false)
+        .AssignToPaymentFormat(paymentFormat1.Id)
+        .AssignToCategory(category1.Id)
+        .AssignToMonthly(monthlyExpensesId);
+      
+      var expense2 = Expense.Create()
+        .WithTitle("EXPENSE_2")
+        .WithDescription("EXPENSE_2_DESCRIPTION")
+        .WithDate(DateTime.Parse("2024-10-19T00:00:00"))
+        .WithAmount(78.16)
+        .IsRecurringExpense(false)
+        .AssignToPaymentFormat(paymentFormat1.Id)
+        .AssignToCategory(category1.Id)
+        .AssignToMonthly(monthlyExpensesId);
+
+      _db.Expenses.AddRange([expense1, expense2]);
+      await _db.SaveChangesAsync();
+    }
+
+    private async Task<MonthlyExpenses> CreateForExpensesPageInfo (Guid userId)
+    {
+      var monthlyExpense = MonthlyExpenses.Create(userId, DateTime.Parse("2024-10-23T00:00:00"));
+
+      _db.MonthlyExpenses.Add(monthlyExpense);
+      await _db.SaveChangesAsync();
+
+      await CreateExpenses(monthlyExpense.Id);
+
+      return monthlyExpense;
+    }
     
-    var category1 = Category.Create()
-      .WithTitle("Educação")
-      .WithDescription("Descrição qualquer");
-    
-    var categoryConfig1 = CategoryConfig.Create()
-      .WithIcon("ICON")
-      .WithIconColor("ICON_COLOR")
-      .WithBackgroundIconColor("BACKGROUND_ICON_COLOR")
-      .AssignToCategory(category1.Id);
-
-    _db.Categories.Add(category1);
-    _db.CategoryConfigs.Add(categoryConfig1);
-    
-    var expense1 = Expense.Create()
-      .WithTitle("EXPENSE_1")
-      .WithDescription("EXPENSE_1_DESCRIPTION")
-      .WithDate(DateTime.Parse("2024-10-20T00:00:00"))
-      .WithAmount(500)
-      .IsRecurringExpense(false)
-      .AssignToPaymentFormat(paymentFormat1.Id)
-      .AssignToCategory(category1.Id)
-      .AssignToMonthly(monthlyExpensesId);
-    
-    var expense2 = Expense.Create()
-      .WithTitle("EXPENSE_2")
-      .WithDescription("EXPENSE_2_DESCRIPTION")
-      .WithDate(DateTime.Parse("2024-10-19T00:00:00"))
-      .WithAmount(78.16)
-      .IsRecurringExpense(false)
-      .AssignToPaymentFormat(paymentFormat1.Id)
-      .AssignToCategory(category1.Id)
-      .AssignToMonthly(monthlyExpensesId);
-
-    _db.Expenses.AddRange([expense1, expense2]);
-    await _db.SaveChangesAsync();
-  }
+  #endregion
 }

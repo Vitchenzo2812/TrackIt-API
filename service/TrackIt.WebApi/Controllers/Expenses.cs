@@ -3,6 +3,7 @@ using TrackIt.Commands.ExpenseCommands.CreateExpense;
 using TrackIt.Commands.ExpenseCommands.UpdateExpense;
 using TrackIt.Commands.ExpenseCommands.DeleteExpense;
 using TrackIt.Infraestructure.Web.Controller;
+using TrackIt.Queries.GetExpense;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 
@@ -16,6 +17,13 @@ public class Expenses : BaseController
   private readonly IMediator _mediator;
 
   public Expenses (IMediator mediator) => _mediator = mediator;
+
+  [HttpGet("{id}")]
+  [SwaggerAuthorize]
+  public async Task<GetExpenseResult> HandleGetExpense (Guid id)
+  {
+    return await _mediator.Send(new GetExpenseQuery(new GetExpenseParams(id), SessionFromHeaders()));
+  }
   
   [HttpPost]
   [SwaggerAuthorize]
