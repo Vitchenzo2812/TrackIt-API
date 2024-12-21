@@ -51,6 +51,7 @@ using TrackIt.Queries.GetCategory;
 using TrackIt.Queries.GetExpense;
 using TrackIt.Queries.GetExpensePageInfo;
 using TrackIt.Queries.GetHomePageInfo;
+using TrackIt.Queries.GetPaymentFormats;
 using TrackIt.Queries.GetSubActivities;
 using TrackIt.Queries.GetSubActivity;
 using TrackIt.Queries.Views.HomePage;
@@ -128,6 +129,7 @@ public abstract class TrackItStartup : IStartup
     services.AddTransient<IPipelineBehavior<GetSubActivityQuery, GetSubActivityResult>, GetSubActivityRealmHandle>();
     services.AddTransient<IPipelineBehavior<GetExpensePageInfoQuery, List<GetExpensePageInfoResult>>, GetExpensePageInfoRealmHandle>();
     services.AddTransient<IPipelineBehavior<GetExpenseQuery, GetExpenseResult>, GetExpenseRealmHandle>();
+    services.AddTransient<IPipelineBehavior<GetPaymentFormatsQuery, List<GetPaymentFormatsResult>>, GetPaymentFormatsRealmHandle>();
   }
 
   public void ConfigureMassTransit (IServiceCollection services)
