@@ -7,6 +7,7 @@ using TrackIt.Commands.SubActivityCommands;
 using TrackIt.Queries.GetSubActivities;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using TrackIt.Queries.GetSubActivity;
 
 namespace TrackIt.WebApi.Controllers;
 
@@ -25,6 +26,18 @@ public class SubActivity : BaseController
   {
     return await _mediator.Send(
       new GetSubActivitiesQuery(new GetSubActivitiesParams(groupId, activityId), SessionFromHeaders())
+    );
+  }
+
+  [HttpGet("{groupId}/activity/{activityId}/sub/{subActivityId}")]
+  [SwaggerAuthorize]
+  public async Task<GetSubActivityResult> HandleGetSubActivity (Guid groupId, Guid activityId, Guid subActivityId)
+  {
+    return await _mediator.Send(
+      new GetSubActivityQuery(
+        new GetSubActivityParams(groupId, activityId, subActivityId),
+        SessionFromHeaders()
+      )
     );
   }
   

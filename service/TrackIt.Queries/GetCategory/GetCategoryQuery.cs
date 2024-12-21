@@ -1,6 +1,6 @@
-﻿namespace TrackIt.Queries.GetCategory;
+﻿using TrackIt.Entities.Core;
 
-public class GetCategoryQuery
-{
-  
-}
+namespace TrackIt.Queries.GetCategory;
+
+public class GetCategoryQuery (GetCategoryParams @params, Session? session = null)
+  : Query<GetCategoryParams, GetCategoryResult>(@params, session);

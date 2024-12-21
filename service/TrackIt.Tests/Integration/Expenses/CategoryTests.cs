@@ -2,6 +2,9 @@
 using TrackIt.Infraestructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using TrackIt.Tests.Config.Builders;
+using TrackIt.Queries.GetCategories;
+using TrackIt.Tests.Mocks.Entities;
+using TrackIt.Queries.GetCategory;
 using TrackIt.Entities.Expenses;
 using TrackIt.Entities.Events;
 using TrackIt.Tests.Config;
@@ -13,6 +16,53 @@ public class CategoryTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
 {
   private Category category1 { get; set; }
   private Category category2 { get; set; }
+  
+  private CategoryConfig config1 { get; set; }
+  private CategoryConfig config2 { get; set; }
+
+  [Fact]
+  public async Task ShouldGetCategories ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateCategories();
+
+    var response = await _httpClient.GetAsync("category");
+    var result = await response.ToData<List<GetCategoriesResult>>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    List<Category> categories = [category1, category2];
+    List<CategoryConfig> configs = [config1, config2];
+
+    foreach (var data in result)
+    {
+      var category = categories.Find(x => x.Id == data.Id);
+      var config = configs.Find(x => x.CategoryId == data.Id);
+
+      if (category is null || config is null)
+        continue;
+      
+      CategoryMock.Verify(data, category, config);
+    }
+  }
+
+  [Fact]
+  public async Task ShouldGetCategory ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateCategories();
+    
+    var response = await _httpClient.GetAsync($"category/{category1.Id}");
+    var result = await response.ToData<GetCategoryResult>();
+    
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    
+    CategoryMock.Verify(result, category1, config1);
+  }
   
   [Fact]
   public async Task ShouldCreateCategory ()
@@ -93,7 +143,7 @@ public class CategoryTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
       .WithTitle("CATEGORY_1")
       .WithDescription("CATEGORY_1_DESCRIPTION");
     
-    var config1 = CategoryConfig.Create()
+    config1 = CategoryConfig.Create()
       .WithIcon("ICON_1")
       .WithIconColor("ICON_COLOR_1")
       .WithBackgroundIconColor("BACKGROUND_ICON_COLOR_1")
@@ -103,7 +153,7 @@ public class CategoryTests (TrackItWebApplication fixture) : TrackItSetup (fixtu
       .WithTitle("CATEGORY_2")
       .WithDescription("CATEGORY_2_DESCRIPTION");
 
-    var config2 = CategoryConfig.Create()
+    config2 = CategoryConfig.Create()
       .WithIcon("ICON_2")
       .WithIconColor("ICON_COLOR_2")
       .WithBackgroundIconColor("BACKGROUND_ICON_COLOR_2")

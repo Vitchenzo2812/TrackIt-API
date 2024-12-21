@@ -8,6 +8,7 @@ using TrackIt.Tests.Config.Builders;
 using TrackIt.Entities.Activities;
 using TrackIt.Tests.Config;
 using System.Net;
+using TrackIt.Queries.GetSubActivity;
 using TrackIt.Tests.Mocks.Entities;
 
 namespace TrackIt.Tests.Integration.Activities;
@@ -46,6 +47,22 @@ public class SubActivityTests (TrackItWebApplication fixture) : TrackItSetup (fi
       Assert.NotNull(expect);
       SubActivityMock.Verify(expect, subActivity);
     }
+  }
+
+  [Fact]
+  public async Task ShouldGetSubActivity ()
+  {
+    var user = await CreateUserWithEmailValidated();
+    AddAuthorizationData(SessionBuilder.Build(user));
+
+    await CreateSubActivities(user.Id);
+    
+    var response = await _httpClient.GetAsync($"/group/{activityGroup2.Id}/activity/{activity1.Id}/sub/{subActivity2.Id}");
+    var result = await response.ToData<GetSubActivityResult>();
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    
+    SubActivityMock.Verify(subActivity2, result);
   }
   
   [Fact]

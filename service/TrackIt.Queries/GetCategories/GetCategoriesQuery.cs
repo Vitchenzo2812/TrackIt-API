@@ -1,6 +1,6 @@
-﻿namespace TrackIt.Queries.GetCategories;
+﻿using TrackIt.Entities.Core;
 
-public class GetCategoriesQuery
-{
-  
-}
+namespace TrackIt.Queries.GetCategories;
+
+public class GetCategoriesQuery (Session? session = null)
+  : Query<object, List<GetCategoriesResult>>(null, session);

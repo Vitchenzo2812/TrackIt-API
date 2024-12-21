@@ -1,3 +1,3 @@
 ﻿namespace TrackIt.Queries.GetCategory;
 
-public record GetCategoryParams ();
+public record GetCategoryParams (Guid CategoryId);
